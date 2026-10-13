@@ -1,0 +1,28 @@
+# 只跟踪 X 实验交付物；排除工作区其他内容
+*
+!.gitignore
+
+# X 实验交付物
+!X最小闭环实验规范.md
+!X实验登记表-v0.1.md
+!X实验登记表-v0.2.md
+!X实验登记表-v0.3.md
+!X实验登记表-v0.4.md
+!X实验登记表-v0.5.md
+!X实验登记表-v0.6.md
+!X实验登记表-v0.7.md
+!X实验登记表-v0.8.md
+!X实验登记表-v0.9.md
+!X实验登记表-v1.0.md
+!X阶段一案例库-v1.0.md
+!X阶段一案例库-v1.1.md
+!X实验报告-交付版.md
+!_xexp/
+!_xexp/*
+!MCP操控Dify-分享对话完整文档.md
+
+# _xexp 内排除临时/大文件
+_xexp/base.tar
+_xexp/_tmp/
+_xexp/__pycache__/
+_xexp/_indep_results.txt
