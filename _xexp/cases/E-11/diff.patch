@@ -1,0 +1,90 @@
+diff --git a/src/eval/validator.py b/src/eval/validator.py
+index 2f30e6a..3a85b0c 100644
+--- a/src/eval/validator.py
++++ b/src/eval/validator.py
+@@ -61,6 +61,7 @@ def validate_meta(meta: Meta) -> List[str]:
+     except (ValueError, AttributeError, TypeError):
+         errors.append(f"Meta.created_at '{meta.created_at}' is not a valid ISO 8601 datetime")
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -101,6 +102,7 @@ def validate_ground_truth_fact(fact: GroundTruthFact) -> List[str]:
+             f"GroundTruthFact.value must be int|float|str|bool, got {type(fact.value).__name__}"
+         )
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -118,6 +120,7 @@ def validate_ground_truth_facts(facts: List[GroundTruthFact]) -> List[str]:
+             )
+         seen_ids.add(fact.fact_id)
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -141,6 +144,7 @@ def validate_ground_truth_fact_list(ftl: GroundTruthFactList) -> List[str]:
+                 )
+             seen.add(fid)
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -172,6 +176,7 @@ def validate_ground_truth_structure(gs: GroundTruthStructure) -> List[str]:
+         if not isinstance(el, str) or not el.strip():
+             errors.append(f"GroundTruthStructure.required_elements[{i}] must be non-empty string")
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -207,6 +212,7 @@ def validate_ground_truth_conclusion(gc: GroundTruthConclusion) -> List[str]:
+             else:
+                 seen.add(eid)
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -251,6 +257,7 @@ def validate_known_issue(ki: KnownIssue) -> List[str]:
+     if not isinstance(ki.reason, str) or not ki.reason.strip():
+         errors.append("KnownIssue.reason must be non-empty string")
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -259,6 +266,7 @@ def validate_known_issues(kis: List[KnownIssue]) -> List[str]:
+     for idx, ki in enumerate(kis):
+         for e in validate_known_issue(ki):
+             errors.append(f"KnownIssues[{idx}]: {e}")
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -281,6 +289,7 @@ def validate_expected_issue(ei: ExpectedIssue) -> List[str]:
+         if err is not None:
+             errors.append(f"ExpectedIssue.fact_id: {err}")
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -289,6 +298,7 @@ def validate_expected_issues(eis: List[ExpectedIssue]) -> List[str]:
+     for idx, ei in enumerate(eis):
+         for e in validate_expected_issue(ei):
+             errors.append(f"ExpectedIssues[{idx}]: {e}")
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors
+ 
+ 
+@@ -353,4 +363,5 @@ def validate_case(case: EvaluationCase) -> List[str]:
+             "but fact_ids list is empty"
+         )
+ 
++    retry_policy = "default"  # INJECT-E11: 无契约参数
+     return errors

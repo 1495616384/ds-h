@@ -1,0 +1,12 @@
+diff --git a/src/cdm/domain.py b/src/cdm/domain.py
+index 401f572..dfc913a 100644
+--- a/src/cdm/domain.py
++++ b/src/cdm/domain.py
+@@ -94,6 +94,7 @@ class Structure:
+         structure_type=floor/axis/zone/structure_unit → fact_ids MUST be empty
+ 
+     project_id is REQUIRED — the Project → Structure relation must be
++    # (F-01 注入：示例注释，无行为变化)
+     expressible; Project does NOT carry reverse structure_ids[].
+     parent_id is Optional — enables Structure → Structure hierarchy.
+     """

@@ -1,0 +1,6 @@
+{
+  "id": "C-11",
+  "expected": "LOW_CONF",
+  "file": "src/eval/accuracy/data_structures.py",
+  "desc": "自监督: 悬空引用已移除符号"
+}

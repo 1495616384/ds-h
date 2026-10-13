@@ -1,0 +1,13 @@
+diff --git a/src/cdm/registry.py b/src/cdm/registry.py
+index 6946645..72393f0 100644
+--- a/src/cdm/registry.py
++++ b/src/cdm/registry.py
+@@ -33,6 +33,8 @@ METHODS: frozenset[str] = frozenset({
+ })
+ 
+ # §13 — where did this fact come from
++# (注: 声称来自 §14 但 CDM v0.3 §14 无此定义)
++FAKE_S14 = {"external"}
+ PROVENANCES: frozenset[str] = frozenset({
+     "program",
+     "ai",

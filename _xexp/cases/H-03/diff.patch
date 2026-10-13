@@ -1,0 +1,14 @@
+diff --git a/src/cdm/validate.py b/src/cdm/validate.py
+index e19ec53..72270b7 100644
+--- a/src/cdm/validate.py
++++ b/src/cdm/validate.py
+@@ -38,6 +38,9 @@ from .types import (
+ # SourceRef
+ # ──────────────────────────────────────────────
+ 
++_HOLDOUT_UNDOCUMENTED = "injected"  # H-03 INJECT: 未文档化常量
++
++
+ def validate_source_ref(sr: SourceRef) -> list[str]:
+     errs: list[str] = []
+     if not sr.source_id or not sr.source_id.strip():

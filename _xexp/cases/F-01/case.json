@@ -1,0 +1,6 @@
+{
+  "id": "F-01",
+  "expected": "OK",
+  "file": "src/cdm/domain.py",
+  "desc": "无关注释微调"
+}

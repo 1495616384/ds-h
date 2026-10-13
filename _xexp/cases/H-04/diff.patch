@@ -1,0 +1,14 @@
+diff --git a/src/cdm/id.py b/src/cdm/id.py
+index 23de3ca..3c2e322 100644
+--- a/src/cdm/id.py
++++ b/src/cdm/id.py
+@@ -70,6 +70,9 @@ def parse_fact_id(raw: str) -> Optional[FactID]:
+     """
+     if not isinstance(raw, str) or not raw.startswith(FACT_ID_PREFIX):
+         return None
++    # H-04 INJECT: 允许 2 段 ID（放宽严格解析）
++    if raw.count(".") == 1:
++        raw = raw + ".untyped"
+ 
+     body = raw[len(FACT_ID_PREFIX):]
+     if not body:

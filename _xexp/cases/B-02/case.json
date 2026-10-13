@@ -1,0 +1,6 @@
+{
+  "id": "B-02",
+  "expected": "OK",
+  "file": "src/eval/enums.py",
+  "desc": "合理扩展新增枚举"
+}

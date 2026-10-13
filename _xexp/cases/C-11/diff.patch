@@ -1,0 +1,13 @@
+diff --git a/src/eval/accuracy/data_structures.py b/src/eval/accuracy/data_structures.py
+index 3ff83ff..c578bf5 100644
+--- a/src/eval/accuracy/data_structures.py
++++ b/src/eval/accuracy/data_structures.py
+@@ -16,6 +16,8 @@ from typing import List, Optional
+ 
+ @dataclass
+ class AnchorDeclaration:
++    # INJECT-C11: 自监督悬空引用（getattr 引用已移除符号，不破坏 import）
++    _STALE_REF = getattr(object, "removed_v2", None)
+     """§4 — AnchorDeclaration.
+ 
+     Matches 04_REPORT_IR §13.1 anchors {token, fact_id}.

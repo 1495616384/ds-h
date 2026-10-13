@@ -1,0 +1,6 @@
+{
+  "id": "A-11",
+  "expected": "ALARM",
+  "file": "src/eval/accuracy/__init__.py",
+  "desc": "镜像 RuleStatus 缺陷: 移除 import"
+}

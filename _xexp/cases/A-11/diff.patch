@@ -1,0 +1,14 @@
+diff --git a/src/eval/accuracy/__init__.py b/src/eval/accuracy/__init__.py
+index 4896feb..dd6d786 100644
+--- a/src/eval/accuracy/__init__.py
++++ b/src/eval/accuracy/__init__.py
+@@ -38,8 +38,7 @@ from .binding import (
+     NumericBindingResult,
+     IdentifierBindingResult,
+     bind_and_validate,
+-    bind_table_cell,
+-    bind_rendered_segment,
++    bind_rendered_segment,  # INJECT: 移除 bind_table_cell 导入（镜像 RuleStatus 缺陷模式）
+     VALIDATOR_ERROR_CODES,
+ )
+ 

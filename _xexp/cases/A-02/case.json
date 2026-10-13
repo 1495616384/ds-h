@@ -1,0 +1,6 @@
+{
+  "id": "A-02",
+  "expected": "ALARM",
+  "file": "src/eval/accuracy/binding.py",
+  "desc": "越界: 放宽 span 包含判定"
+}

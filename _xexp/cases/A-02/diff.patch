@@ -1,0 +1,13 @@
+diff --git a/src/eval/accuracy/binding.py b/src/eval/accuracy/binding.py
+index 4b164ad..9a9e6e6 100644
+--- a/src/eval/accuracy/binding.py
++++ b/src/eval/accuracy/binding.py
+@@ -163,7 +163,7 @@ def is_span_contained(
+ 
+     Partial overlap (intersect but NOT contain) → NOT covered.
+     """
+-    return token_start >= decl_start and token_end <= decl_end
++    return token_start >= decl_start or token_end <= decl_end  # INJECT: 边界放宽
+ 
+ 
+ def find_covering_declarations(

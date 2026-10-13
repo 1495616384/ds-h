@@ -1,0 +1,6 @@
+{
+  "id": "H-02",
+  "expected": "OK",
+  "file": "tests/cdm/test_domain.py",
+  "desc": "合理扩展: 新增测试"
+}

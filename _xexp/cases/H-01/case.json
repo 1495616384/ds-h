@@ -1,0 +1,6 @@
+{
+  "id": "H-01",
+  "expected": "ALARM",
+  "file": "src/cdm/domain_validate.py",
+  "desc": "越界: 绕过 structure_type 校验"
+}

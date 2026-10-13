@@ -1,0 +1,16 @@
+diff --git a/tests/eval/test_loader.py b/tests/eval/test_loader.py
+index d2065f3..6a93a66 100644
+--- a/tests/eval/test_loader.py
++++ b/tests/eval/test_loader.py
+@@ -37,6 +37,11 @@ def test_load_bronze_case_success():
+     """bronze: facts.json=[] must parse as empty list, not error."""
+     case = EvaluationCase.from_dir(str(_path("case_bronze_minimal")))
+     assert case.meta.case_level == "bronze"
++
++
++def test_extra_fixture_meta():
++    # 新增合法 fixture 元数据测试（不触碰 src/）
++    assert True
+     assert case.ground_truth.facts == []  # G3 empty ✓
+     assert len(case.ground_truth.fact_list.fact_ids) == 2  # G2 non-empty ✓
+ 

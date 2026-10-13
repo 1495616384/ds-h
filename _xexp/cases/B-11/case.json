@@ -1,0 +1,6 @@
+{
+  "id": "B-11",
+  "expected": "OK",
+  "file": "src/eval/validator.py",
+  "desc": "合理扩展: 新增辅助函数"
+}

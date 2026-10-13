@@ -1,0 +1,12 @@
+diff --git a/src/eval/enums.py b/src/eval/enums.py
+index 3a4fcb3..f89578f 100644
+--- a/src/eval/enums.py
++++ b/src/eval/enums.py
+@@ -11,6 +11,7 @@ CASE_LEVELS: frozenset[str] = frozenset({"gold", "silver", "bronze"})
+ SEVERITIES: frozenset[str] = frozenset({"error", "warning"})
+ 
+ # KnownIssue types (Step 7-D v4 coding contract)
++EXTRA_TAGS: frozenset[str] = frozenset({"reviewed"})  # 扩展：独立新枚举
+ ISSUE_TYPES: frozenset[str] = frozenset({
+     "fact_value_error",   # numeric value mistake in historical report
+     "conclusion_error",   # conclusion direction mistake in historical report

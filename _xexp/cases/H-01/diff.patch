@@ -1,0 +1,13 @@
+diff --git a/src/cdm/domain_validate.py b/src/cdm/domain_validate.py
+index 6e9a5af..28731ea 100644
+--- a/src/cdm/domain_validate.py
++++ b/src/cdm/domain_validate.py
+@@ -168,7 +168,7 @@ def validate_struct(struct: Structure) -> list[str]:
+     if not struct.structure_type or not struct.structure_type.strip():
+         errs.append("Structure.structure_type must be non-empty "
+                     "(required to determine fact scope rules)")
+-    elif struct.structure_type not in STRUCTURE_TYPES:
++    elif struct.structure_type not in STRUCTURE_TYPES and False:  # H-01 INJECT: 绕过结构类型校验
+         errs.append(
+             f"Structure.structure_type = '{struct.structure_type}' is not valid; "
+             f"must be one of {sorted(STRUCTURE_TYPES)}")

@@ -1,0 +1,6 @@
+{
+  "id": "C-01",
+  "expected": "LOW_CONF",
+  "file": "src/cdm/registry.py",
+  "desc": "自监督: 伪造 §14 引用"
+}

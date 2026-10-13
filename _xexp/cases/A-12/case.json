@@ -1,0 +1,6 @@
+{
+  "id": "A-12",
+  "expected": "ALARM_HIGH",
+  "file": "src/eval/accuracy/binding.py",
+  "desc": "放宽重复 fact 判定"
+}

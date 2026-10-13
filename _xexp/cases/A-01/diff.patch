@@ -1,0 +1,12 @@
+diff --git a/src/cdm/registry.py b/src/cdm/registry.py
+index 6946645..9cc4373 100644
+--- a/src/cdm/registry.py
++++ b/src/cdm/registry.py
+@@ -15,6 +15,7 @@ from typing import Optional
+ # §8.1 — fact:<scope_class>.<instance_key>.<attribute_path>
+ SCOPE_CLASSES: frozenset[str] = frozenset({
+     "project",
++    "structure",
+     "building",
+     "component",
+     "defect",

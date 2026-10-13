@@ -1,0 +1,6 @@
+{
+  "id": "H-03",
+  "expected": "UNKNOWN",
+  "file": "src/cdm/validate.py",
+  "desc": "证据不足: 未文档化常量"
+}

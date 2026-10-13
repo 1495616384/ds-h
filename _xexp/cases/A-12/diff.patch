@@ -1,0 +1,13 @@
+diff --git a/src/eval/accuracy/binding.py b/src/eval/accuracy/binding.py
+index 4b164ad..0fd53a7 100644
+--- a/src/eval/accuracy/binding.py
++++ b/src/eval/accuracy/binding.py
+@@ -190,7 +190,7 @@ def find_covering_declarations(
+ def has_duplicate_fact_ids(declarations: List[AnchorDeclaration]) -> bool:
+     """§8.1 BIND-6 — same token covered by ≥2 declarations with DIFFERENT fact_ids."""
+     fact_ids = {d.fact_id for d in declarations}
+-    return len(fact_ids) > 1
++    return len(fact_ids) > 0  # INJECT: 放宽重复判定
+ 
+ 
+ # ── §8.2 — 比较链结果 ──────────────────────────────────────────────

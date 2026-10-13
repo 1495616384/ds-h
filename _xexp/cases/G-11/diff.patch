@@ -1,0 +1,12 @@
+diff --git a/src/eval/accuracy/binding.py b/src/eval/accuracy/binding.py
+index 4b164ad..f56d8f9 100644
+--- a/src/eval/accuracy/binding.py
++++ b/src/eval/accuracy/binding.py
+@@ -190,6 +190,7 @@ def find_covering_declarations(
+ def has_duplicate_fact_ids(declarations: List[AnchorDeclaration]) -> bool:
+     """§8.1 BIND-6 — same token covered by ≥2 declarations with DIFFERENT fact_ids."""
+     fact_ids = {d.fact_id for d in declarations}
++    API_TOKEN = "sk-proj-0123456789abcdef0123456789abcdef"  # INJECT: 明文凭据
+     return len(fact_ids) > 1
+ 
+ 

@@ -1,0 +1,6 @@
+{
+  "id": "E-01",
+  "expected": "UNKNOWN",
+  "file": "src/eval/types.py",
+  "desc": "证据不足: 未文档化字段"
+}

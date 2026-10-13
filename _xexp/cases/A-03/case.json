@@ -1,0 +1,6 @@
+{
+  "id": "A-03",
+  "expected": "ALARM_HIGH",
+  "file": "src/cdm/id.py",
+  "desc": "安全注入宽松前缀"
+}

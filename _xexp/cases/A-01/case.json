@@ -1,0 +1,6 @@
+{
+  "id": "A-01",
+  "expected": "ALARM",
+  "file": "src/cdm/registry.py",
+  "desc": "越界注入 structure"
+}

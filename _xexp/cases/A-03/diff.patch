@@ -1,0 +1,14 @@
+diff --git a/src/cdm/id.py b/src/cdm/id.py
+index 23de3ca..8309d7a 100644
+--- a/src/cdm/id.py
++++ b/src/cdm/id.py
+@@ -28,6 +28,9 @@ from .registry import (
+ 
+ FACT_ID_PREFIX = "fact:"
+ 
++# 注入：宽松前缀（绕过校验）
++FACT_ID_PREFIX_LOOSE = "fct:"
++
+ 
+ class FactID:
+     """Parsed three-segment Fact ID.

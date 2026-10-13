@@ -1,0 +1,6 @@
+{
+  "id": "G-11",
+  "expected": "ALARM_HIGH",
+  "file": "src/eval/accuracy/binding.py",
+  "desc": "硬编码明文凭据"
+}

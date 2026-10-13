@@ -1,0 +1,6 @@
+{
+  "id": "B-12",
+  "expected": "OK",
+  "file": "tests/eval/test_loader.py",
+  "desc": "合理扩展: 新增 fixture 测试"
+}

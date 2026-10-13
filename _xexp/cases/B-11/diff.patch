@@ -1,0 +1,133 @@
+diff --git a/src/eval/validator.py b/src/eval/validator.py
+index 2f30e6a..4ad62ca 100644
+--- a/src/eval/validator.py
++++ b/src/eval/validator.py
+@@ -64,6 +64,11 @@ def validate_meta(meta: Meta) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ # ── 2. validate_ground_truth_fact (single) ────────────────────────
+ 
+ _ALLOWED_VALUE_TYPES = (int, float, str, bool)
+@@ -104,6 +109,11 @@ def validate_ground_truth_fact(fact: GroundTruthFact) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ def validate_ground_truth_facts(facts: List[GroundTruthFact]) -> List[str]:
+     """Validate a list of GroundTruthFact (G3). Also checks intra-list uniqueness."""
+     errors: List[str] = []
+@@ -121,6 +131,11 @@ def validate_ground_truth_facts(facts: List[GroundTruthFact]) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ # ── 3. validate_ground_truth_fact_list ────────────────────────────
+ 
+ def validate_ground_truth_fact_list(ftl: GroundTruthFactList) -> List[str]:
+@@ -144,6 +159,11 @@ def validate_ground_truth_fact_list(ftl: GroundTruthFactList) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ # ── 4. validate_ground_truth_structure ─────────────────────────────
+ 
+ def validate_ground_truth_structure(gs: GroundTruthStructure) -> List[str]:
+@@ -175,6 +195,11 @@ def validate_ground_truth_structure(gs: GroundTruthStructure) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ # ── 5. validate_ground_truth_conclusion ───────────────────────────
+ 
+ def validate_ground_truth_conclusion(gc: GroundTruthConclusion) -> List[str]:
+@@ -210,6 +235,11 @@ def validate_ground_truth_conclusion(gc: GroundTruthConclusion) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ # ── 6. validate_known_issue(s) ────────────────────────────────────
+ 
+ def validate_known_issue(ki: KnownIssue) -> List[str]:
+@@ -254,6 +284,11 @@ def validate_known_issue(ki: KnownIssue) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ def validate_known_issues(kis: List[KnownIssue]) -> List[str]:
+     errors: List[str] = []
+     for idx, ki in enumerate(kis):
+@@ -262,6 +297,11 @@ def validate_known_issues(kis: List[KnownIssue]) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ # ── 7. validate_expected_issue(s) ────────────────────────────────
+ 
+ def validate_expected_issue(ei: ExpectedIssue) -> List[str]:
+@@ -284,6 +324,11 @@ def validate_expected_issue(ei: ExpectedIssue) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ def validate_expected_issues(eis: List[ExpectedIssue]) -> List[str]:
+     errors: List[str] = []
+     for idx, ei in enumerate(eis):
+@@ -292,6 +337,11 @@ def validate_expected_issues(eis: List[ExpectedIssue]) -> List[str]:
+     return errors
+ 
+ 
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)
++
++
+ # ── 8. validate_case (top-level cross-file integrity + case_level) ─
+ 
+ def validate_case(case: EvaluationCase) -> List[str]:
+@@ -354,3 +404,8 @@ def validate_case(case: EvaluationCase) -> List[str]:
+         )
+ 
+     return errors
++
++
++def helper_conclusion_summary(case):
++    # 新增辅助函数（无契约违反，合法扩展）
++    return getattr(case, "conclusion", None)

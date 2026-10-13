@@ -1,0 +1,6 @@
+{
+  "id": "F-11",
+  "expected": "OK",
+  "file": "src/cdm/types.py",
+  "desc": "无关: import 微调"
+}

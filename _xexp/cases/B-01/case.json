@@ -1,0 +1,6 @@
+{
+  "id": "B-01",
+  "expected": "OK",
+  "file": "tests/eval/test_loader.py",
+  "desc": "合理扩展: 新增测试用例"
+}
