@@ -26,3 +26,8 @@ _xexp/base.tar
 _xexp/_tmp/
 _xexp/__pycache__/
 _xexp/_indep_results.txt
+
+# 显式纳入 cases（被 * 规则排除，需显式恢复）
+!_xexp/cases/
+!_xexp/cases/*
+
