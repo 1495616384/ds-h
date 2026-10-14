@@ -9,11 +9,11 @@
 | 项 | 值 |
 |---|---|
 | 仓库 | `G:\ds-h`（X 项目根仓库，`anchor_repo = "."`） |
-| **锚定提交 C1** | `4595ae252deee0010a65644c8bc4b60153013c88` |
-| C1 提交树 | `31d42888a9d6a7388eb287ae9fc305e63b128fcb` |
-| C1 主题 | `X H3 冻结链 v6 登记：受理记录 + 清单缺口（G-13/G-14）` |
+| **锚定提交 C1** | `1c7de009ff270d276b311ffc6842f22eacc83593` |
+| C1 提交树 | `b9256e82e60e411a49e9dae56327108096062ad9` |
+| C1 主题 | `X H3 冻结链：锚点生成器确定性化（去时间戳 + 双写自检）` |
 | 锚点文件 | `_xexp/v6-anchor/freeze-anchor.json` |
-| **锚点文件 SHA-256** | `4CAC059677E2F898F928E37CAF97F4D81715BD9B8BBE3BF30A795E668BE33AEE` |
+| **锚点文件 SHA-256** | `B9415C4E45A0DA72EF571C5DDC1AD12B0F3F56894D8DEAC1E06D4B833209F843` |
 | 锚定文件数 | `21（逐项 blob 见锚点文件）` |
 
 ## 二、C1 中关键制品的 blob 与内容哈希（实测）
@@ -27,6 +27,8 @@
 | `_xexp/freeze-check/selected-cases.json` | `06fc45e435a0ba7be7c1b54b9deaff653e9cb79e` | `64B6F3CF6EB5722B3A63F4E537444BA0985C11E3A37165AF9D0F1F7FAADEB716` |
 | `_xexp/freeze-check/expected-fingerprints-v1.json` | `28c05b66c86f42193aba5e280f674f2b4d75f529` | `72F8A588E9F19DF4DF941747C7E23CB82D3CFE6A0289E3F0D20C3EFB17470BEA` |
 | `_xexp/h3-case-protocol/H3-constraint-authorization-review-v1.json` | `582094b8b320e10c6b5941f9b3e27a55a4508b0b` | `AC867B702AEF25EDFEC4CF62F156F064EF131DB00D8B350795D5181791F65518` |
+
+
 
 
 

@@ -3,14 +3,14 @@
   "purpose": "X 项目 H3 冻结链的独立信任锚点：以内容寻址的 git 提交固定各冻结制品的字节内容，供任何第三方不依赖核验程序自行复核。",
   "anchor_repo": ".",
   "anchor_repo_abs": "G:/ds-h",
-  "anchor_commit": "4595ae252deee0010a65644c8bc4b60153013c88",
-  "anchor_commit_tree": "31d42888a9d6a7388eb287ae9fc305e63b128fcb",
+  "anchor_commit": "1c7de009ff270d276b311ffc6842f22eacc83593",
+  "anchor_commit_tree": "b9256e82e60e411a49e9dae56327108096062ad9",
   "anchor_commit_meta": {
-    "sha": "4595ae252deee0010a65644c8bc4b60153013c88",
-    "tree": "31d42888a9d6a7388eb287ae9fc305e63b128fcb",
+    "sha": "1c7de009ff270d276b311ffc6842f22eacc83593",
+    "tree": "b9256e82e60e411a49e9dae56327108096062ad9",
     "author": "dsh",
-    "date": "Wed Oct 14 10:42:58 2026 +0800",
-    "subject": "X H3 冻结链 v6 登记：受理记录 + 清单缺口（G-13/G-14）"
+    "date": "Wed Oct 14 10:46:47 2026 +0800",
+    "subject": "X H3 冻结链：锚点生成器确定性化（去时间戳 + 双写自检）"
   },
   "anchored_files": {
     "current_manifest": {
@@ -155,10 +155,10 @@
     },
     "anchor_gen": {
       "path": "scripts/gen-anchor-v6.mjs",
-      "content_sha256": "E9E030F57877C0F663C45D571E6338D53DD2A52507474646982EED03D493444E",
-      "committed_content_sha256": "E9E030F57877C0F663C45D571E6338D53DD2A52507474646982EED03D493444E",
+      "content_sha256": "FF27702C629D2106C441620EC05C2DF0491338B7131D09B3BC91E59665FECFC5",
+      "committed_content_sha256": "FF27702C629D2106C441620EC05C2DF0491338B7131D09B3BC91E59665FECFC5",
       "content_matches_commit": true,
-      "git_blob": "99399563757a14f10d0af1fc234e2f4f3ce3808e"
+      "git_blob": "67a394d0f139734e0036c2385c2a6302a8bbac5d"
     }
   },
   "verifier_declared_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
@@ -180,5 +180,5 @@
     "_xexp/base.tar、_xexp/_tmp/、_xexp/ddp_base/（被 .gitignore 排除）"
   ],
   "generated_by": "scripts/gen-anchor-v6.mjs",
-  "generated_at": "2026-10-14T02:43:03.048Z"
+  "generated_from_commit": "1c7de009ff270d276b311ffc6842f22eacc83593"
 }
