@@ -1,0 +1,626 @@
+{
+  "schema": "x-archive-manifest-v1",
+  "purpose": "X 项目完整性归档的逐文件字节清单；用于验证 archives 快照未被改动，并标注冻结哈希对应的换行形态。",
+  "generated_by": "scripts/gen-archive-manifest.mjs",
+  "note": [
+    "engine-tree/detect_x0.py 的 sha256 必须等于冻结声明值 2DB2D828…（LF 形态，26009 字节）。",
+    "基线冻结身份是 git 对象（commit 72f06e5c / tree 2110ccbf）；其工作树文本文件为 CRLF 形态（本机原始形态），",
+    "  而仓库存储 blob 为 LF 形态——两者 git 归一化后等价，基线冻结声明不含逐文件哈希，故不影响核验。"
+  ],
+  "trees": {
+    "baseline-tree": {
+      "root": "_xexp/archives/baseline-tree",
+      "source_identity": "_xexp/base @ 72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+      "file_count": 91,
+      "files": [
+        {
+          "path": ".gitignore",
+          "bytes": 38,
+          "sha256": "E274798BAC0BD9429DC8AF6388EF07CCCA92B1F8E4C8DB286D18BFCFE672FE59",
+          "eol": "crlf"
+        },
+        {
+          "path": "缂栫▼瑕佹眰.md",
+          "bytes": 5122,
+          "sha256": "C212B407D288CF3C71A7BF987C1634A9EBF171FDCE7C4348ECEFA27481538485",
+          "eol": "crlf"
+        },
+        {
+          "path": "寮€鍙戞祦姘寸嚎.md",
+          "bytes": 602,
+          "sha256": "DCA3F3AE2A469FB9DBF9F404EBFC27FABB55E4C4C17057E60C684047FB89A9F5",
+          "eol": "crlf"
+        },
+        {
+          "path": "docs/00_PROJECT_CONTEXT.md",
+          "bytes": 3746,
+          "sha256": "E3FFFA7A2364D7CC954F126D22DF711BF1FC9DA96BB536B364C098E8A1E4F95D",
+          "eol": "crlf"
+        },
+        {
+          "path": "docs/02_ARCHITECTURE_REVIEW.md",
+          "bytes": 7950,
+          "sha256": "CFCA8B07A716A088CB66290B15EAC0CAD25B53B01E1F375AFADF724377752DAE",
+          "eol": "crlf"
+        },
+        {
+          "path": "docs/02_ARCHITECTURE.md",
+          "bytes": 34043,
+          "sha256": "4690E955BDA1CB9B42CA556788340D8BEE196B0AC87A4D3ADF4E3213B1845BD9",
+          "eol": "crlf"
+        },
+        {
+          "path": "docs/03_CANONICAL_DATA_MODEL.md",
+          "bytes": 40036,
+          "sha256": "49C8A94263FCAA9130E8BDCF729F5F2CBD058FF2FDD8326876AF550BC73C05B5",
+          "eol": "crlf"
+        },
+        {
+          "path": "docs/04_REPORT_IR.md",
+          "bytes": 36963,
+          "sha256": "6510B5FB38BAECB3446F92C24A4A6DEA39525231A613BC60B9E08BEB1FCEC35F",
+          "eol": "crlf"
+        },
+        {
+          "path": "docs/05_EVALUATION.md",
+          "bytes": 18266,
+          "sha256": "D9D96C3C332E2009808BAA1B079CCF14FE21B50888F113760E08A2FDD8419F99",
+          "eol": "crlf"
+        },
+        {
+          "path": "docs/07_DECISIONS.md",
+          "bytes": 29607,
+          "sha256": "2933704D15CA4082F665A4B206D68E4D54C6D3C95FCDE853658C1878E1C26DC3",
+          "eol": "crlf"
+        },
+        {
+          "path": "pytest.ini",
+          "bytes": 47,
+          "sha256": "C26CE2A50A52FF8C1B6A1A4E279337C83536D9DF73C2DF0C3538EE11B51B6770",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/cdm/__init__.py",
+          "bytes": 1752,
+          "sha256": "B644976E5C24355BC1D32053BCDD78134B8A7ADB5135AC0A39724CE84809FA7F",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/cdm/domain_validate.py",
+          "bytes": 13635,
+          "sha256": "C7CC46286D03B6ABF91B197484B753A0EF4AA0E9A08FEC3096BC90A79FC7736C",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/cdm/domain.py",
+          "bytes": 9714,
+          "sha256": "02D5D07EC2BEBF791EB2E40BAA092412159BC2903D7FCA4C82CDD24F4109B0ED",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/cdm/id.py",
+          "bytes": 5535,
+          "sha256": "8C73C0C236AA15C1BD41D7931F6B92F05FD973B5FA16929098FA3BEA8E53D82C",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/cdm/registry.py",
+          "bytes": 11594,
+          "sha256": "6E95065743724A26A69539C8823122858B0507184924FD7985CB4C53DD11FBE6",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/cdm/types.py",
+          "bytes": 10675,
+          "sha256": "EF2FC1A03B192350812C19BDBC3D845A84EA6B0CC5CAFAFEB13C18F0071E4B92",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/cdm/validate.py",
+          "bytes": 16311,
+          "sha256": "641245FEFE2D426904588AC8F8B0AC90B2F1B941071C31047BC21A19A78E9B47",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/__init__.py",
+          "bytes": 1945,
+          "sha256": "08AF492A902EF9E08F98FDEBAA9F3A8A3FEC59E1EA0694B41B5328BA4D748814",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/accuracy/__init__.py",
+          "bytes": 2056,
+          "sha256": "81836FFBA958C58E51EBCEDAF416ACA9AC3DB92D361B1E430CDF0951EE3BFD91",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/accuracy/binding.py",
+          "bytes": 24864,
+          "sha256": "9B44DE1CFBD8AD22F635B0F9F3BD69268E6201C3EECE314F9A8979BFF5892994",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/accuracy/data_structures.py",
+          "bytes": 6906,
+          "sha256": "06156BA14E47FE8F942BADA6A6379AEC8FB26B4736F4BB194A430D4962DA329E",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/accuracy/frozen_round.py",
+          "bytes": 1550,
+          "sha256": "B688DAF8D2F95AC81FBD78AE99AE5CA30D6C7FCF0494B9CF5E3034797ADABEDE",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/accuracy/tokenizer.py",
+          "bytes": 6812,
+          "sha256": "B4ACC6F32D617747BF7E6EB3B31300E28103F2EEDE5B3743EF10E4CB683396B3",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/enums.py",
+          "bytes": 888,
+          "sha256": "6E085DFE0E8DC3C6EC7F2A73D4ED4F5E8E08B15B392D00BC992B6626CF6B8309",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/types.py",
+          "bytes": 17728,
+          "sha256": "B49755EC4ED13987499FACC900A49EB1F460E1EB2025C0567D3C25434A7B7917",
+          "eol": "crlf"
+        },
+        {
+          "path": "src/eval/validator.py",
+          "bytes": 13444,
+          "sha256": "2C652EB01655BCC25FF335EC728D2868D59F646E8600E1EB7F321505FF836125",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/__init__.py",
+          "bytes": 29,
+          "sha256": "AC2D62878D46A2FC0DA2B40CB08D65869FE9905031C05137D377715BBBFA0301",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/cdm/__init__.py",
+          "bytes": 29,
+          "sha256": "AC2D62878D46A2FC0DA2B40CB08D65869FE9905031C05137D377715BBBFA0301",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/cdm/test_domain.py",
+          "bytes": 24360,
+          "sha256": "500CBEA61F6DA2661214E59969A73357F7FB9BDAB20DF7658D356F8D46995B8E",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/cdm/test_types.py",
+          "bytes": 38772,
+          "sha256": "701442C8549B29CB479D3A8A426AF8BB24E5FBAFED49A5A5DF0162C7C406BE59",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/__init__.py",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_facts_nonempty/expected_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_facts_nonempty/ground_truth/conclusion.json",
+          "bytes": 92,
+          "sha256": "303717DADD8A89DF0D396CA7D5C4966A9DD22004A581A7653921F7F7F478EA3E",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_facts_nonempty/ground_truth/fact_list.json",
+          "bytes": 71,
+          "sha256": "D68B02F304373D955B7E172473078ED7B3FBD9AA66A1CC45461CF56CFA8B1DF2",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_facts_nonempty/ground_truth/facts.json",
+          "bytes": 165,
+          "sha256": "89D14C159671E2F1AC030A47AA85BC4FD447D037112AEA271A61EB45BC47D590",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_facts_nonempty/ground_truth/structure.json",
+          "bytes": 136,
+          "sha256": "419EE57779D026080AE470D6B957C67D2A0E06518F708F353BA8D99559803653",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_facts_nonempty/inputs/.gitkeep",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_facts_nonempty/known_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_facts_nonempty/meta.json",
+          "bytes": 184,
+          "sha256": "AFC83F095B51271D471CD2A3EF5017E67F5FA2CEE9B7D7C4B376F8D16B4895B5",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_minimal/expected_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_minimal/ground_truth/conclusion.json",
+          "bytes": 124,
+          "sha256": "B1455F69BC96AF24CF162418035CA430FF7357EDEF431A85DAB9C56CC302A9DA",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_minimal/ground_truth/fact_list.json",
+          "bytes": 102,
+          "sha256": "B6C5BA1C633F339684583AFD4D56F91B943912E7D6AC4403B8FE4A785FC03A1F",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_minimal/ground_truth/facts.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_minimal/ground_truth/structure.json",
+          "bytes": 200,
+          "sha256": "57F9CE2C300B11F7648B2CAC5010DE2D756F779F51FC08944889F4C28095179D",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_minimal/inputs/.gitkeep",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_minimal/known_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_bronze_minimal/meta.json",
+          "bytes": 220,
+          "sha256": "8B74F567DE1BA38421040AAD1B60F4731651679C09034EDA019EFD6247ED07AA",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g2_g3_duplicate_ids/expected_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g2_g3_duplicate_ids/ground_truth/conclusion.json",
+          "bytes": 92,
+          "sha256": "303717DADD8A89DF0D396CA7D5C4966A9DD22004A581A7653921F7F7F478EA3E",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g2_g3_duplicate_ids/ground_truth/fact_list.json",
+          "bytes": 117,
+          "sha256": "1B9FB4C6221B1F143D2AE2D7803BCD47815B529ACD49D13BE00AF8A5DEA981FD",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g2_g3_duplicate_ids/ground_truth/facts.json",
+          "bytes": 327,
+          "sha256": "1542D6B2B46A4422318B11DE223103F5C0C22A1A5BDC848FF5A847DD20EA8C72",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g2_g3_duplicate_ids/ground_truth/structure.json",
+          "bytes": 136,
+          "sha256": "419EE57779D026080AE470D6B957C67D2A0E06518F708F353BA8D99559803653",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g2_g3_duplicate_ids/inputs/.gitkeep",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g2_g3_duplicate_ids/known_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g2_g3_duplicate_ids/meta.json",
+          "bytes": 182,
+          "sha256": "4D6F3E57D1CEE55B15BAC131763BD1699D842BAFB7F9A0743B990F77423CB42D",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g3_not_in_g2/expected_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g3_not_in_g2/ground_truth/conclusion.json",
+          "bytes": 115,
+          "sha256": "51AC60AF271AAD0E7C2686FAFCC8EA904C38CE73C03079CEEDC7CC9107EEFE1E",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g3_not_in_g2/ground_truth/fact_list.json",
+          "bytes": 102,
+          "sha256": "C218581B921B4BBE5762D26D86F0942055E73632A613FB598428BE9A0ABF56A5",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g3_not_in_g2/ground_truth/facts.json",
+          "bytes": 439,
+          "sha256": "F3A787D15A38F8C63DDD610F26DC4C7157E899233BF2C647F842730EFE6D3E33",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g3_not_in_g2/ground_truth/structure.json",
+          "bytes": 147,
+          "sha256": "4A1549FBF85A2A0DBFFF39EF78C83537F05D99D1B8FFD0FACA77FFE2C4A16FC0",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g3_not_in_g2/inputs/.gitkeep",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g3_not_in_g2/known_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_g3_not_in_g2/meta.json",
+          "bytes": 182,
+          "sha256": "D5965FE43D1A313DE418FD501A19F6B5F7EDC009800DAE2900FDF469C214B03A",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_gold_minimal/expected_issues.json",
+          "bytes": 142,
+          "sha256": "205A10DBB6B2F7DDA61B49F0BC61717B6F017E2EC0017CABE5BF5DFE2E96CE8A",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_gold_minimal/ground_truth/conclusion.json",
+          "bytes": 185,
+          "sha256": "6DB3C577EE3D0A6234941C51E55C48C096CE862581E5562C66A1129E3F5DEA94",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_gold_minimal/ground_truth/fact_list.json",
+          "bytes": 140,
+          "sha256": "BEB508E62CFB49A3C4EC648548E186C64359FBA2F6C20F7E81D0F1C8AA5AC018",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_gold_minimal/ground_truth/facts.json",
+          "bytes": 436,
+          "sha256": "0EEF102301796D8CC0CC93CF0AE9FA3CE5AA06DD8B278B0C68987A29CF209AF0",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_gold_minimal/ground_truth/structure.json",
+          "bytes": 397,
+          "sha256": "3A7DFE73BBE78BC26BFA77856307CDC8E758BFA06C7D43DA7321C85D9A1ED20C",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_gold_minimal/inputs/.gitkeep",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_gold_minimal/known_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_gold_minimal/meta.json",
+          "bytes": 296,
+          "sha256": "FAFA91CA58DFB060DA6DC875FD90F07498FDED774CBE5F9ED323AD97DC625DBB",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_missing_inputs_dir/expected_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_missing_inputs_dir/ground_truth/conclusion.json",
+          "bytes": 92,
+          "sha256": "303717DADD8A89DF0D396CA7D5C4966A9DD22004A581A7653921F7F7F478EA3E",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_missing_inputs_dir/ground_truth/fact_list.json",
+          "bytes": 71,
+          "sha256": "D68B02F304373D955B7E172473078ED7B3FBD9AA66A1CC45461CF56CFA8B1DF2",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_missing_inputs_dir/ground_truth/facts.json",
+          "bytes": 165,
+          "sha256": "D8AAB1AF2DBEE42B3803A44FE91590BD37405A2C70869D8D6AA3402FDD0B2AA8",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_missing_inputs_dir/ground_truth/structure.json",
+          "bytes": 147,
+          "sha256": "4A1549FBF85A2A0DBFFF39EF78C83537F05D99D1B8FFD0FACA77FFE2C4A16FC0",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_missing_inputs_dir/known_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_missing_inputs_dir/meta.json",
+          "bytes": 182,
+          "sha256": "886BD2B420BE47AB6D11E9929CFB48E42B0436A9B5450D207598DE702C0EED54",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_silver_minimal/expected_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_silver_minimal/ground_truth/conclusion.json",
+          "bytes": 92,
+          "sha256": "303717DADD8A89DF0D396CA7D5C4966A9DD22004A581A7653921F7F7F478EA3E",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_silver_minimal/ground_truth/fact_list.json",
+          "bytes": 140,
+          "sha256": "BEB508E62CFB49A3C4EC648548E186C64359FBA2F6C20F7E81D0F1C8AA5AC018",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_silver_minimal/ground_truth/facts.json",
+          "bytes": 165,
+          "sha256": "B09C930AD6353FF0E3CF712C5ABF33462AA1C52ABB1CC8979EAA98521B731D2C",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_silver_minimal/ground_truth/structure.json",
+          "bytes": 236,
+          "sha256": "3AE9E810F76504540B8574047B5FDD77BB1A174C0B04539F8FED40CAB9F51E17",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/fixtures/case_silver_minimal/inputs/.gitkeep",
+          "bytes": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_silver_minimal/known_issues.json",
+          "bytes": 2,
+          "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945",
+          "eol": "no-eol"
+        },
+        {
+          "path": "tests/eval/fixtures/case_silver_minimal/meta.json",
+          "bytes": 214,
+          "sha256": "1A41DE480E450203B695710C83A566826DF1C88B1F40C9AFD07E49A9C619878F",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/test_accuracy.py",
+          "bytes": 45242,
+          "sha256": "DC65C2A17E1BDFC1DD4AAB4E72A85B96059D9AF4A9EFF1C3686499AD774BD25E",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/test_loader.py",
+          "bytes": 6177,
+          "sha256": "CA231E39A3572C488D6483FBCC8465E70787BDA2405B54A369B7DA174F6FC21D",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/test_types.py",
+          "bytes": 12070,
+          "sha256": "78F171E1A0AA5388C64D0CF473595FECC283519E94B110B173498C8EF0A69A94",
+          "eol": "crlf"
+        },
+        {
+          "path": "tests/eval/test_validator.py",
+          "bytes": 19535,
+          "sha256": "7D164B923AD8DD84366469D316D03CA10D5D115DA328FAC3124574C80F29F724",
+          "eol": "crlf"
+        }
+      ]
+    },
+    "engine-tree": {
+      "root": "_xexp/archives/engine-tree",
+      "source_identity": "_xexp_dev2 @ 93859b700362542c49a3460f801c6923cffb7156",
+      "file_count": 9,
+      "files": [
+        {
+          "path": "_regress_precheck.py",
+          "bytes": 1296,
+          "sha256": "825E72C69A6C650C0B9274E3021EE669D9A7BDECB0BA100D869964FD91AA3A16",
+          "eol": "lf"
+        },
+        {
+          "path": "_repro.py",
+          "bytes": 1308,
+          "sha256": "BFA2C7536A0EC09BE3B53542C26CA788EB136B152B5EC8539C9E90DE20BEDC1F",
+          "eol": "lf"
+        },
+        {
+          "path": "_trace.py",
+          "bytes": 517,
+          "sha256": "3BDD772F4399B1AB7C03A9CBC9873C29327FFB0A27412BD67892002B49DF0172",
+          "eol": "lf"
+        },
+        {
+          "path": ".gitignore",
+          "bytes": 155,
+          "sha256": "2F4C635410B5439D21FFC4C9877704A857D8F5BD49839E58FED584BBC72D6D54",
+          "eol": "lf"
+        },
+        {
+          "path": "detect_x0.py",
+          "bytes": 26009,
+          "sha256": "2DB2D828424C17D2B69EB568E2C49E31EC602AD7BA4B3F4354B1A74840BBCD83",
+          "eol": "lf"
+        },
+        {
+          "path": "gen_h3_01r.py",
+          "bytes": 2050,
+          "sha256": "2C9D0C0DE2562D9E3ABF1F10EADF7EE637B6466336A1354F64AD1D5715E3D8C7",
+          "eol": "lf"
+        },
+        {
+          "path": "regression_test.py",
+          "bytes": 2926,
+          "sha256": "ACA2EA1CF1396A01461A408C1253863FDAD26D252C208E7C66AABA681601DDFE",
+          "eol": "lf"
+        },
+        {
+          "path": "regression-run-log-v2.txt",
+          "bytes": 1116,
+          "sha256": "BE85925561F85923C60B4C28C52ACF34A45023FC98BC28872ACDE3CC838945E8",
+          "eol": "crlf"
+        },
+        {
+          "path": "regression-run-log.txt",
+          "bytes": 973,
+          "sha256": "0F7A5CB645993EC0D203B2D47706C6FA70B8AC433ACD61BC73E989C5CF2E7603",
+          "eol": "crlf"
+        }
+      ]
+    }
+  }
+}

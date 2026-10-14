@@ -41,9 +41,39 @@ git -C G:\ds-h\_xexp\base rev-parse HEAD 'HEAD^{tree}'   # 期望 72f06e5c… / 
 # 2) 从 tar + 脚本重建（依据上游 zixun4@27afc5e，需本机存在该库）
 pwsh -File G:\ds-h\_xexp\restore_base.ps1
 
-# 3) 引擎
-git clone G:\ds-h\_xexp\archives\engine-93859b7.bundle G:\ds-h\_xexp_dev2
+# 3) 引擎（**必须** autocrlf=false，否则字节形态不符，见第五节）
+git -c core.autocrlf=false clone G:\ds-h\_xexp\archives\engine-93859b7.bundle G:\ds-h\_xexp_dev2
 git -C G:\ds-h\_xexp_dev2 rev-parse HEAD                  # 期望 93859b7…
+```
+
+## 三之二、换行符与字节形态（**重要**，2026-10-14 实测）
+
+两个仓库的 `core.autocrlf` 均为 `true`，但**冻结声明的字节形态不同**，还原时必须区分：
+
+| 对象 | 仓库存储 blob | 本机工作树 | 冻结声明 | 正确还原 |
+|---|---|---|---|---|
+| 引擎 `detect_x0.py` | LF，26009 B | LF，26009 B | **文件哈希 `2DB2D828…`** | `git -c core.autocrlf=false clone …`；或直接用 `engine-tree/` 快照（已是 LF） |
+| 基线（如 `docs/03_CANONICAL_DATA_MODEL.md`） | LF，38163 B | **CRLF，40036 B** | **仅 commit/tree**（`72f06e5c` / `2110ccbf`），**不含逐文件哈希** | bundle 克隆即得等价内容；工作树字节形态随 autocrlf 变化，不影响冻结核验 |
+
+**实测陷阱**：引擎 bundle 用**默认** `git clone` 会按 CRLF 检出（26546 B）→ 文件哈希变成
+`1FB70793…`，**与冻结值 `2DB2D828…` 不符**。这不是归档损坏，而是检出转换；请务必加 `-c core.autocrlf=false`
+（根仓库 `ds-h` 已设 `core.autocrlf=false`，但**子仓库各自的配置不会随之继承**）。
+
+**逐文件验证**：`SNAPSHOT-SHA256.json` 记录了 `baseline-tree/`（91 文件）与 `engine-tree/`（9 文件）的
+`path / bytes / sha256 / eol`，可直接比对：
+
+```powershell
+node -e "
+const m=require('G:/ds-h/_xexp/archives/SNAPSHOT-SHA256.json');
+const fs=require('fs'),c=require('crypto');
+let bad=0;
+for(const [name,t] of Object.entries(m.trees)) for(const f of t.files){
+  const buf=fs.readFileSync('G:/ds-h/_xexp/archives/'+t.root.split('/').slice(-1)[0]+'/'+f.path);
+  const h=c.createHash('sha256').update(buf).digest('hex').toUpperCase();
+  if(h!==f.sha256){bad++;console.log('MISMATCH',name,f.path);}
+}
+console.log(bad?('不一致 '+bad+' 项'):'全部一致（100 文件）');
+"
 ```
 
 ## 四、完整性自检（已实测）
