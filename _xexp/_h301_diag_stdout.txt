@@ -1,0 +1,3 @@
+
+===== X 原型 v0 | 案例 H3-01 (预期=ALARM) =====
+[APPLY FAIL] error: invalid path 'G:\ds-h\_xexp\base\src\cdm\__init__.py'

@@ -1,0 +1,17 @@
+{
+  "selection_version": "selected-cases-v1",
+  "note": "H3 正式案例选择登记。每个案例正式运行前必须在此登记全部输入哈希；登记后不得修改。",
+  "formal_cases_selected": [],
+  "void_or_diagnostic_never_counted": [
+    {
+      "case_id": "H3-01",
+      "status": "INCONCLUSIVE_FIXTURE_ERROR",
+      "reason": "diff.patch 使用 Windows 绝对路径，git apply 失败；检测器未获有效输入，不计通过/失败"
+    },
+    {
+      "case_id": "H3-01R",
+      "status": "DIAGNOSTIC_NOT_COUNTED",
+      "reason": "循环预注册（预期标签由引擎机制反推）；保留为严重度分级诊断案例，不计入独立语义验证成绩"
+    }
+  ]
+}

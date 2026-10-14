@@ -1,0 +1,6 @@
+
+===== X 原型 v0 | 案例 H3-01R (预期=ALARM_HIGH) =====
+判定: ALARM_HIGH
+证据: PYTEST_GATE+CONTRACT: 0 passed (基线 273)，且修改契约关键函数
+设计索引: 308 符号 / 42 章节
+正确性: CORRECT

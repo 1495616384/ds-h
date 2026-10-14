@@ -1,0 +1,145 @@
+{
+  "registry_version": "RISK-REGISTRY v1",
+  "schema": "X 最小闭环实验规范 v1.2 §3",
+  "subject_baseline": {
+    "project": "zixun4",
+    "commit": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+    "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+    "note": "登记表位于基线之外（独立准备目录），原基线未修改"
+  },
+  "severity_value_domain": ["high", "normal", "PENDING"],
+  "change_control_value_domain": ["frozen", "approval-required", "free", "PENDING"],
+  "PENDING_semantics": "PENDING 表示按 v1.2 §3 要求登记为待决（证据不足，不擅自判定）；判定时不得把 PENDING 当作 high 或 normal 使用。",
+  "entries": [
+    {
+      "constraint_id": "CV-001",
+      "constraint_type": "公共接口",
+      "expected_invariant": "受控词表 CASE_LEVELS / SEVERITIES 的值域必须与设计文档定义一致（gold/silver/bronze；error/warning），不得扩增或删减",
+      "change_control": "frozen",
+      "severity": "normal",
+      "impact_rationale": "词表变更只影响结构校验宽松度与案例分级标签；不触及权限、安全、审计出口或 ID 完整性。删减既有值会使既有用例被拒（测试失败），扩增会造成行为偏差——均属普通破坏。",
+      "required_evidence": ["src/eval/enums.py 值域声明", "docs/05_EVALUATION.md 用例分级表（含 gold 行）", "tests/ 中对词表的既有断言"],
+      "action_policy": "人工复核"
+    },
+    {
+      "constraint_id": "PI-001",
+      "constraint_type": "公共接口",
+      "expected_invariant": "src/eval/__init__.py 的 __all__ 所声明的名字必须均能在包上绑定（声明与绑定一致）",
+      "change_control": "frozen",
+      "severity": "normal",
+      "impact_rationale": "实证依据（H3-01R）：移除 validate_case 的包级再导出后，生产依赖方不受影响（src/eval/types.py 从 .validator 直接导入，EvaluationCase.validate() 仍可调用），仅测试依赖方 tests/eval/test_validator.py 导入失败。后果为普通破坏（收集失败/构建红），不触及权限、安全或审计出口。",
+      "required_evidence": ["src/eval/__init__.py 的 __all__ 与 import 块", "生产依赖方：src/eval/types.py 的导入来源", "测试依赖方：tests/eval/test_validator.py"],
+      "action_policy": "人工复核"
+    },
+    {
+      "constraint_id": "PI-002",
+      "constraint_type": "公共接口",
+      "expected_invariant": "src/cdm/__init__.py 的 __all__ 所声明的名字必须均能在包上绑定（声明与绑定一致）",
+      "change_control": "frozen",
+      "severity": "normal",
+      "impact_rationale": "与 PI-001 同类：包级再导出被移除时，影响限于从包导入的依赖方（主要是测试与外部调用），cdm 内部模块之间使用相对导入；不触及权限、安全或审计出口。",
+      "required_evidence": ["src/cdm/__init__.py 的 __all__ 与 import 块", "src/cdm 内部相对导入关系", "tests/ 中从 cdm 包导入的位置"],
+      "action_policy": "人工复核"
+    },
+    {
+      "constraint_id": "DI-001",
+      "constraint_type": "数据完整性",
+      "expected_invariant": "Fact ID 必须为三段式 fact:<scope_class>.<instance_key>.<attribute>，且 scope_class 属于 SCOPE_CLASSES、attribute 与 fact_type 登记一致；不得接受任何非法格式",
+      "change_control": "frozen",
+      "severity": "high",
+      "impact_rationale": "放宽语法将使非法标识进入数据模型，破坏事实引用完整性，使下游判定依据不可信（判定建立在 fact_id 绑定之上）。后果属数据完整性关键契约破坏，非普通构建失败。",
+      "required_evidence": ["src/cdm/id.py 语法实现（parse_fact_id / is_valid_fact_id）", "docs/03_CANONICAL_DATA_MODEL.md §8.1 与 §9（v0.3.1 冻结为三段式）", "cdm 相关测试结果"],
+      "action_policy": "阻断合并"
+    },
+    {
+      "constraint_id": "DI-002",
+      "constraint_type": "数据完整性",
+      "expected_invariant": "Fact.id 必须唯一——同一作用域内不得出现重复 fact_id",
+      "change_control": "frozen",
+      "severity": "high",
+      "impact_rationale": "允许重复 ID 会使事实引用产生歧义，破坏「能够参与回归测试」「能够帮助定位错误」的设计要求（文档明列），导致审计可追溯性失效。属数据完整性关键契约破坏。",
+      "required_evidence": ["docs/03_CANONICAL_DATA_MODEL.md §9（id 应满足：唯一/稳定/可被引用/可参与回归测试/可定位错误）", "src/cdm/validate.py 重复检测实现", "cdm 测试结果"],
+      "action_policy": "阻断合并"
+    },
+    {
+      "constraint_id": "SEC-001",
+      "constraint_type": "安全",
+      "expected_invariant": "issue_id 必须等于 canonical JSON（键排序确定）经 SHA-256 摘要的结果；规范化方式与摘要算法强度不得削弱",
+      "change_control": "free",
+      "severity": "high",
+      "impact_rationale": "该函数未被任何冻结声明覆盖（模块仅声明「结构体」冻结），属未冻结代码；但其后果触及证据链可核验性：规范化不确定或摘要被弱化（截断、换算法）将使 issue 身份可碰撞或不可复现，使验收结论无法被独立复核。→ 未冻结但高风险，证明管制与严重度两轴独立。",
+      "required_evidence": ["src/eval/accuracy/data_structures.py 的 _compute_issue_id 实现", "调用点（issue_id 生成路径）", "复核该身份的消费方（验收/报告输出）"],
+      "action_policy": "阻断合并"
+    },
+    {
+      "constraint_id": "AU-001",
+      "constraint_type": "验收",
+      "expected_invariant": "issue_id 的恒等规则（canonical JSON of identity tuple 的 SHA-256）为冻结契约，不得变更",
+      "change_control": "PENDING",
+      "severity": "high",
+      "impact_rationale": "严重度依据充分（同上 SEC-001 的后果分析：身份不可复现 → 验收不可复核）。但 change_control 无法确定：代码引用的 Step_7_E_Coding_Contract_v10.md §11.4 不在冻结基线内（基线 docs 仅含 00/02/02R/03/04/05/07），且基线 02_ARCHITECTURE.md §11.4 是「人工红线」，非此契约。→ 待决，不擅自判定其冻结状态。",
+      "required_evidence": ["缺失：Step_7_E_Coding_Contract_v10.md（不在基线内）", "待补：该契约文档的引入或替代声明"],
+      "action_policy": "人工复核"
+    },
+    {
+      "constraint_id": "TZ-001",
+      "constraint_type": "数据完整性",
+      "expected_invariant": "tokenizer 的冻结正则与 overlap 消解规则必须保持，使应被锚定的数值/标识 token 全部产出",
+      "change_control": "PENDING",
+      "severity": "high",
+      "impact_rationale": "严重度：tokenizer 直接决定验证覆盖率——正则放宽或收窄会使数值逃逸锚定检查，造成漏报，即判定闸门失效（完整性/验证覆盖关键）。change_control 待决：§5 契约文档（Step_7_E_Coding_Contract_v10.md）不在基线内，代码 docstring 称「冻结」但缺基线内条文依据。",
+      "required_evidence": ["src/eval/accuracy/tokenizer.py 正则与消解实现", "待补：§5 契约条文（不在基线内）", "EXPECTED：绑定流水线对 token 的消费关系"],
+      "action_policy": "人工复核"
+    },
+    {
+      "constraint_id": "FZ-001",
+      "constraint_type": "公共接口",
+      "expected_invariant": "工程四舍五入必须为 Decimal(str(value)) + ROUND_HALF_UP 后转 float；禁止 Python round()（banker's rounding）",
+      "change_control": "PENDING",
+      "severity": "PENDING",
+      "impact_rationale": "两轴均待决：change_control 因 §12 契约文档不在基线内；severity 因基线文档未规定该函数的验收地位——改四舍五入会影响数值比对可复现性，但尚不能确定其是否构成完整性/安全边界后果。按 v1.2 要求登记为待决，不擅自猜测。",
+      "required_evidence": ["src/eval/accuracy/frozen_round.py 实现", "src/eval/accuracy/binding.py 中的消费点", "待补：§12 契约条文与其验收地位说明"],
+      "action_policy": "人工复核"
+    },
+    {
+      "constraint_id": "DS-001",
+      "constraint_type": "公共接口",
+      "expected_invariant": "Step 7-E 数据结构（AnchorDeclaration / RenderedSegment / StructuredTable / SystemOutput 等）的字段集必须保持，不得增删改语义",
+      "change_control": "PENDING",
+      "severity": "normal",
+      "impact_rationale": "severity：字段集破坏导致构造/序列化失败与测试失败，属普通破坏，不触及权限、安全或审计出口。change_control 待决：§4 契约文档不在基线内。",
+      "required_evidence": ["src/eval/accuracy/data_structures.py 数据结构定义", "待补：§4 契约条文", "构造与序列化测试结果"],
+      "action_policy": "人工复核"
+    },
+    {
+      "constraint_id": "NV-001",
+      "constraint_type": "数据完整性",
+      "expected_invariant": "SourceRef / RawSource / Conflict / ConflictCandidate 的结构合法性校验（非空、必填字段、结构形态）",
+      "change_control": "free",
+      "severity": "normal",
+      "impact_rationale": "显式反例（名称无关）：函数名含 validate_ 但后果仅为结构合法性层，放宽后产生的是结构不合规数据而非权限/安全/审计后果。→ 名字含 validate/check 不构成 high 依据。",
+      "required_evidence": ["src/cdm/validate.py 对应函数实现", "调用方与被校验字段的结构约束", "相关测试结果"],
+      "action_policy": "警告"
+    },
+    {
+      "constraint_id": "NV-002",
+      "constraint_type": "数据完整性",
+      "expected_invariant": "Evaluation Case 子结构校验（meta / expected_issue / ground truth 各子校验）的既有限制",
+      "change_control": "free",
+      "severity": "normal",
+      "impact_rationale": "同为显式反例：名称含 validate_ 且位于 validator 模块，但后果限于用例结构合法性；不触及权限/安全/ID 完整性/审计出口。",
+      "required_evidence": ["src/eval/validator.py 对应函数实现", "tests/eval/test_validator.py 既有断言", "用例结构约束来源"],
+      "action_policy": "警告"
+    },
+    {
+      "constraint_id": "PERM-000",
+      "constraint_type": "权限",
+      "expected_invariant": "（类别级登记）权限/认证/授权判定不得被绕过或放宽",
+      "change_control": "PENDING",
+      "severity": "PENDING",
+      "impact_rationale": "基线内不存在权限/认证/授权实现（检索 src/ 无 auth/permission/credential/redact 模块）。该类约束在本基线**无可登记的具体条目**；若 H3 需覆盖该类别，须以注入式案例另行声明并记录依据。诚实登记为待决，不虚构条目。",
+      "required_evidence": ["检索证据：基线 src/ 无此类模块", "待补：H3 若需覆盖，须声明注入式案例的约束来源"],
+      "action_policy": "人工复核"
+    }
+  ]
+}

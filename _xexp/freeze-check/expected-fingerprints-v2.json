@@ -1,0 +1,84 @@
+{
+  "fingerprints_version": "expected-fingerprints-v6",
+  "supersedes": "expected-fingerprints-v1.json（保留不改写，作为历史记录）",
+  "bound_freeze_record": {
+    "file": "_xexp/H3-freeze-manifest-v6.md",
+    "sha256": "D25AAF194EC782B2BB84227E5B16C3F0E48506AE154A45D50C642386F54ECCAB",
+    "note": "本文件为 Manifest v6 的机器可读镜像；manifest 哈希一并核验，防止冻结记录被改写"
+  },
+  "self_check": {
+    "path": "_xexp/freeze-check/freeze_check_v2.py",
+    "sha256": "AB28A6EA187E40760C3EA3B9D254E406B63A34908BFAD8E9140F52A69202B892",
+    "note": "自绑定：核验脚本自身指纹。改写脚本必须同步更新本字段并发布新清单，否则退出码 2。"
+  },
+  "spec": {
+    "v1_2_1_current": {
+      "path": "X最小闭环实验规范-v1.2.1.md",
+      "sha256": "7BFBE4F2C7B4F2240F3AE8F34306A1F6A37CB0277837667D6031CB627312650D"
+    },
+    "v1_2_revised": {
+      "path": "X最小闭环实验规范-v1.2.md",
+      "sha256": "8EA1B356500DC41DE91A7140E39CA3838DCE8E847397EA5A7ED8722E678091E2"
+    },
+    "v1_1_superseded": {
+      "path": "X最小闭环实验规范-v1.1.md",
+      "sha256": "016D79D32AD171CB17EDF7F1DC52F10A27F0389F027780FC4BB93CB5800B172D"
+    },
+    "v1_0_historical": {
+      "path": "X最小闭环实验规范.md",
+      "sha256": "7B1A2E2DBC208831973FA318FAE68322620DF09268DAC3FE7662881D95E35922"
+    }
+  },
+  "risk_registry": {
+    "path": "_xexp/risk-registry/RISK-REGISTRY-v1.json",
+    "sha256": "981FB92AD80104AE9D66D877EC82ABE29D250893AF759F39A134DAB1D02FC5D0",
+    "version": "RISK-REGISTRY v1",
+    "verifier": {
+      "path": "_xexp/risk-registry/verify_registry.py",
+      "sha256": "BE2109BB228EF572CD7A97233E8BB2E85F1569774DBB5A2C907275A8548155DA",
+      "note": "本轮由 v2 升级为 v3：判定标准未变，仅修正编码崩溃与管道不可用（见 Manifest v6 第七节）"
+    }
+  },
+  "case_protocol": {
+    "path": "_xexp/h3-case-protocol/H3-case-registration-protocol-v1.md",
+    "sha256": "EB416BA9D41650A2F722329B28C2DD1277516E7B69C11E661E489CB3F63D4544"
+  },
+  "authorization_review": {
+    "path": "_xexp/h3-case-protocol/H3-constraint-authorization-review-v1.json",
+    "sha256": "AC867B702AEF25EDFEC4CF62F156F064EF131DB00D8B350795D5181791F65518",
+    "rule": "可用 = U1 ∧ U2 ∧ U3 ∧ U4 ∧ U5（见 H3-case-registration-protocol-v1.md §1）",
+    "source_of_truth": "逐条授权状态以该文件为准；此处不重复硬编码清单，避免两处不一致",
+    "manual_review_completed": false,
+    "manual_review_note": "逐条 U1–U5（基线侧）审查已记录于授权审查文件；但**整体人工审查仍未完成**：正式案例的 U1『案例适用范围』检查尚未进行，且正式案例清单为空。**不得因冻结核验通过而宣布人工语义审查完成。**"
+  },
+  "engine": {
+    "path": "_xexp_dev2/detect_x0.py",
+    "sha256": "2DB2D828424C17D2B69EB568E2C49E31EC602AD7BA4B3F4354B1A74840BBCD83",
+    "rule_version_equivalent": "DB7A35921BE9EE6D0FA3ECC3D71C44DE252970F3E0E2CF78D78548B4F7E66050",
+    "repo_commit": "93859b700362542c49a3460f801c6923cffb7156"
+  },
+  "tools": {
+    "proc_capture": {
+      "path": "_xexp/tools/proc_capture.py",
+      "sha256": "2B45B0427D508FA4C10D136364E13B6CD9C747C0F489C080304E46A05D7B81C8",
+      "note": "受限环境子进程捕获 helper（UTF-8 标准流 + 管道不可用时回退临时文件重定向）"
+    },
+    "selftest_freeze": {
+      "path": "_xexp/freeze-check/selftest_v2.py",
+      "sha256": "462987AA8FA2EFE33C3257BF5D8F2E6FAAF2356DD4F4B0A6D637CEBD1B243E43",
+      "note": "冻结核验自测套件（5 项，隔离沙箱）"
+    },
+    "selftest_registry": {
+      "path": "_xexp/risk-registry/selftest_registry_v3.py",
+      "sha256": "EE27C65D2BC23386F4FDC700D76AF607309657F851F993B13A7251D36445D394",
+      "note": "登记表校验自测套件（4 项，隔离沙箱）"
+    }
+  },
+  "baseline": {
+    "path": "_xexp/base",
+    "commit": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+    "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+    "worktree_must_be_clean": true,
+    "note": "git status --porcelain 非空（任何未提交修改或未跟踪文件）即视为冻结完整性破坏"
+  }
+}

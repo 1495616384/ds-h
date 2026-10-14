@@ -1,0 +1,35 @@
+=== 开始 H2 独立运行 2026-10-13 15:09:41 ===
+引擎哈希: E8817BD5C38C365F11EF5BB4B0581C70E5F182C20EAD2AB55C26083455E7F862
+标准答案哈希: FF2CAA7A748DA069ABAC9308B2948E8FE12DDD73769EA864A4D64341EEB86125
+=== H2-01 ===
+
+===== X 原型 v0 | 案例 H2-01 (预期=ALARM) =====
+判定: UNKNOWN
+证据: ASSOC: 新增符号 val 未出现在设计条目索引
+设计索引: 308 符号 / 42 章节
+正确性: MISMATCH
+EXIT_CODE: 0
+=== H2-02 ===
+
+===== X 原型 v0 | 案例 H2-02 (预期=OK) =====
+判定: OK
+证据: ASSOC: 变更符号均可关联设计条目
+设计索引: 308 符号 / 42 章节
+正确性: CORRECT
+EXIT_CODE: 0
+=== H2-03 ===
+
+===== X 原型 v0 | 案例 H2-03 (预期=UNKNOWN) =====
+判定: UNKNOWN
+证据: ASSOC: 新增符号 LEGACY_ROUND_MODE 未出现在设计条目索引
+设计索引: 308 符号 / 42 章节
+正确性: CORRECT
+EXIT_CODE: 0
+=== H2-04 ===
+
+===== X 原型 v0 | 案例 H2-04 (预期=ALARM_HIGH) =====
+判定: UNKNOWN
+证据: ASSOC: 新增符号 e 未出现在设计条目索引
+设计索引: 308 符号 / 42 章节
+正确性: MISMATCH
+EXIT_CODE: 0

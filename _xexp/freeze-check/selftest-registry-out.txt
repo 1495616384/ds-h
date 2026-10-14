@@ -1,0 +1,9 @@
+[PASS] R1 真实登记表 -> 通过 + 绑定一致
+        退出码 期望 0 / 实测 0
+[PASS] R2 隔离基线 + 登记表 commit 不符 -> 绑定不一致
+        退出码 期望 1 / 实测 1
+[PASS] R3 基线路径不存在 -> git 失败被显式报告
+        退出码 期望 1 / 实测 1
+[PASS] R4 proc_capture 自证：mode=tempfile rc=0 out='probe-ok'
+
+自测汇总：4/4 通过

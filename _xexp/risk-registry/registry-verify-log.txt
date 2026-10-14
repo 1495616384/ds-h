@@ -1,0 +1,22 @@
+registry_version: RISK-REGISTRY v1
+条目总数: 13
+
+=== 1. 八字段完整性 ===
+  全部 13 条目八字段齐备 ✅
+
+=== 2. 值域检查 ===
+  值域违规: 无 ✅
+
+=== 3. 四类分类边界 ===
+  ① 冻结 + 普通严重度的公共接口: ['CV-001', 'PI-001', 'PI-002']  ✅
+  ② 冻结 + 高严重度的关键接口: ['DI-001', 'DI-002']  ✅
+  ③ 未冻结但属安全/完整性边界（severity=high 且 change_control=free）: ['SEC-001']  ✅
+  ④a 涉及 validate/check 命名且 severity=normal（无高风险影响）: ['PI-001', 'NV-001', 'NV-002']  ✅
+  ④b 涉及 validate/check 命名但 severity=high（同域内也可为高风险）: ['DI-002']  ✅
+
+  → ④a/④b 并存说明：同属 validate 命名/validator 模块的约束，严重度仍按后果分列；
+    名称（乃至模块）不决定 severity，必须逐条依 impact_rationale 判定。
+
+=== 4. 待决条目（不擅自猜测）===
+  AU-001: change_control=PENDING severity=high
+  TZ-001: change_control=PENDING severity=high

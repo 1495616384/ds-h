@@ -1,0 +1,166 @@
+{
+  "review_version": "H3-constraint-authorization-review-v1",
+  "purpose": "逐条记录每个约束的 U1–U5 审查状态、关键证据、审查依据与正式授权状态。本文件是正式案例引用约束的**唯一授权来源**。",
+  "authorization_rule": "可用 = U1 ∧ U2 ∧ U3 ∧ U4 ∧ U5（见 H3-case-registration-protocol-v1.md §1）",
+  "review_scope_note": "本条审查覆盖**基线侧**门槛（U1 的基线与来源部分、U2、U3、U4、U5）。U1 的**案例适用范围**部分属案例级检查，须在案例登记时完成；未完成前不得运行该案例。",
+  "gate_effect": "本文件不改变 expected-fingerprints 的 manual_review_completed=false：逐条审查完成 ≠ 整体门槛就绪（正式案例清单仍为空）。",
+  "status_values": ["AUTHORIZED", "BLOCKED"],
+  "remaining_case_level_checks": ["U1-case-scope：拟设计案例的适用范围须与所引条目范围一致（登记时核验）"],
+  "entries": [
+    {
+      "constraint_id": "PI-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "PASS",
+      "U5_contract_source_confirmed": "PASS",
+      "key_evidence": ["src/eval/__init__.py 的 __all__ 列表与 from .validator import 块（声明与绑定的对照面）", "tests/eval/test_validator.py:22 从包导入（依赖方实证）", "src/eval/types.py:461-472 从 .validator 直接导入（生产侧对照）"],
+      "review_basis": "不变量为『__all__ 声明的名字必须均可在包上绑定』——可由导入测试机械判定（U2）；声明与依赖方均存在于基线内（U4）；change_control=frozen 且无缺失声明（U5）。",
+      "authorization": "AUTHORIZED"
+    },
+    {
+      "constraint_id": "PI-002",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "PASS",
+      "U5_contract_source_confirmed": "PASS",
+      "key_evidence": ["src/cdm/__init__.py 的 __all__ 与 import 块", "src/cdm 内部相对导入关系", "tests/ 中从 cdm 包导入的位置"],
+      "review_basis": "与 PI-001 同类；不变量可机械判定，证据在基线内齐备。",
+      "authorization": "AUTHORIZED"
+    },
+    {
+      "constraint_id": "DI-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "PASS",
+      "U5_contract_source_confirmed": "PASS",
+      "key_evidence": ["src/cdm/id.py 的首部语法规则注释与实现（parse_fact_id / is_valid_fact_id）", "docs/03_CANONICAL_DATA_MODEL.md L436『v0.3.1 冻结为三段式，格式见 §8.1』"],
+      "review_basis": "不变量为三段式语法 + scope_class/attribute 一致性——可对给定 ID 字符串判定（U2）；冻结依据在基线文档中可核（U4）。",
+      "authorization": "AUTHORIZED"
+    },
+    {
+      "constraint_id": "DI-002",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "PASS",
+      "U5_contract_source_confirmed": "PASS",
+      "key_evidence": ["docs/03_CANONICAL_DATA_MODEL.md §9 L424-433：id『应满足：唯一 / 稳定 / 可被其他对象引用 / 能够参与回归测试 / 能够帮助定位错误』", "src/cdm/validate.py 中重复检测实现"],
+      "review_basis": "唯一性可对给定事实集判定（U2）；简单（最短）路径冻结依据在基线文档中可核（U4）。",
+      "authorization": "AUTHORIZED"
+    },
+    {
+      "constraint_id": "SEC-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "PASS",
+      "U5_contract_source_confirmed": "PASS",
+      "key_evidence": ["src/eval/accuracy/data_structures.py 的 _compute_issue_id（canonical json.dumps(sort_keys=True) + hashlib.sha256）", "同文件 issue_id 生成调用点（object.__setattr__(instance, \"issue_id\", …)）"],
+      "review_basis": "不变量为『issue_id == SHA256(canonical JSON of identity)』——可对给定 identity 重算比对（U2）；实现与调用点均在基线内（U4）；change_control=free 不构成 U5 障碍（U5 只排除来源未确认者，不要求 frozen）。",
+      "authorization": "AUTHORIZED"
+    },
+    {
+      "constraint_id": "NV-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "PASS",
+      "U5_contract_source_confirmed": "PASS",
+      "key_evidence": ["src/cdm/validate.py 的 validate_source_ref / validate_raw_source / validate_conflict_candidate / validate_conflict 实现"],
+      "review_basis": "结构合法性可判定（U2）；实现存在（U4）。严重度为 normal，不构成『名称含 validate 即高风险』。",
+      "authorization": "AUTHORIZED"
+    },
+    {
+      "constraint_id": "NV-002",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "PASS",
+      "U5_contract_source_confirmed": "PASS",
+      "key_evidence": ["src/eval/validator.py 的 validate_meta / validate_expected_issue / validate_ground_truth_* 等实现", "tests/eval/test_validator.py 既有断言"],
+      "review_basis": "用例子结构约束可判定（U2）；实现与既有测试均在基线内（U4）。",
+      "authorization": "AUTHORIZED"
+    },
+    {
+      "constraint_id": "CV-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "FAIL",
+      "U5_contract_source_confirmed": "PASS",
+      "key_evidence": ["docs/05_EVALUATION.md §4（L125『Evaluation Case 分级』）支持 CASE_LEVELS 的 gold/silver/bronze", "docs/05_EVALUATION.md §5.2（L171）示例仅出现 \"severity\": \"error\"（L181）"],
+      "review_basis": "**U4 不通过（证据不完整）**：不变量同时声明 SEVERITIES 值域为 error/warning，但基线全部 docs 中 **`warning` 无任何条文**（全文检索无匹配），仅 §5.2 的 JSON 示例出现 error。→ 该条目证据不能支撑其声明的完整不变量。",
+      "authorization": "BLOCKED",
+      "block_reason": "U4 证据不完整：SEVERITIES 的 `warning` 值在冻结基线文档中无条文依据。补齐后方可复审。"
+    },
+    {
+      "constraint_id": "AU-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "FAIL",
+      "U5_contract_source_confirmed": "FAIL",
+      "key_evidence": ["缺失：Step_7_E_Coding_Contract_v10.md §11.4（不在冻结基线内）", "基线 docs 仅含 00/02/02R/03/04/05/07；02_ARCHITECTURE.md §11.4 实为『人工红线』，非此契约"],
+      "review_basis": "契约来源未确认（U5 不通过）；关键条文缺失使 U4 亦不通过。**即使 severity=high 也不得使用**（U6）。",
+      "authorization": "BLOCKED",
+      "block_reason": "U5/U4 不通过：§11.4 契约文档不在基线内；severity=high 不构成授权。"
+    },
+    {
+      "constraint_id": "TZ-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "FAIL",
+      "U5_contract_source_confirmed": "FAIL",
+      "key_evidence": ["src/eval/accuracy/tokenizer.py 的正则与 overlap 消解实现（存在）", "缺失：§5 契约条文（Step_7_E_Coding_Contract_v10.md 不在基线内）"],
+      "review_basis": "冻结依据缺条文（U5 不通过；U4 缺关键契约证据）。后果严重度虽为 high，仍不得使用（U6）。",
+      "authorization": "BLOCKED",
+      "block_reason": "U5/U4 不通过：§5 契约条文缺失。"
+    },
+    {
+      "constraint_id": "FZ-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "FAIL",
+      "U4_key_evidence_exists": "FAIL",
+      "U5_contract_source_confirmed": "FAIL",
+      "key_evidence": ["src/eval/accuracy/frozen_round.py 实现（存在）", "缺失：§12 契约条文与其验收地位说明"],
+      "review_basis": "两轴均待决：severity 未定（U3 不通过）+ 契约来源未确认（U5 不通过）+ 关键证据缺失（U4 不通过）。",
+      "authorization": "BLOCKED",
+      "block_reason": "U3/U4/U5 均不通过：severity 与契约状态均待决。"
+    },
+    {
+      "constraint_id": "DS-001",
+      "U1_source_exists": "PASS",
+      "U2_invariant_decidable": "PASS",
+      "U3_severity_determined": "PASS",
+      "U4_key_evidence_exists": "FAIL",
+      "U5_contract_source_confirmed": "FAIL",
+      "key_evidence": ["src/eval/accuracy/data_structures.py 数据结构定义（存在）", "缺失：§4 契约条文（不在基线内）"],
+      "review_basis": "严重度虽为 normal，但契约来源未确认（U5 不通过）且关键条文缺失（U4 不通过）→ 不得使用。",
+      "authorization": "BLOCKED",
+      "block_reason": "U5/U4 不通过：§4 契约条文缺失。"
+    },
+    {
+      "constraint_id": "PERM-000",
+      "U1_source_exists": "FAIL",
+      "U2_invariant_decidable": "FAIL",
+      "U3_severity_determined": "FAIL",
+      "U4_key_evidence_exists": "FAIL",
+      "U5_contract_source_confirmed": "FAIL",
+      "key_evidence": ["检索证据：基线 src/ 无 auth/permission/credential/redact 模块"],
+      "review_basis": "类别级待决：基线内无可登记条目（U1 不通过）；不变量与严重度均无法确定（U2/U3 不通过）。若 H3 需覆盖该类别，须以注入式案例另行声明约束来源并重审。",
+      "authorization": "BLOCKED",
+      "block_reason": "U1–U5 均不通过：基线无该类实现，非『已存在可引用约束』。"
+    }
+  ],
+  "summary": {
+    "total_entries": 13,
+    "authorized": ["PI-001", "PI-002", "DI-001", "DI-002", "SEC-001", "NV-001", "NV-002"],
+    "blocked": ["CV-001", "AU-001", "TZ-001", "FZ-001", "DS-001", "PERM-000"],
+    "note": "authorized 表示**基线侧审查通过**；正式案例仍须在登记时完成 U1 案例适用范围检查，且正式案例清单当前为空。"
+  }
+}

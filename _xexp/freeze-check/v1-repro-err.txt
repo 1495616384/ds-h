@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "G:\ds-h\_xexp\freeze-check\freeze_check.py", line 231, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "G:\ds-h\_xexp\freeze-check\freeze_check.py", line 133, in main
+    print(f"[{'OK  ' if ok else 'FAIL'}] {item.ljust(width)}  ÆÚÍû {str(e)[:16]}¡­  Êµ²â {str(a)[:16]}¡­")
+UnicodeEncodeError: 'gbk' codec can't encode character '\u2194' in position 20: illegal multibyte sequence

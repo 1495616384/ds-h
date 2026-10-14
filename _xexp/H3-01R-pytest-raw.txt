@@ -1,0 +1,16 @@
+
+=================================== ERRORS ====================================
+________________ ERROR collecting tests/eval/test_validator.py ________________
+ImportError while importing test module 'G:\ds-h\_xexp\base\tests\eval\test_validator.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\eval\test_validator.py:4: in <module>
+    from eval import (
+E   ImportError: cannot import name 'validate_case' from 'eval' (G:\ds-h\_xexp\base\src\eval\__init__.py)
+=========================== short test summary info ===========================
+ERROR tests/eval/test_validator.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.25s
