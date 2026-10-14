@@ -13,7 +13,7 @@
 | C1 提交树 | `df97a0b6a15600ff9d0e3fbcf94868c205a4c055` |
 | C1 主题 | `X H3 冻结链 v6 终稿：修复 git 回溯假通过（G-12）+ 记录实测结果` |
 | 锚点文件 | `_xexp/v6-anchor/freeze-anchor.json` |
-| **锚点文件 SHA-256** | `E9BA05A9E1532632E8B80BA070ECB5E64174D16EF259734D59DC9B78B9E96333` |
+| **锚点文件 SHA-256** | `F474FFEDA9BDF0A4E854EB70259C6D09743B715A81E55039BDAC9F04AB5B0CA4` |
 | 锚定文件数 | `21（逐项 blob 见锚点文件）` |
 
 ## 二、C1 中关键制品的 blob 与内容哈希（实测）

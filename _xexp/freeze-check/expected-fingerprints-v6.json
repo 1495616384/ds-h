@@ -20,7 +20,7 @@
   },
   "current_manifest": {
     "file": "_xexp/H3-freeze-manifest-v6.md",
-    "sha256": "92AB4D26D05F008C0FCBE1B4A78FD7B6E12FFE5CEF956FFB8C222058CF09CBBD",
+    "sha256": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
     "note": "当前有效冻结记录；每名历史记录均登记以便探测历史改写"
   },
   "historical_manifests": {
