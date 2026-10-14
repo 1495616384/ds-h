@@ -784,7 +784,7 @@
       "section": "F 基线",
       "item": "commit",
       "expected": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
-      "actual": "6bca08b03bffe0aaf84a8f9e6e09155a037a1ba3",
+      "actual": "794dd24cf97aa377218603bada9a35d161358949",
       "ok": false,
       "note": ""
     },
@@ -792,7 +792,7 @@
       "section": "F 基线",
       "item": "tree",
       "expected": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
-      "actual": "00378df2268eeeacc78442b9317683b0be7bef85",
+      "actual": "fec2a80430852fc796eeaca81e7006579ba103ca",
       "ok": false,
       "note": ""
     },
@@ -800,7 +800,7 @@
       "section": "F 基线",
       "item": "工作树干净",
       "expected": "<空>",
-      "actual": "6 项改动/未跟踪",
+      "actual": "2 项改动/未跟踪",
       "ok": false,
       "note": ""
     },
@@ -808,7 +808,7 @@
       "section": "F 基线",
       "item": "登记表声明 commit 与实测",
       "expected": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
-      "actual": "6bca08b03bffe0aaf84a8f9e6e09155a037a1ba3",
+      "actual": "794dd24cf97aa377218603bada9a35d161358949",
       "ok": false,
       "note": ""
     },
@@ -816,7 +816,7 @@
       "section": "F 基线",
       "item": "登记表声明 tree 与实测",
       "expected": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
-      "actual": "00378df2268eeeacc78442b9317683b0be7bef85",
+      "actual": "fec2a80430852fc796eeaca81e7006579ba103ca",
       "ok": false,
       "note": ""
     }
@@ -859,5 +859,5 @@
   "exit_code": 5,
   "exit_code_formula": "git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0",
   "verdict": "git 命令执行失败（基线项已按失败处理）",
-  "checked_at": "2026-10-14T10:47:14"
+  "checked_at": "2026-10-14T10:50:22"
 }

@@ -1,0 +1,30 @@
+[PASS] T1-py_compile: rc=0 (期望 [0])
+[PASS] T2-json-validity: rc=0 (期望 [0])
+[PASS] T3-verify_registry: rc=0 (期望 [0])
+[PASS] T4-freeze_check_normal: rc=3 (期望 [3])
+[PASS] T4-freeze_check_normal-report_exit_code: 报告 exit_code=3 / 进程退出码=3 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0
+[PASS] T5-worktree_dirty: rc=2 (期望 [2])
+[PASS] T5b-dirty_cleanup_verified: 清理后 status 空=True，HEAD 未变=True，tree 未变=True
+[PASS] T6-git_fail_measured_rc5: 被核验程序在 git 真实失败时的实测退出码 = 5（拦截器自身 rc=0）
+[PASS] T6b-git_access_restored: .git 已恢复=True，残留 stash=False，status 空=True，HEAD 未变=True
+[PASS] T7-tamper-selected_cases: rc=2 (期望 [2])
+[PASS] T7b-restored-selected_cases: 恢复后哈希一致=True（64B6F3CF6EB5722B）
+[PASS] T7-tamper-expected_fingerprints_v1: rc=2 (期望 [2])
+[PASS] T7b-restored-expected_fingerprints_v1: 恢复后哈希一致=True（72F8A588E9F19DF4）
+[PASS] T7-tamper-authorization_review: rc=2 (期望 [2])
+[PASS] T7b-restored-authorization_review: 恢复后哈希一致=True（AC867B702AEF25ED）
+[PASS] T7-tamper-current_manifest: rc=2 (期望 [2])
+[PASS] T7b-restored-current_manifest: 恢复后哈希一致=True（56B53477BAED695C）
+[PASS] T7-tamper-engine: rc=2 (期望 [2])
+[PASS] T7b-restored-engine: 恢复后哈希一致=True（2DB2D828424C17D2）
+[PASS] T8-threshold_must_be_3: rc=3 (期望 [3])
+[PASS] T8-threshold_must_be_3-report_exit_code: 报告 exit_code=3 / 进程退出码=3 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0
+[PASS] T8b-not_zero: 实测退出码 3 不等于 0
+[PASS] T9-anchor_missing: rc=2 (期望 [2])
+[PASS] T9b-anchor_restored: 锚点恢复后哈希一致=True
+[PASS] T10-no_anchor_diagnostic: rc=3 (期望 [3])
+[PASS] T10-no_anchor_diagnostic-report_exit_code: 报告 exit_code=3 / 进程退出码=3 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0
+[PASS] Z-baseline_unchanged: HEAD 未变=True，tree 未变=True，status 空=True
+
+汇总：27/27 通过
+报告：G:\ds-h\_xexp\v6-anchor\logs\selftest-report.json

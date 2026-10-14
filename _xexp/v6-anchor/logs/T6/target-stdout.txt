@@ -116,18 +116,14 @@
 
 -- F 基线 --
 [FAIL] 基线为独立 git 仓库（不得回溯父仓库）                        期望 g:/ds-h/_xexp/ba 实测 g:/ds-h            [若基线 .git 缺失，git 会回溯到父仓库并返回父仓库 HEAD —— 必须显式拦截]
-[FAIL] commit                                       期望 72f06e5c66b8797a 实测 6bca08b03bffe0aa
-[FAIL] tree                                         期望 2110ccbfc89c81f3 实测 00378df2268eeeac
-[FAIL] 工作树干净                                        期望 <空>              实测 6 项改动/未跟踪       
-[FAIL] 登记表声明 commit 与实测                             期望 72f06e5c66b8797a 实测 6bca08b03bffe0aa
-[FAIL] 登记表声明 tree 与实测                               期望 2110ccbfc89c81f3 实测 00378df2268eeeac
+[FAIL] commit                                       期望 72f06e5c66b8797a 实测 794dd24cf97aa377
+[FAIL] tree                                         期望 2110ccbfc89c81f3 实测 fec2a80430852fc7
+[FAIL] 工作树干净                                        期望 <空>              实测 2 项改动/未跟踪       
+[FAIL] 登记表声明 commit 与实测                             期望 72f06e5c66b8797a 实测 794dd24cf97aa377
+[FAIL] 登记表声明 tree 与实测                               期望 2110ccbfc89c81f3 实测 fec2a80430852fc7
 
 === 基线工作树脏项（逐条列出）===
-  M _xexp/v6-anchor/logs/T4-freeze_check_normal/sha256.txt
-   M _xexp/v6-anchor/logs/T4-freeze_check_normal/stdout.txt
-   M _xexp/v6-anchor/logs/T4-freeze_check_normal/verify-report.json
-   M _xexp/v6-anchor/logs/T5-worktree_dirty/sha256.txt
-   M _xexp/v6-anchor/logs/T5-worktree_dirty/stdout.txt
+  M _xexp/v6-anchor/logs/T4-freeze_check_normal/verify-report.json
   ?? _xexp/ddp_base/
 
 === git 命令失败（真实 stderr 与返回码）===

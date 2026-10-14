@@ -1,6 +1,6 @@
 {
   "suite": "selftest_v3.py",
-  "run_at": "2026-10-14T10:47:25",
+  "run_at": "2026-10-14T10:50:34",
   "root": "G:\\ds-h",
   "out_dir": "G:\\ds-h\\_xexp\\v6-anchor\\logs",
   "freeze_check_v3_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",

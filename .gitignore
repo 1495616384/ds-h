@@ -26,3 +26,5 @@ _xexp/base.tar
 _xexp/_tmp/
 _xexp/__pycache__/
 _xexp/_indep_results.txt
+# 独立子项目（DDP base，不在 X 冻结链内，见 Manifest v7 G-5/G-9）
+_xexp/ddp_base/
