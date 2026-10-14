@@ -13,7 +13,7 @@
 | C1 提交树 | `f8892da99a19fddd0493b3df7eea38024961d3d1` |
 | C1 主题 | `X H3 冻结链修复：Manifest v6 + 独立信任锚点（阶段1 冻结制品）` |
 | 锚点文件 | `_xexp/v6-anchor/freeze-anchor.json` |
-| **锚点文件 SHA-256** | `3F20C7EEF8E2B638B4EB7B958BE589EA31617083DF09828F67586BDC882F43E1` |
+| **锚点文件 SHA-256** | `C854AB78E0A688BA1FDB6C840294E2FF02CA85E875F00804AC7EE339C7E8BC23` |
 | 锚定文件数 | 21（逐项 blob 见锚点文件） |
 
 ## 二、C1 中关键制品的 blob 与内容哈希（实测）

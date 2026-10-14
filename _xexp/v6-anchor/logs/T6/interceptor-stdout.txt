@@ -1,0 +1,36 @@
+������������������˳��� = 5
+git ʧ�����Ƭ�Σ�
+  | [OK  ] ê��ֿ�Ϊ���� git �ֿ⣨���û��ݣ�                         ���� g:/ds-h          ʵ�� g:/ds-h         
+  | [OK  ] current_manifest git blob ���� ID ��ê��һ��        ���� b9f26ca6e0235c84 ʵ�� b9f26ca6e0235c84
+  | [OK  ] expected_fingerprints git blob ���� ID ��ê��һ��   ���� 7ff57ced912b41d9 ʵ�� 7ff57ced912b41d9
+  | [OK  ] verifier git blob ���� ID ��ê��һ��                ���� c26a1d9c258056ec ʵ�� c26a1d9c258056ec
+  | [OK  ] selftest_v3 git blob ���� ID ��ê��һ��             ���� dae16574302ac8b4 ʵ�� dae16574302ac8b4
+  | [OK  ] expected_fingerprints_v1 git blob ���� ID ��ê��һ�� ���� 28c05b66c86f4219 ʵ�� 28c05b66c86f4219
+  | [OK  ] expected_fingerprints_v2 git blob ���� ID ��ê��һ�� ���� 02134c48690c639b ʵ�� 02134c48690c639b
+  | [OK  ] selected_cases git blob ���� ID ��ê��һ��          ���� 06fc45e435a0ba7b ʵ�� 06fc45e435a0ba7b
+  | [OK  ] case_protocol git blob ���� ID ��ê��һ��           ���� fd52421509d712ae ʵ�� fd52421509d712ae
+  | [OK  ] authorization_review git blob ���� ID ��ê��һ��    ���� 582094b8b320e10c ʵ�� 582094b8b320e10c
+  | [OK  ] risk_registry git blob ���� ID ��ê��һ��           ���� c1f069ae6b8abd1d ʵ�� c1f069ae6b8abd1d
+  | [OK  ] registry_verifier git blob ���� ID ��ê��һ��       ���� f6400bb938399598 ʵ�� f6400bb938399598
+  | [OK  ] registry_selftest git blob ���� ID ��ê��һ��       ���� 985f9b1aaa5002d3 ʵ�� 985f9b1aaa5002d3
+  | [OK  ] proc_capture git blob ���� ID ��ê��һ��            ���� 493f799e3a094700 ʵ�� 493f799e3a094700
+  | [OK  ] manifest_v5 git blob ���� ID ��ê��һ��             ���� c4df68d4b21e3e24 ʵ�� c4df68d4b21e3e24
+  | [OK  ] manifest_v4 git blob ���� ID ��ê��һ��             ���� 95157d3876d1d737 ʵ�� 95157d3876d1d737
+  | [OK  ] manifest_v3 git blob ���� ID ��ê��һ��             ���� 57cd970e93b349ac ʵ�� 57cd970e93b349ac
+  | [OK  ] manifest_v2 git blob ���� ID ��ê��һ��             ���� 1fa87c89e1080505 ʵ�� 1fa87c89e1080505
+  | [OK  ] manifest_v1 git blob ���� ID ��ê��һ��             ���� 40dbe3614bc19726 ʵ�� 40dbe3614bc19726
+  | [OK  ] recovery_doc git blob ���� ID ��ê��һ��            ���� 0938a932ec22190e ʵ�� 0938a932ec22190e
+  | [OK  ] expected_gen git blob ���� ID ��ê��һ��            ���� d9df8906b7b277c3 ʵ�� d9df8906b7b277c3
+  | [OK  ] anchor_gen git blob ���� ID ��ê��һ��              ���� 99399563757a14f1 ʵ�� 99399563757a14f1
+  | [FAIL] ����Ϊ���� git �ֿ⣨���û��ݸ��ֿ⣩                        ���� g:/ds-h/_xexp/ba ʵ�� g:/ds-h            [������ .git ȱʧ��git ����ݵ����ֿⲢ���ظ��ֿ� HEAD ���� ������ʽ����]
+  | === git ����ʧ�ܣ���ʵ stderr �뷵���룩===
+  |   git -C G:\ds-h\_xexp\base rev-parse --show-toplevel
+  |     ������: 128
+  |     stderr : ���߲��Ƕ��� git �ֿ⣺toplevel=g:/ds-h������ g:/ds-h/_xexp/base��git �ѻ��ݵ��ϲ�ֿ⣨rc=0��
+  | === ���棨���ı��˳��룩===
+  | ��git �������ʽ��pipe��
+  |   git ���� 1 ����ͬʱָ��ʧ���� 10 ����git ʧ�ܱ�����Ȼ���»�������ʧ�ܣ���ϸ���ϣ�
+  |   [�˳��� 5] git ����ִ��ʧ�ܣ��������Ѱ�ʧ�ܴ�����
+  |   ͳ�ƣ������ 101��ͨ�� 91��ʧ�� 10������ 1��git ���� 1
+  |   �˳��빫ʽ��git �����5������ָ��/����ʧ�ܡ�2������δ��Ȩ���á�4�������ż�δ������3�������0���׸����м�ȡֵ���뺯��������ͬԴ��
+��������.git �ѻָ� = True

@@ -1,0 +1,2 @@
+F:\ProgramData\anaconda3\python.exe G:\ds-h\_xexp\freeze-check\freeze_check_v3.py
+(cwd=G:\ds-h)

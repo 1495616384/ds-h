@@ -1,0 +1,1 @@
+{"baseline_git_fail_measured_rc": 5}

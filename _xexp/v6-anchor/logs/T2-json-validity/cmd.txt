@@ -1,0 +1,2 @@
+F:\ProgramData\anaconda3\python.exe -c import json,sys;[print('OK', p, len(json.load(open(p, encoding='utf-8')))) for p in sys.argv[1:]] G:\ds-h\_xexp\risk-registry\RISK-REGISTRY-v1.json G:\ds-h\_xexp\h3-case-protocol\H3-constraint-authorization-review-v1.json G:\ds-h\_xexp\freeze-check\expected-fingerprints-v1.json G:\ds-h\_xexp\freeze-check\expected-fingerprints-v6.json G:\ds-h\_xexp\freeze-check\selected-cases.json G:\ds-h\_xexp\v6-anchor\freeze-anchor.json
+(cwd=G:\ds-h)

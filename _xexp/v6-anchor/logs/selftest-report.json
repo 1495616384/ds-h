@@ -1,0 +1,373 @@
+{
+  "suite": "selftest_v3.py",
+  "run_at": "2026-10-14T10:39:42",
+  "root": "G:\\ds-h",
+  "out_dir": "G:\\ds-h\\_xexp\\v6-anchor\\logs",
+  "freeze_check_v3_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
+  "trust_doc": "G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v6.json",
+  "trust_doc_sha256": "39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1",
+  "anchor": "G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
+  "anchor_sha256": "C854AB78E0A688BA1FDB6C840294E2FF02CA85E875F00804AC7EE339C7E8BC23",
+  "baseline_before": {
+    "head": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+    "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+    "dirty": []
+  },
+  "baseline_after": {
+    "head": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+    "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+    "dirty": []
+  },
+  "results": [
+    {
+      "test": "T1-py_compile",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe -m py_compile G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v2.py G:\\ds-h\\_xexp\\freeze-check\\freeze_check.py G:\\ds-h\\_xexp\\freeze-check\\selftest_v2.py G:\\ds-h\\_xexp\\freeze-check\\selftest_v3.py G:\\ds-h\\_xexp\\risk-registry\\verify_registry.py G:\\ds-h\\_xexp\\risk-registry\\selftest_registry_v3.py G:\\ds-h\\_xexp\\tools\\proc_capture.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 0,
+      "expected_exit_codes": [
+        0
+      ],
+      "asserts": [],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T1-py_compile\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T1-py_compile\\stderr.txt",
+      "stdout_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "Python 语法检查"
+    },
+    {
+      "test": "T2-json-validity",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe -c import json,sys;[print('OK', p, len(json.load(open(p, encoding='utf-8')))) for p in sys.argv[1:]] G:\\ds-h\\_xexp\\risk-registry\\RISK-REGISTRY-v1.json G:\\ds-h\\_xexp\\h3-case-protocol\\H3-constraint-authorization-review-v1.json G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v1.json G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v6.json G:\\ds-h\\_xexp\\freeze-check\\selected-cases.json G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
+      "cwd": "G:\\ds-h",
+      "exit_code": 0,
+      "expected_exit_codes": [
+        0
+      ],
+      "asserts": [
+        "OK"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T2-json-validity\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T2-json-validity\\stderr.txt",
+      "stdout_sha256": "670A5F47E4A5E915B5FC1E31B0A6AE6EBD711F3D3908080FF3754C0D2C7E59B6",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "关键 JSON 合法性（json.load 实测）"
+    },
+    {
+      "test": "T3-verify_registry",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\risk-registry\\verify_registry.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 0,
+      "expected_exit_codes": [
+        0
+      ],
+      "asserts": [
+        "绑定一致 OK",
+        "自动校验总结果: 通过"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T3-verify_registry\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T3-verify_registry\\stderr.txt",
+      "stdout_sha256": "A5FEEF1DBFDB67AC680B9F1FA5F70B393CDD4A6469CF700633DF631863623FFC",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "RISK-REGISTRY 校验"
+    },
+    {
+      "test": "T4-freeze_check_normal",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py --report G:\\ds-h\\_xexp\\v6-anchor\\logs\\T4-freeze_check_normal\\verify-report.json",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        3
+      ],
+      "asserts": [
+        "当前冻结记录 H3-freeze-manifest-v6.md"
+      ],
+      "missing_asserts": [],
+      "ok": false,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T4-freeze_check_normal\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T4-freeze_check_normal\\stderr.txt",
+      "stdout_sha256": "9E0AAC916887C2BE382AA647C4231165FF9787F95D3C31080F0B61F15F8470EB",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "正常冻结核验：期望 3（指纹一致、门槛未就绪）"
+    },
+    {
+      "test": "T4-freeze_check_normal-report_exit_code",
+      "ok": true,
+      "detail": "报告 exit_code=2 / 进程退出码=2 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0"
+    },
+    {
+      "test": "T5-worktree_dirty",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        2
+      ],
+      "asserts": [
+        "[FAIL] 工作树干净",
+        "=== 基线工作树脏项（逐条列出）===",
+        "_selftest_dirty_probe.txt",
+        "[退出码 2]"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T5-worktree_dirty\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T5-worktree_dirty\\stderr.txt",
+      "stdout_sha256": "D6132FBABC9A801876128FA70D3B0A9D90CE7FE92982559BE0227A7A0C95423B",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "植入未跟踪文件 → 期望 2 且逐条列出路径"
+    },
+    {
+      "test": "T5b-dirty_cleanup_verified",
+      "ok": true,
+      "detail": "清理后 status 空=True，HEAD 未变=True，tree 未变=True",
+      "after": {
+        "head": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+        "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+        "dirty": []
+      },
+      "before": {
+        "head": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+        "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+        "dirty": []
+      }
+    },
+    {
+      "test": "T6-git_fail_measured_rc5",
+      "ok": true,
+      "detail": "被核验程序在 git 真实失败时的实测退出码 = 5（拦截器自身 rc=0）",
+      "interceptor_rc": 0,
+      "measured_rc": 5
+    },
+    {
+      "test": "T6b-git_access_restored",
+      "ok": true,
+      "detail": ".git 已恢复=True，残留 stash=False，status 空=True，HEAD 未变=True"
+    },
+    {
+      "test": "T7-tamper-selected_cases",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        2
+      ],
+      "asserts": [
+        "[退出码 2]",
+        "指纹不一致 / 冻结完整性破坏"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-selected_cases\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-selected_cases\\stderr.txt",
+      "stdout_sha256": "D128AA67EA052B346B6E1A06CEEB5652B7140815D08E5F8AFAB1E0DA6C3E81EF",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "可恢复篡改 frozen_inputs.selected_cases"
+    },
+    {
+      "test": "T7b-restored-selected_cases",
+      "ok": true,
+      "detail": "恢复后哈希一致=True（64B6F3CF6EB5722B）"
+    },
+    {
+      "test": "T7-tamper-expected_fingerprints_v1",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        2
+      ],
+      "asserts": [
+        "[退出码 2]",
+        "指纹不一致 / 冻结完整性破坏"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-expected_fingerprints_v1\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-expected_fingerprints_v1\\stderr.txt",
+      "stdout_sha256": "4501A4923DE728FE515AD0535EC34DDF0E441829E0037BB521FACF95C9821D29",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "可恢复篡改 frozen_inputs.expected_fingerprints_v1"
+    },
+    {
+      "test": "T7b-restored-expected_fingerprints_v1",
+      "ok": true,
+      "detail": "恢复后哈希一致=True（72F8A588E9F19DF4）"
+    },
+    {
+      "test": "T7-tamper-authorization_review",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        2
+      ],
+      "asserts": [
+        "[退出码 2]",
+        "指纹不一致 / 冻结完整性破坏"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-authorization_review\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-authorization_review\\stderr.txt",
+      "stdout_sha256": "17336840F4DA5685A4455496C6C4C59EA8B219F007D31A853E0D1221E243DC55",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "可恢复篡改 authorization_review"
+    },
+    {
+      "test": "T7b-restored-authorization_review",
+      "ok": true,
+      "detail": "恢复后哈希一致=True（AC867B702AEF25ED）"
+    },
+    {
+      "test": "T7-tamper-current_manifest",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        2
+      ],
+      "asserts": [
+        "[退出码 2]",
+        "指纹不一致 / 冻结完整性破坏"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-current_manifest\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-current_manifest\\stderr.txt",
+      "stdout_sha256": "D843D7CF115B3509AA5248F8EFEF7DFEDA9E1ED64E1756B512FC93BACA27DE8E",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "可恢复篡改 current_manifest"
+    },
+    {
+      "test": "T7b-restored-current_manifest",
+      "ok": true,
+      "detail": "恢复后哈希一致=True（4BDB9278D7D93360）"
+    },
+    {
+      "test": "T7-tamper-engine",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        2
+      ],
+      "asserts": [
+        "[退出码 2]",
+        "指纹不一致 / 冻结完整性破坏"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-engine\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-engine\\stderr.txt",
+      "stdout_sha256": "ED88A3BA59530D38AC426F713ED6FA32DF03D1C200CA6D611CDFDC65687ADEF8",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "可恢复篡改 engine"
+    },
+    {
+      "test": "T7b-restored-engine",
+      "ok": true,
+      "detail": "恢复后哈希一致=True（2DB2D828424C17D2）"
+    },
+    {
+      "test": "T8-threshold_must_be_3",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py --report G:\\ds-h\\_xexp\\v6-anchor\\logs\\T8-threshold_must_be_3\\verify-report.json",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        3
+      ],
+      "asserts": [
+        "尚未选择正式案例"
+      ],
+      "missing_asserts": [],
+      "ok": false,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T8-threshold_must_be_3\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T8-threshold_must_be_3\\stderr.txt",
+      "stdout_sha256": "8F9175E56E8DE3B35B8FC75AA724F1D751A7174F44CF70975D9267C8E97DD315",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "无正式案例 + 人工审查未完成 → 必须 3，不得 0"
+    },
+    {
+      "test": "T8-threshold_must_be_3-report_exit_code",
+      "ok": true,
+      "detail": "报告 exit_code=2 / 进程退出码=2 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0"
+    },
+    {
+      "test": "T8b-not_zero",
+      "ok": true,
+      "detail": "实测退出码 2 不等于 0"
+    },
+    {
+      "test": "T9-anchor_missing",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py",
+      "cwd": "G:\\ds-h",
+      "exit_code": 2,
+      "expected_exit_codes": [
+        2
+      ],
+      "asserts": [
+        "[退出码 2]",
+        "锚点文件存在"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T9-anchor_missing\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T9-anchor_missing\\stderr.txt",
+      "stdout_sha256": "A827B295ABB4E3A559B5E50CBC01B5F68B0C228B9D922BC5C01949BF31463E3D",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "锚点缺失 → 期望 2"
+    },
+    {
+      "test": "T9b-anchor_restored",
+      "ok": true,
+      "detail": "锚点恢复后哈希一致=True"
+    },
+    {
+      "test": "T10-no_anchor_diagnostic",
+      "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py --no-anchor --report G:\\ds-h\\_xexp\\v6-anchor\\logs\\T10-no_anchor_diagnostic\\verify-report.json",
+      "cwd": "G:\\ds-h",
+      "exit_code": 3,
+      "expected_exit_codes": [
+        3
+      ],
+      "asserts": [
+        "已跳过锚点核验",
+        "警告（不改变退出码）"
+      ],
+      "missing_asserts": [],
+      "ok": true,
+      "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T10-no_anchor_diagnostic\\stdout.txt",
+      "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T10-no_anchor_diagnostic\\stderr.txt",
+      "stdout_sha256": "BBF84277607B233A67D8615686058E74341787F81D29A37C67AF411C43D2EDBC",
+      "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "note": "诊断模式：记录警告，结论不得用于受理"
+    },
+    {
+      "test": "T10-no_anchor_diagnostic-report_exit_code",
+      "ok": true,
+      "detail": "报告 exit_code=3 / 进程退出码=3 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0"
+    },
+    {
+      "test": "Z-baseline_unchanged",
+      "ok": true,
+      "detail": "HEAD 未变=True，tree 未变=True，status 空=True",
+      "before": {
+        "head": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+        "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+        "dirty": []
+      },
+      "after": {
+        "head": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+        "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+        "dirty": []
+      }
+    }
+  ],
+  "passed": 25,
+  "total": 27
+}

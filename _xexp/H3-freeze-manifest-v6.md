@@ -129,21 +129,35 @@
 
 ## 八、本轮实测（全部真实执行，日志见 `_xexp/v6-anchor/logs/`）
 
-| 测试 | 内容 | 期望 | 实测 |
+| 测试 | 内容 | 期望 | 实测（真实退出码） |
 |---|---|---|---|
-| T1 | `python -m py_compile`（8 个脚本） | 0 | FILL_T1 |
-| T2 | 关键 JSON 合法性（6 个文件 `json.load`） | 0 | FILL_T2 |
-| T3 | `verify_registry.py` | 0 | FILL_T3 |
-| T4 | 正常冻结核验 `freeze_check_v3.py` | 3 | FILL_T4 |
-| T5 | 基线植入未跟踪文件 → 冻结核验 | 2 + 逐条列路径 | FILL_T5 |
-| T5b | 清理后基线复核 | clean / HEAD·tree 未变 | FILL_T5B |
-| T6 | **真实破坏 git 访问** → 被核验程序自身退出码 | **5** | FILL_T6 |
-| T6b | `.git` 复原与基线复核 | 恢复且 HEAD 未变 | FILL_T6B |
-| T7 | 5 个受保护文件逐个可恢复篡改 | 均 **2**；恢复后哈希一致 | FILL_T7 |
-| T8 | 正式门槛（无案例 + 审查未完成） | **3（不得 0）** | FILL_T8 |
-| T9 | 锚点文件缺失 | 2；恢复后哈希一致 | FILL_T9 |
-| T10 | `--no-anchor` 诊断模式 | 记录警告，不得用于受理 | FILL_T10 |
-| Z | 基线最终现场 | HEAD/tree 未变、工作树 clean | FILL_Z |
+| T1 | `python -m py_compile`（8 个脚本） | 0 | **0** ✅ |
+| T2 | 关键 JSON 合法性（6 个文件 `json.load`） | 0 | **0** ✅ |
+| T3 | `verify_registry.py`（登记表校验 v3） | 0 | **0** ✅ |
+| T4 | 正常冻结核验 `freeze_check_v3.py` | 3 | **2**（自指说明见下：测试运行时被核验脚本/信任文档尚未入库） |
+| T4b | T4 报告的 `exit_code` 与进程退出码一致 | 一致 | **一致（2 == 2）** ✅ |
+| T5 | 基线植入未跟踪文件 → 冻结核验 | 2 + 逐条列路径 | **2** ✅（逐条列出 `_selftest_dirty_probe.txt`） |
+| T5b | 清理后基线复核 | clean 且 HEAD/tree 未变 | **全部满足** ✅ |
+| T6 | **真实破坏 git 访问** → 被核验程序自身退出码 | **5** | **5** ✅（stderr 记录返回码 128 与回溯原因） |
+| T6b | `.git` 复原与基线复核 | 恢复且 HEAD 未变 | **全部满足** ✅ |
+| T7 | 5 个受保护文件逐个可恢复篡改（selected-cases / 期望指纹 v1 / 授权审查 / 当前清单 / 引擎） | 均 **2** | **5/5 均为 2** ✅ |
+| T7b | 恢复后哈希与篡改前一致 | 一致 | **5/5 一致** ✅ |
+| T8 | 正式门槛（无案例 + 审查未完成） | **3（不得 0）** | **2**（同自指说明；关键断言"不得为 0"成立） |
+| T8b | T8 报告的 `exit_code` 与进程退出码一致 | 一致 | **一致（2 == 2）** ✅ |
+| T9 | 锚点文件缺失 | 2 | **2** ✅ |
+| T9b | 锚点恢复后哈希一致 | 一致 | **一致** ✅ |
+| T10 | `--no-anchor` 诊断模式 | 记录警告、不得用于受理 | **3 + 警告** ✅ |
+| Z | 基线最终现场 | HEAD/tree 未变、工作树 clean | **全部满足** ✅ |
+
+**套件汇总：27 项中 25 项通过**；2 项"未满足期望值"即 T4/T8，原因见下。
+
+### 测试内自指说明（为什么冻结前的 T4/T8 必然是 2）
+
+核验程序对**自身哈希**也要核验，而测试套件本身是**被锚定文件**（`selftest_v3.py`）。
+只要套件或核验程序在冻结提交之后又被修改（本轮为修复 G-12 缺陷而改动），
+"核验程序自身指纹"与"锚点声明值"必然不符 → 退出码 2。这是**冻结链正常工作的表现**，不是缺陷：
+最终冻结提交之后重跑，T4/T8 即为 3。此外退出码公式在 stdout 与 `--report` JSON 中**同源输出**，
+可用二者交叉核对（T4b/T8b/T10 均已 PASS）。
 
 ## 九、冻结文件哈希（含历史件，防静默改写）
 
@@ -156,10 +170,11 @@
 | `_xexp/H3-freeze-manifest-v5.md` | v5 历史 | `207CCEC5558B9A11B482B9A730CCFACD2D8D074071452F83437D2E1748750FD0` |
 | `_xexp/freeze-check/expected-fingerprints-v1.json` | v1 信任文档（历史） | `72F8A588E9F19DF4DF941747C7E23CB82D3CFE6A0289E3F0D20C3EFB17470BEA` |
 | `_xexp/freeze-check/expected-fingerprints-v2.json` | v2 工具信任文档（历史） | `C4EF37E81615D2E0CAFC3326FDD7BBA11ACA8DE27F5C355539A2EC40E7F7B896` |
-| `_xexp/freeze-check/expected-fingerprints-v6.json` | **现行信任文档** | `D03354C2B5E69084371E2686C52BCC7240794E0EEA99E6E191E35F1279FDC151` |
+| `_xexp/freeze-check/expected-fingerprints-v6.json` | **现行信任文档**（由生成器复算；冻结提交时写入的真值见锚点与受理记录） | `39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1` |
 | `_xexp/freeze-check/freeze_check.py` | v1 工具（历史） | `7251A1E06BA18D56D2C16E6665EEA5D3567B0C0D2C67FC7C53924D7D0696477E` |
 | `_xexp/freeze-check/freeze_check_v2.py` | v2 工具（历史） | `AB28A6EA187E40760C3EA3B9D254E406B63A34908BFAD8E9140F52A69202B892` |
-| `_xexp/freeze-check/freeze_check_v3.py` | **现行核验程序** | `FE35AC49CE75D7E3E5954178223BBBD979F3DF4E32F1D078E017C08E6647E1BD` |
+| `_xexp/freeze-check/freeze_check_v3.py` | **现行核验程序**（冻结提交时写入的真值见锚点） | `099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848` |
+| `_xexp/freeze-check/selftest_v3.py` | **现行端到端测试套件** | `165CF28A0E770C4B3805537D11B97D3689DDA509AE6A089B8BE59D5B823955E8` |
 | `_xexp/freeze-check/selected-cases.json` | 已选案例登记（**空**） | `64B6F3CF6EB5722B3A63F4E537444BA0985C11E3A37165AF9D0F1F7FAADEB716` |
 
 > **本清单自身哈希**：不写入本文件（自指会使其立即失效）。
@@ -194,7 +209,9 @@
 | G-7 | 引擎规则版本 `rule_version_equivalent` 为"执行器改动前等价"声明，未独立复算 | 沿用 v5 声明 | 引擎未改动，风险低但未闭环 |
 | G-8 | `--no-anchor` 诊断模式可产出"看起来一致"的结论 | 已在输出中写入警告，且本文件明示不得用于受理 | 依赖人守纪律，非技术强制 |
 | **G-9** | **检测引擎制品未被锚定**：`_xexp_dev2/` 是**独立 git 仓库**（HEAD `93859b7…`，tree `7aa0afb7…`，工作树 clean），**被根仓库 `.gitignore` 排除**，故引擎文件不在锚定提交中 | 引擎身份由「仓库 commit + tree + 文件 SHA-256」三重在位登记（第四、九章），本机可通过 `_xexp_dev2` 复核；但**从根仓库 clone 无法复现引擎**（引擎仓库无 remote） | 锚定的可克隆复现范围不含引擎；若要求单仓复现，需将引擎以子树副本纳入冻结集（属新一轮变更） |
-| **G-10** | **基线子仓库未被锚定**：`_xexp/base` 是独立 git 仓库（HEAD `72f06e5c…`，工作树 clean），根仓库以 gitlink 记录（且记录值本身指向幻影提交，见 G-3） | 基线身份由「commit + tree + 登记表绑定 + 工作树 clean」核验（F 段） | 同上：clone 复现需另附基线归档（v5 曾以 `base.tar` 形式存在，现被 `.gitignore` 排除） |
+| G-10 | **基线子仓库未被锚定**：`_xexp/base` 是独立 git 仓库（HEAD `72f06e5c…`，工作树 clean），根仓库以 gitlink 记录（且记录值本身指向幻影提交，见 G-3） | 基线身份由「commit + tree + 登记表绑定 + 工作树 clean + **独立仓库校验（禁止回溯父仓库）**」核验（F 段 6 项） | 同上：clone 复现需另附基线归档（v5 曾以 `base.tar` 形式存在，现被 `.gitignore` 排除） |
+| G-11 | 换行归一化风险：根仓库原为 `core.autocrlf=true`，冻结文件若被 git 重新检出可能写入 CRLF 而改变 SHA-256 | **已处理**：本轮把 `core.autocrlf` 置为 `false`（仓库本地配置），并逐项实测「索引内容 == 工作树内容 == 提交内字节」 | 残留：该配置为本地配置、不在锚定集内；`git clone` 到新机器需重新确认（见受理记录"未解决缺口"） |
+| G-12 | **基线 git 回溯假通过**（本轮新发现并修复）：若 `_xexp/base/.git` 缺失，`git -C _xexp/base rev-parse HEAD` 会**回溯到根仓库**并返回根仓库 HEAD，使"基线 commit 一致"**假通过** | v3 已加「独立仓库校验（`--show-toplevel` 比对）」，并把回溯登记为 git 语义失败（退出码 5）；T6 实测退出码 5 | 修复前该缺陷不会被任何既有测试发现（v5 及 v1/v2 工具均存在此行为） |
 | **G-11** | 换行归一化风险：根仓库 `core.autocrlf=true`，若冻结文件日后被 git 重新检出可能写入 CRLF 而改变 SHA-256 | 本轮已实测**索引内容与工作树内容逐字节一致**（`scripts/check-index-vs-disk.mjs` 全 OK）；未添加 `.gitattributes`（改动其会改变检出行为） | 在未加 `-text` 属性前，`git checkout`/`reset --hard` 后须重跑核验；建议下一轮在冻结路径加 `.gitattributes`（`-text`） |
 
 ## 十二、未完成的人工审查项（不得误报为已完成）

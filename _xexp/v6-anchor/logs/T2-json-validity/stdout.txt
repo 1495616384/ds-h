@@ -1,0 +1,6 @@
+OK G:\ds-h\_xexp\risk-registry\RISK-REGISTRY-v1.json 7
+OK G:\ds-h\_xexp\h3-case-protocol\H3-constraint-authorization-review-v1.json 9
+OK G:\ds-h\_xexp\freeze-check\expected-fingerprints-v1.json 8
+OK G:\ds-h\_xexp\freeze-check\expected-fingerprints-v6.json 17
+OK G:\ds-h\_xexp\freeze-check\selected-cases.json 4
+OK G:\ds-h\_xexp\v6-anchor\freeze-anchor.json 15

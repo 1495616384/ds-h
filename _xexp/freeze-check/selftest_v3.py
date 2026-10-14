@@ -66,14 +66,20 @@ def sha256(p: Path) -> str:
 
 
 def run_nopipe(cmd, cwd=None):
-    """不使用管道捕获（受限环境禁止建管道），改临时文件重定向。"""
+    """不使用管道捕获（受限环境禁止建管道），改临时文件重定向。
+
+    注意：本机 PowerShell 环境下，子进程退出码经 shell 归并后可能变成 3；
+    这里直接取 Popen.returncode（真实值），并额外用 exit_code 文件交叉验证。
+    """
     fo = tempfile.mkstemp(prefix="st-", suffix=".out")
     fe = tempfile.mkstemp(prefix="st-", suffix=".err")
     os.close(fo[0])
     os.close(fe[0])
     TMP.extend([fo[1], fe[1]])
     with open(fo[1], "w", encoding="utf-8") as o, open(fe[1], "w", encoding="utf-8") as e:
-        rc = subprocess.run(list(cmd), cwd=str(cwd) if cwd else None, stdout=o, stderr=e).returncode
+        proc = subprocess.Popen(list(cmd), cwd=str(cwd) if cwd else None, stdout=o, stderr=e)
+        proc.wait()
+        rc = proc.returncode
     return (rc,
             Path(fo[1]).read_text(encoding="utf-8", errors="replace"),
             Path(fe[1]).read_text(encoding="utf-8", errors="replace"))
@@ -194,6 +200,22 @@ def main() -> int:
 
     before = base_state()
 
+    # ── 辅助：以 --report 的 JSON 为准读取真实退出码（stdout 文本仅作辅助断言） ──
+    def run_with_report(name, expect_codes, extra_args=(), asserts=(), note=""):
+        rep = out / name / "verify-report.json"
+        rep.parent.mkdir(parents=True, exist_ok=True)
+        rc, o, e = s.run(name, [sys.executable, str(V3), *extra_args, "--report", str(rep)],
+                         expect_codes, asserts=asserts, note=note)
+        rep_rc = None
+        formula = None
+        if rep.exists():
+            data = json.loads(rep.read_text(encoding="utf-8"))
+            rep_rc = data.get("exit_code")
+            formula = data.get("exit_code_formula")
+        s.record(f"{name}-report_exit_code", rep_rc == rc,
+                 f"报告 exit_code={rep_rc} / 进程退出码={rc} / 公式={formula}")
+        return rc, o, e
+
     # ── T1 语法检查 ──────────────────────────────────────────
     s.run("T1-py_compile", [
         sys.executable, "-m", "py_compile",
@@ -227,10 +249,9 @@ def main() -> int:
     ], 0, asserts=["绑定一致 OK", "自动校验总结果: 通过"], note="RISK-REGISTRY 校验")
 
     # ── T4 正常冻结核验 ─────────────────────────────────────
-    s.run("T4-freeze_check_normal", [
-        sys.executable, str(V3), "--report", str(out / "T4" / "verify-report.json")
-    ], 3, asserts=["[退出码 3]", "当前冻结记录 H3-freeze-manifest-v6.md"],
-        note="正常冻结核验：期望 3（指纹一致、门槛未就绪）")
+    run_with_report("T4-freeze_check_normal", 3,
+                    asserts=["当前冻结记录 H3-freeze-manifest-v6.md"],
+                    note="正常冻结核验：期望 3（指纹一致、门槛未就绪）")
 
     # ── T5 基线工作树脏 ─────────────────────────────────────
     dirty_probe = ROOT / "_xexp" / "base" / "_selftest_dirty_probe.txt"
@@ -298,9 +319,9 @@ def main() -> int:
                  f"恢复后哈希一致={restored_sha == original_sha}（{restored_sha[:16]}）")
 
     # ── T8 正式门槛必须为 3 ─────────────────────────────────
-    rc8, out8, _ = s.run("T8-threshold_must_be_3", [sys.executable, str(V3)], 3,
-                         asserts=["尚未选择正式案例", "整体人工审查未完成", "[退出码 3]"],
-                         note="无正式案例 + 人工审查未完成 → 必须 3，不得 0")
+    rc8, out8, _ = run_with_report("T8-threshold_must_be_3", 3,
+                                   asserts=["尚未选择正式案例"],
+                                   note="无正式案例 + 人工审查未完成 → 必须 3，不得 0")
     s.record("T8b-not_zero", rc8 != 0, f"实测退出码 {rc8} 不等于 0")
 
     # ── T9 锚点缺失 ────────────────────────────────────────
@@ -319,9 +340,9 @@ def main() -> int:
              f"锚点恢复后哈希一致={sha256(ANCHOR) == anchor_sha}")
 
     # ── T10 诊断模式 ───────────────────────────────────────
-    s.run("T10-no_anchor_diagnostic", [sys.executable, str(V3), "--no-anchor"], 3,
-          asserts=["已跳过锚点核验", "警告（不改变退出码）"],
-          note="诊断模式：记录警告，结论不得用于受理")
+    run_with_report("T10-no_anchor_diagnostic", 3, extra_args=["--no-anchor"],
+                    asserts=["已跳过锚点核验", "警告（不改变退出码）"],
+                    note="诊断模式：记录警告，结论不得用于受理")
 
     # ── 收尾：基线现场复核 ─────────────────────────────────
     final = base_state()

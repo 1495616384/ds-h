@@ -15,12 +15,12 @@
   },
   "verifier": {
     "path": "_xexp/freeze-check/freeze_check_v3.py",
-    "sha256": "BA8BB4DB530E4DC4E1F1534001663FD4BA4A61B607CA02340322F2DC302036E5",
+    "sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
     "note": "权威核验程序；本值必须与锚点的 verifier_declared_sha256 一致（锚点校验不过 → 退出码 2）"
   },
   "current_manifest": {
     "file": "_xexp/H3-freeze-manifest-v6.md",
-    "sha256": "B84472D250BD7F98611EBCC97A105783A85CB892C3BDDA91DF0F7AF6AF24C07E",
+    "sha256": "92AB4D26D05F008C0FCBE1B4A78FD7B6E12FFE5CEF956FFB8C222058CF09CBBD",
     "note": "当前有效冻结记录；每名历史记录均登记以便探测历史改写"
   },
   "historical_manifests": {
@@ -153,7 +153,7 @@
     },
     "selftest_v3": {
       "path": "_xexp/freeze-check/selftest_v3.py",
-      "sha256": "2729BFA1D10B359086FBE75E8916053D1DEB6AFBBBBACC27C460D3A621F93578",
+      "sha256": "165CF28A0E770C4B3805537D11B97D3689DDA509AE6A089B8BE59D5B823955E8",
       "note": "v3 端到端测试套件（脏树 / git 失败 / 篡改 / 门槛 / 锚点）"
     }
   },

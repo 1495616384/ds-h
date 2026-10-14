@@ -1,0 +1,2 @@
+F:\ProgramData\anaconda3\python.exe G:\ds-h\_xexp\risk-registry\verify_registry.py
+(cwd=G:\ds-h)

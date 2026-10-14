@@ -1,0 +1,45 @@
+registry_version: RISK-REGISTRY v1
+条目总数: 13
+根目录: G:\ds-h
+
+=== 1. 八字段齐备与值域 ===
+  全部 13 条目八字段齐备 OK
+  值域合规 OK
+
+=== 2. constraint_id 唯一性 ===
+  13 个 ID 全部唯一 OK
+
+=== 3. required_evidence 来源可访问性（对冻结基线路径存在性）===
+  已解析 19 个基线内路径，全部存在；其余条目均带显式缺失/待补声明 OK
+
+=== 4. change_control / severity / action_policy 一致性 ===
+  规则 R1-R5 全部通过 OK
+
+=== 5. 待决（PENDING）条目使用限制 ===
+  5 个待决条目均未标记为阻断 OK
+  已声明规则：severity=PENDING 的条目不得用于判定 ALARM_HIGH（须先补齐证据）
+    - AU-001: change_control=PENDING severity=high
+    - TZ-001: change_control=PENDING severity=high
+    - FZ-001: change_control=PENDING severity=PENDING
+    - DS-001: change_control=PENDING severity=normal
+    - PERM-000: change_control=PENDING severity=PENDING
+
+=== 6. 登记表与冻结基线绑定关系 ===
+  登记表记录 commit: 72f06e5c66b8797ae51b95f1ae9bc871be1eccbc
+  实测基线   commit: 72f06e5c66b8797ae51b95f1ae9bc871be1eccbc
+  登记表记录 tree  : 2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2
+  实测基线   tree  : 2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2
+  绑定一致 OK
+
+=== 自动校验总结果: 通过 ===
+（git 输出捕获方式：pipe）
+
+=== MANUAL REVIEW（脚本不可验证的语义内容，须人工审查）===
+  ① impact_rationale 是否真正证成其 severity（因果成立，而非断言）
+  ② constraint_type 归类是否正确（权限/安全/完整性/公共接口/验收）
+  ③ expected_invariant 是否可判定（无歧义、可被测试或人工核验）
+  ④ action_policy 是否符合项目既定政策（阻断/复核/警告的取舍）
+  ⑤ 证据是否真支撑不变量（如 03_CDM §8/§9 条文是否确如所引）
+  ⑥ 待决条目的待决理由是否充分（是否本可判定而误判为待决）
+  ⑦ 登记表完整性：是否存在应登记而未登记的高风险约束（结构检查无法发现遗漏）
+  ⑧ 与引擎 HIGH_RISK_CONTRACT_FUNCS 的差异是否被如实记录（不得据此反推 severity）

@@ -1,0 +1,2 @@
+F:\ProgramData\anaconda3\python.exe G:\ds-h\_xexp\freeze-check\freeze_check_v3.py --report G:\ds-h\_xexp\v6-anchor\logs\T8-threshold_must_be_3\verify-report.json
+(cwd=G:\ds-h)

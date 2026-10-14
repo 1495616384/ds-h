@@ -103,12 +103,41 @@ def git_run(*args):
     return rc, out.strip(), err.strip()
 
 
-def blob_sha256_at(repo: Path, rev: str, path: str):
-    """取 git 提交中某路径的 blob 字节内容并算 SHA-256；返回 (status, value)。"""
+def toplevel_of(repo: Path):
+    """返回该路径所属 git 仓库的顶层目录（解析符号链接/长路径后比较）。
+
+    重要性：若目标目录**不是**独立仓库，`git -C <dir> rev-parse HEAD` 会**向上层目录回溯**
+    并返回父仓库的 HEAD——这会制造"基线 commit 一致"的**假通过**。本函数用于显式拦截该情形。
+    """
+    rc, out, err = git_run("-C", str(repo), "rev-parse", "--show-toplevel")
+    if rc != 0:
+        return rc, "", err
+    return rc, str(Path(out).resolve()).replace("\\", "/").lower(), ""
+
+
+def note_derived_git_failure(args, err):
+    """把"因目标非独立仓库而导致的 git 语义失败"登记为 git 错误（去重）。
+
+    这些调用本身可能返回 0（父仓库可用），但对**目标路径**而言属于真实失败；
+    必须登记，否则会以退出码 2 掩盖"git 语义失败"，而退出码 5 才是正确口径。
+    """
+    entry = (args, 128, err)
+    if entry not in GIT_ERRORS and not any(e[0] == args for e in GIT_ERRORS):
+        GIT_ERRORS.append(entry)
+
+
+def blob_bytes_at(repo: Path, rev: str, path: str):
+    """取 git 提交中某路径的 blob 原始字节；返回 (status, bytes, err)。"""
     rc2, raw, err2 = _cat_file_bytes(repo, rev, path)
     if rc2 != 0:
-        return "GIT_FAIL", err2
-    return "OK", hashlib.sha256(raw).hexdigest().upper()
+        return "GIT_FAIL", b"", err2
+    return "OK", raw, ""
+
+
+def git_blob_object_id(data: bytes) -> str:
+    """按 git 对象格式复算 blob 的 SHA-1（'blob <len>\\0' + 内容）。"""
+    header = f"blob {len(data)}\0".encode("utf-8")
+    return hashlib.sha1(header + data).hexdigest()
 
 
 def _cat_file_bytes(repo: Path, rev: str, path: str):
@@ -241,6 +270,14 @@ def main() -> int:
                 act, act == ta.get("content_sha256"))
 
         # E2 各锚定文件的 git blob 与磁盘内容一致性
+        tlrc, tl, tlerr = toplevel_of(repo)
+        exp_tl = str(repo.resolve()).replace("\\", "/").lower()
+        add("E 独立锚点", "锚点仓库为独立 git 仓库（不得回溯）", exp_tl[-40:],
+            tl[-40:] if tl else f"<{tlerr or 'git 失败'}>", tlrc == 0 and tl == exp_tl)
+        if tlrc != 0 or tl != exp_tl:
+            note_derived_git_failure(("-C", str(repo), "rev-parse", "--show-toplevel"),
+                                     f"锚点仓库不是独立 git 仓库：toplevel={tl or '<空>'}，"
+                                     f"期望 {exp_tl}；git 已回溯到上层仓库（{tlerr or 'rc=0'}）")
         rc, head, _ = git_run("-C", str(repo), "rev-parse", commit)
         add("E 独立锚点", "锚定提交存在", commit[:16], head[:16] if rc == 0 else "<不可解析>",
             rc == 0 and head == commit)
@@ -252,9 +289,19 @@ def main() -> int:
             add("E 独立锚点", f"{key} 磁盘内容 == 锚定内容", item["content_sha256"],
                 sha256(fp) if fp.exists() else "<缺失>", disk_ok)
             if isinstance(item.get("git_blob"), str) and len(item["git_blob"]) > 20:
-                st, val = blob_sha256_at(repo, commit, item["path"])
-                add("E 独立锚点", f"{key} git blob 与提交一致", item["git_blob"][:16], str(val)[:16],
-                    st == "OK" and val == item["git_blob"], "" if st == "OK" else st)
+                st, raw, err = blob_bytes_at(repo, commit, item["path"])
+                if st != "OK":
+                    add("E 独立锚点", f"{key} git blob 与提交一致", item["git_blob"][:16], st,
+                        False, err[:60])
+                    continue
+                blob_content = hashlib.sha256(raw).hexdigest().upper()
+                blob_id = git_blob_object_id(raw)
+                ok_c = blob_content == item.get("content_sha256")
+                ok_b = blob_id == item["git_blob"]
+                add("E 独立锚点", f"{key} 提交内内容 == 锚定内容", item["content_sha256"][:16],
+                    blob_content[:16], ok_c, "提交内字节与磁盘不一致" if not ok_c else "")
+                add("E 独立锚点", f"{key} git blob 对象 ID 与锚点一致", item["git_blob"][:16],
+                    blob_id[:16], ok_b, "" if ok_b else "blob 对象 ID 不符")
 
         # E3 锚点自身不参与自证：改为核验"独立留存文件"是否存在（ANCHOR-COMMIT.md）
         sr = anchor_data.get("self_reference") or {}
@@ -308,11 +355,22 @@ def main() -> int:
 
     bl = exp["baseline"]
     base = root / bl["path"]
+    tl_rc, tl, tl_err = toplevel_of(base)
+    expected_tl = str(base.resolve()).replace("\\", "/").lower()
+    add("F 基线", "基线为独立 git 仓库（不得回溯父仓库）", expected_tl[-40:],
+        tl[-40:] if tl else f"<{tl_err or 'git 失败'}>", tl_rc == 0 and tl == expected_tl,
+        "若基线 .git 缺失，git 会回溯到父仓库并返回父仓库 HEAD —— 必须显式拦截")
+    if tl_rc != 0 or tl != expected_tl:
+        note_derived_git_failure(("-C", str(base), "rev-parse", "--show-toplevel"),
+                                 f"基线不是独立 git 仓库：toplevel={tl or '<空>'}，"
+                                 f"期望 {expected_tl}；git 已回溯到上层仓库（{tl_err or 'rc=0'}）")
     rc1, a_commit, _ = git_run("-C", str(base), "rev-parse", "HEAD")
     rc2, a_tree, _ = git_run("-C", str(base), "rev-parse", "HEAD^{tree}")
     rc3, a_status, _ = git_run("-C", str(base), "status", "--porcelain")
-    add("F 基线", "commit", bl["commit"], a_commit, rc1 == 0 and a_commit == bl["commit"])
-    add("F 基线", "tree", bl["tree"], a_tree, rc2 == 0 and a_tree == bl["tree"])
+    add("F 基线", "commit", bl["commit"], a_commit,
+        rc1 == 0 and a_commit == bl["commit"] and tl == expected_tl)
+    add("F 基线", "tree", bl["tree"], a_tree,
+        rc2 == 0 and a_tree == bl["tree"] and tl == expected_tl)
     dirty = [ln for ln in a_status.splitlines() if ln.strip()]
     if rc3 != 0:
         wt_state, wt_actual = "GIT_FAIL", "<git 失败>"
@@ -393,7 +451,15 @@ def main() -> int:
     print("\n=== 结论 ===")
     print(f"（git 输出捕获方式：{GIT_CAPTURE_MODE or '未调用'}）")
     exit_code, verdict = None, ""
+
+    def emit(code, text):
+        """唯一落点：print 出的退出码与函数返回的退出码同源，避免三者不一致。"""
+        print(f"\n  [退出码 {code}] {text}")
+        return code
+
     if GIT_ERRORS:
+        print(f"  git 错误 {len(GIT_ERRORS)} 条；同时指纹失败项 {len(fails)} 条"
+              f"（git 失败本身必然导致基线类项失败，明细见上）")
         exit_code, verdict = 5, "git 命令执行失败（基线项已按失败处理）"
     elif fails:
         exit_code, verdict = 2, "指纹不一致 / 冻结完整性破坏"
@@ -416,8 +482,11 @@ def main() -> int:
         else:
             exit_code, verdict = 0, "全部通过，正式门槛就绪"
 
-    print(f"\n  [退出码 {exit_code}] {verdict}")
-    print(f"  统计：检查项 {len(checks)}，通过 {len(checks) - len(fails)}，失败 {len(fails)}，警告 {len(warn)}")
+    exit_code = emit(exit_code, verdict)
+    print(f"  统计：检查项 {len(checks)}，通过 {len(checks) - len(fails)}，失败 {len(fails)}，"
+          f"警告 {len(warn)}，git 错误 {len(GIT_ERRORS)}")
+    print("  退出码公式：git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；"
+          "否则门槛未就绪→3；否则→0（首个命中即取值，与函数返回码同源）")
 
     if args.report:
         rp_out = Path(args.report)
@@ -445,6 +514,7 @@ def main() -> int:
             "formal_cases": len(cases),
             "manual_review_completed": auth.get("manual_review_completed", None),
             "exit_code": exit_code,
+            "exit_code_formula": "git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0",
             "verdict": verdict,
             "checked_at": datetime.datetime.now().isoformat(timespec="seconds"),
         }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
