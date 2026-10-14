@@ -9,7 +9,7 @@
 [OK  ] 核验程序自身（信任文档声明）                               期望 099DC2E59DAC1BA3 实测 099DC2E59DAC1BA3
 
 -- B 冻结记录 --
-[OK  ] 当前冻结记录 H3-freeze-manifest-v6.md              期望 4BDB9278D7D93360 实测 4BDB9278D7D93360
+[OK  ] 当前冻结记录 H3-freeze-manifest-v6.md              期望 56B53477BAED695C 实测 56B53477BAED695C
 [OK  ] 历史记录 H3-freeze-manifest.md                   期望 059CF06A6B04DAC9 实测 059CF06A6B04DAC9
 [OK  ] 历史记录 H3-freeze-manifest-v2.md                期望 79D71385E4229DCB 实测 79D71385E4229DCB
 [OK  ] 历史记录 H3-freeze-manifest-v3.md                期望 D88F2A71AB1A1267 实测 D88F2A71AB1A1267

@@ -9,7 +9,7 @@
 [OK  ] 核验程序自身（信任文档声明）                               期望 099DC2E59DAC1BA3 实测 099DC2E59DAC1BA3
 
 -- B 冻结记录 --
-[OK  ] 当前冻结记录 H3-freeze-manifest-v6.md              期望 4BDB9278D7D93360 实测 4BDB9278D7D93360
+[OK  ] 当前冻结记录 H3-freeze-manifest-v6.md              期望 56B53477BAED695C 实测 56B53477BAED695C
 [OK  ] 历史记录 H3-freeze-manifest.md                   期望 059CF06A6B04DAC9 实测 059CF06A6B04DAC9
 [OK  ] 历史记录 H3-freeze-manifest-v2.md                期望 79D71385E4229DCB 实测 79D71385E4229DCB
 [OK  ] 历史记录 H3-freeze-manifest-v3.md                期望 D88F2A71AB1A1267 实测 D88F2A71AB1A1267
@@ -41,21 +41,21 @@
 [OK  ] selftest_v3                                  期望 165CF28A0E770C4B 实测 165CF28A0E770C4B
 
 -- E 独立锚点 --
-[OK  ] 信任文档（期望指纹）未被静默改写                             期望 39C244B02F222FF8 实测 39C244B02F222FF8
+[OK  ] 信任文档（期望指纹）未被静默改写                             期望 16477F51501F010F 实测 16477F51501F010F
 [OK  ] 锚点仓库为独立 git 仓库（不得回溯）                         期望 g:/ds-h          实测 g:/ds-h         
-[OK  ] 锚定提交存在                                       期望 2a720383d1059c8d 实测 2a720383d1059c8d
-[OK  ] current_manifest 磁盘内容 == 锚定内容                期望 4BDB9278D7D93360 实测 4BDB9278D7D93360
-[FAIL] current_manifest 提交内内容 == 锚定内容               期望 4BDB9278D7D93360 实测 B84472D250BD7F98   [提交内字节与磁盘不一致]
-[OK  ] current_manifest git blob 对象 ID 与锚点一致        期望 b9f26ca6e0235c84 实测 b9f26ca6e0235c84
-[OK  ] expected_fingerprints 磁盘内容 == 锚定内容           期望 39C244B02F222FF8 实测 39C244B02F222FF8
-[FAIL] expected_fingerprints 提交内内容 == 锚定内容          期望 39C244B02F222FF8 实测 76D750E9997E7E6C   [提交内字节与磁盘不一致]
-[OK  ] expected_fingerprints git blob 对象 ID 与锚点一致   期望 7ff57ced912b41d9 实测 7ff57ced912b41d9
+[OK  ] 锚定提交存在                                       期望 4595ae252deee001 实测 4595ae252deee001
+[OK  ] current_manifest 磁盘内容 == 锚定内容                期望 56B53477BAED695C 实测 56B53477BAED695C
+[OK  ] current_manifest 提交内内容 == 锚定内容               期望 56B53477BAED695C 实测 56B53477BAED695C
+[OK  ] current_manifest git blob 对象 ID 与锚点一致        期望 9bb1db98d475d908 实测 9bb1db98d475d908
+[OK  ] expected_fingerprints 磁盘内容 == 锚定内容           期望 16477F51501F010F 实测 16477F51501F010F
+[OK  ] expected_fingerprints 提交内内容 == 锚定内容          期望 16477F51501F010F 实测 16477F51501F010F
+[OK  ] expected_fingerprints git blob 对象 ID 与锚点一致   期望 85a3cfa329dd40d1 实测 85a3cfa329dd40d1
 [OK  ] verifier 磁盘内容 == 锚定内容                        期望 099DC2E59DAC1BA3 实测 099DC2E59DAC1BA3
-[FAIL] verifier 提交内内容 == 锚定内容                       期望 099DC2E59DAC1BA3 实测 BA8BB4DB530E4DC4   [提交内字节与磁盘不一致]
-[OK  ] verifier git blob 对象 ID 与锚点一致                期望 c26a1d9c258056ec 实测 c26a1d9c258056ec
+[OK  ] verifier 提交内内容 == 锚定内容                       期望 099DC2E59DAC1BA3 实测 099DC2E59DAC1BA3
+[OK  ] verifier git blob 对象 ID 与锚点一致                期望 cad779def67158f7 实测 cad779def67158f7
 [OK  ] selftest_v3 磁盘内容 == 锚定内容                     期望 165CF28A0E770C4B 实测 165CF28A0E770C4B
-[FAIL] selftest_v3 提交内内容 == 锚定内容                    期望 165CF28A0E770C4B 实测 2729BFA1D10B3590   [提交内字节与磁盘不一致]
-[OK  ] selftest_v3 git blob 对象 ID 与锚点一致             期望 dae16574302ac8b4 实测 dae16574302ac8b4
+[OK  ] selftest_v3 提交内内容 == 锚定内容                    期望 165CF28A0E770C4B 实测 165CF28A0E770C4B
+[OK  ] selftest_v3 git blob 对象 ID 与锚点一致             期望 9f5852c1a52f50a5 实测 9f5852c1a52f50a5
 [OK  ] expected_fingerprints_v1 磁盘内容 == 锚定内容        期望 72F8A588E9F19DF4 实测 72F8A588E9F19DF4
 [OK  ] expected_fingerprints_v1 提交内内容 == 锚定内容       期望 72F8A588E9F19DF4 实测 72F8A588E9F19DF4
 [OK  ] expected_fingerprints_v1 git blob 对象 ID 与锚点一致 期望 28c05b66c86f4219 实测 28c05b66c86f4219
@@ -139,12 +139,8 @@ manual_review_completed: <字段缺失，视为未完成>
 
 === 结论 ===
 （git 输出捕获方式：pipe）
-    - [E 独立锚点] current_manifest 提交内内容 == 锚定内容
-    - [E 独立锚点] expected_fingerprints 提交内内容 == 锚定内容
-    - [E 独立锚点] verifier 提交内内容 == 锚定内容
-    - [E 独立锚点] selftest_v3 提交内内容 == 锚定内容
     - [F 基线] 工作树干净
 
   [退出码 2] 指纹不一致 / 冻结完整性破坏
-  统计：检查项 101，通过 96，失败 5，警告 1，git 错误 0
+  统计：检查项 101，通过 100，失败 1，警告 1，git 错误 0
   退出码公式：git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0（首个命中即取值，与函数返回码同源）

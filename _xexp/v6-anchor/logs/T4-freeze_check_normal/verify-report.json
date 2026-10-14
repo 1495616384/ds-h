@@ -5,10 +5,10 @@
   "tool_registered_in_trust_doc": true,
   "root": "G:\\ds-h",
   "trust_doc": "G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v6.json",
-  "trust_doc_sha256": "39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1",
+  "trust_doc_sha256": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
   "anchor": "G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
-  "anchor_sha256": "C854AB78E0A688BA1FDB6C840294E2FF02CA85E875F00804AC7EE339C7E8BC23",
-  "anchor_commit": "2a720383d1059c8d239c8ea423d472358502428d",
+  "anchor_sha256": "672EF29E58AB5FF6BB5423EFB206178DBAEBA493EB51F53A1D75005D77BAB28E",
+  "anchor_commit": "4595ae252deee0010a65644c8bc4b60153013c88",
   "anchor_used": true,
   "git_capture_mode": "pipe",
   "checks": [
@@ -23,8 +23,8 @@
     {
       "section": "B 冻结记录",
       "item": "当前冻结记录 H3-freeze-manifest-v6.md",
-      "expected": "4BDB9278D7D93360E15F0641884710F823EA9BF2F5CB51759634FC838CE07A93",
-      "actual": "4BDB9278D7D93360E15F0641884710F823EA9BF2F5CB51759634FC838CE07A93",
+      "expected": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
+      "actual": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
       "ok": true,
       "note": ""
     },
@@ -215,8 +215,8 @@
     {
       "section": "E 独立锚点",
       "item": "信任文档（期望指纹）未被静默改写",
-      "expected": "39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1",
-      "actual": "39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1",
+      "expected": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
+      "actual": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
       "ok": true,
       "note": ""
     },
@@ -231,56 +231,56 @@
     {
       "section": "E 独立锚点",
       "item": "锚定提交存在",
-      "expected": "2a720383d1059c8d",
-      "actual": "2a720383d1059c8d",
+      "expected": "4595ae252deee001",
+      "actual": "4595ae252deee001",
       "ok": true,
       "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "current_manifest 磁盘内容 == 锚定内容",
-      "expected": "4BDB9278D7D93360E15F0641884710F823EA9BF2F5CB51759634FC838CE07A93",
-      "actual": "4BDB9278D7D93360E15F0641884710F823EA9BF2F5CB51759634FC838CE07A93",
+      "expected": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
+      "actual": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
       "ok": true,
       "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "current_manifest 提交内内容 == 锚定内容",
-      "expected": "4BDB9278D7D93360",
-      "actual": "B84472D250BD7F98",
-      "ok": false,
-      "note": "提交内字节与磁盘不一致"
+      "expected": "56B53477BAED695C",
+      "actual": "56B53477BAED695C",
+      "ok": true,
+      "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "current_manifest git blob 对象 ID 与锚点一致",
-      "expected": "b9f26ca6e0235c84",
-      "actual": "b9f26ca6e0235c84",
+      "expected": "9bb1db98d475d908",
+      "actual": "9bb1db98d475d908",
       "ok": true,
       "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "expected_fingerprints 磁盘内容 == 锚定内容",
-      "expected": "39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1",
-      "actual": "39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1",
+      "expected": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
+      "actual": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
       "ok": true,
       "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "expected_fingerprints 提交内内容 == 锚定内容",
-      "expected": "39C244B02F222FF8",
-      "actual": "76D750E9997E7E6C",
-      "ok": false,
-      "note": "提交内字节与磁盘不一致"
+      "expected": "16477F51501F010F",
+      "actual": "16477F51501F010F",
+      "ok": true,
+      "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "expected_fingerprints git blob 对象 ID 与锚点一致",
-      "expected": "7ff57ced912b41d9",
-      "actual": "7ff57ced912b41d9",
+      "expected": "85a3cfa329dd40d1",
+      "actual": "85a3cfa329dd40d1",
       "ok": true,
       "note": ""
     },
@@ -296,15 +296,15 @@
       "section": "E 独立锚点",
       "item": "verifier 提交内内容 == 锚定内容",
       "expected": "099DC2E59DAC1BA3",
-      "actual": "BA8BB4DB530E4DC4",
-      "ok": false,
-      "note": "提交内字节与磁盘不一致"
+      "actual": "099DC2E59DAC1BA3",
+      "ok": true,
+      "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "verifier git blob 对象 ID 与锚点一致",
-      "expected": "c26a1d9c258056ec",
-      "actual": "c26a1d9c258056ec",
+      "expected": "cad779def67158f7",
+      "actual": "cad779def67158f7",
       "ok": true,
       "note": ""
     },
@@ -320,15 +320,15 @@
       "section": "E 独立锚点",
       "item": "selftest_v3 提交内内容 == 锚定内容",
       "expected": "165CF28A0E770C4B",
-      "actual": "2729BFA1D10B3590",
-      "ok": false,
-      "note": "提交内字节与磁盘不一致"
+      "actual": "165CF28A0E770C4B",
+      "ok": true,
+      "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "selftest_v3 git blob 对象 ID 与锚点一致",
-      "expected": "dae16574302ac8b4",
-      "actual": "dae16574302ac8b4",
+      "expected": "9f5852c1a52f50a5",
+      "actual": "9f5852c1a52f50a5",
       "ok": true,
       "note": ""
     },
@@ -845,8 +845,8 @@
   ],
   "formal_cases": 0,
   "manual_review_completed": null,
-  "exit_code": 2,
+  "exit_code": 3,
   "exit_code_formula": "git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0",
-  "verdict": "指纹不一致 / 冻结完整性破坏",
-  "checked_at": "2026-10-14T10:39:28"
+  "verdict": "指纹一致，但正式门槛未就绪",
+  "checked_at": "2026-10-14T10:43:15"
 }

@@ -5,9 +5,9 @@
   "tool_registered_in_trust_doc": true,
   "root": "G:\\ds-h",
   "trust_doc": "G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v6.json",
-  "trust_doc_sha256": "39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1",
+  "trust_doc_sha256": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
   "anchor": "G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
-  "anchor_sha256": "C854AB78E0A688BA1FDB6C840294E2FF02CA85E875F00804AC7EE339C7E8BC23",
+  "anchor_sha256": "672EF29E58AB5FF6BB5423EFB206178DBAEBA493EB51F53A1D75005D77BAB28E",
   "anchor_commit": null,
   "anchor_used": false,
   "git_capture_mode": "pipe",
@@ -23,8 +23,8 @@
     {
       "section": "B 冻结记录",
       "item": "当前冻结记录 H3-freeze-manifest-v6.md",
-      "expected": "4BDB9278D7D93360E15F0641884710F823EA9BF2F5CB51759634FC838CE07A93",
-      "actual": "4BDB9278D7D93360E15F0641884710F823EA9BF2F5CB51759634FC838CE07A93",
+      "expected": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
+      "actual": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
       "ok": true,
       "note": ""
     },
@@ -305,5 +305,5 @@
   "exit_code": 3,
   "exit_code_formula": "git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0",
   "verdict": "指纹一致，但正式门槛未就绪",
-  "checked_at": "2026-10-14T10:39:42"
+  "checked_at": "2026-10-14T10:43:28"
 }

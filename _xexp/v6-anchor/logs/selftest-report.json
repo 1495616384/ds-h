@@ -1,13 +1,13 @@
 {
   "suite": "selftest_v3.py",
-  "run_at": "2026-10-14T10:39:42",
+  "run_at": "2026-10-14T10:43:29",
   "root": "G:\\ds-h",
   "out_dir": "G:\\ds-h\\_xexp\\v6-anchor\\logs",
   "freeze_check_v3_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
   "trust_doc": "G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v6.json",
-  "trust_doc_sha256": "39C244B02F222FF840CA4DC56D66C9C9D36B17A0511ADD85B0A2BDB2182AB8A1",
+  "trust_doc_sha256": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
   "anchor": "G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
-  "anchor_sha256": "C854AB78E0A688BA1FDB6C840294E2FF02CA85E875F00804AC7EE339C7E8BC23",
+  "anchor_sha256": "672EF29E58AB5FF6BB5423EFB206178DBAEBA493EB51F53A1D75005D77BAB28E",
   "baseline_before": {
     "head": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
     "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
@@ -79,7 +79,7 @@
       "test": "T4-freeze_check_normal",
       "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py --report G:\\ds-h\\_xexp\\v6-anchor\\logs\\T4-freeze_check_normal\\verify-report.json",
       "cwd": "G:\\ds-h",
-      "exit_code": 2,
+      "exit_code": 3,
       "expected_exit_codes": [
         3
       ],
@@ -87,17 +87,17 @@
         "当前冻结记录 H3-freeze-manifest-v6.md"
       ],
       "missing_asserts": [],
-      "ok": false,
+      "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T4-freeze_check_normal\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T4-freeze_check_normal\\stderr.txt",
-      "stdout_sha256": "9E0AAC916887C2BE382AA647C4231165FF9787F95D3C31080F0B61F15F8470EB",
+      "stdout_sha256": "C55AF861327C0D24BDB664E2306C00E1EB771940304381FE3DBCD453C4B71AE7",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "正常冻结核验：期望 3（指纹一致、门槛未就绪）"
     },
     {
       "test": "T4-freeze_check_normal-report_exit_code",
       "ok": true,
-      "detail": "报告 exit_code=2 / 进程退出码=2 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0"
+      "detail": "报告 exit_code=3 / 进程退出码=3 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0"
     },
     {
       "test": "T5-worktree_dirty",
@@ -117,7 +117,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T5-worktree_dirty\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T5-worktree_dirty\\stderr.txt",
-      "stdout_sha256": "D6132FBABC9A801876128FA70D3B0A9D90CE7FE92982559BE0227A7A0C95423B",
+      "stdout_sha256": "965E2A4858EBEA0810CFE10D8EF7B699CF87E471119C39292F3A472E76D10480",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "植入未跟踪文件 → 期望 2 且逐条列出路径"
     },
@@ -164,7 +164,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-selected_cases\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-selected_cases\\stderr.txt",
-      "stdout_sha256": "D128AA67EA052B346B6E1A06CEEB5652B7140815D08E5F8AFAB1E0DA6C3E81EF",
+      "stdout_sha256": "CB0755349D02C0ED2192C186AD7D17F0E311B2D127E487330ACDDAB04B093237",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 frozen_inputs.selected_cases"
     },
@@ -189,7 +189,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-expected_fingerprints_v1\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-expected_fingerprints_v1\\stderr.txt",
-      "stdout_sha256": "4501A4923DE728FE515AD0535EC34DDF0E441829E0037BB521FACF95C9821D29",
+      "stdout_sha256": "8A4C0E0758B72054F05B00633E5F4C5E09CFA08B3D986A996F6599E0A39AB273",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 frozen_inputs.expected_fingerprints_v1"
     },
@@ -214,7 +214,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-authorization_review\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-authorization_review\\stderr.txt",
-      "stdout_sha256": "17336840F4DA5685A4455496C6C4C59EA8B219F007D31A853E0D1221E243DC55",
+      "stdout_sha256": "62FF7066D1AE8538105F3B4C513FB8BBF8823214359DA1850EAB62586BB333D5",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 authorization_review"
     },
@@ -239,14 +239,14 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-current_manifest\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-current_manifest\\stderr.txt",
-      "stdout_sha256": "D843D7CF115B3509AA5248F8EFEF7DFEDA9E1ED64E1756B512FC93BACA27DE8E",
+      "stdout_sha256": "4D2870EB1DAB38B26D6767B5EEA8EFC325D74CB4361D0AC90146E2160BB80B11",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 current_manifest"
     },
     {
       "test": "T7b-restored-current_manifest",
       "ok": true,
-      "detail": "恢复后哈希一致=True（4BDB9278D7D93360）"
+      "detail": "恢复后哈希一致=True（56B53477BAED695C）"
     },
     {
       "test": "T7-tamper-engine",
@@ -264,7 +264,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-engine\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-engine\\stderr.txt",
-      "stdout_sha256": "ED88A3BA59530D38AC426F713ED6FA32DF03D1C200CA6D611CDFDC65687ADEF8",
+      "stdout_sha256": "46766EB75C0C3AE391A8E320D06F79EA47A7BA24C78D520C77528C1908B99383",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 engine"
     },
@@ -277,7 +277,7 @@
       "test": "T8-threshold_must_be_3",
       "cmd": "F:\\ProgramData\\anaconda3\\python.exe G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py --report G:\\ds-h\\_xexp\\v6-anchor\\logs\\T8-threshold_must_be_3\\verify-report.json",
       "cwd": "G:\\ds-h",
-      "exit_code": 2,
+      "exit_code": 3,
       "expected_exit_codes": [
         3
       ],
@@ -285,22 +285,22 @@
         "尚未选择正式案例"
       ],
       "missing_asserts": [],
-      "ok": false,
+      "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T8-threshold_must_be_3\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T8-threshold_must_be_3\\stderr.txt",
-      "stdout_sha256": "8F9175E56E8DE3B35B8FC75AA724F1D751A7174F44CF70975D9267C8E97DD315",
+      "stdout_sha256": "2E09C10D90FA32DB3195F0DA590D9CACBEC393C5A4D69D92CCA530406B3DA69A",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "无正式案例 + 人工审查未完成 → 必须 3，不得 0"
     },
     {
       "test": "T8-threshold_must_be_3-report_exit_code",
       "ok": true,
-      "detail": "报告 exit_code=2 / 进程退出码=2 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0"
+      "detail": "报告 exit_code=3 / 进程退出码=3 / 公式=git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0"
     },
     {
       "test": "T8b-not_zero",
       "ok": true,
-      "detail": "实测退出码 2 不等于 0"
+      "detail": "实测退出码 3 不等于 0"
     },
     {
       "test": "T9-anchor_missing",
@@ -318,7 +318,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T9-anchor_missing\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T9-anchor_missing\\stderr.txt",
-      "stdout_sha256": "A827B295ABB4E3A559B5E50CBC01B5F68B0C228B9D922BC5C01949BF31463E3D",
+      "stdout_sha256": "38A57B13E9BD3EDDB5E03C36EDE915216EE1A60EA1BE77515E1E5A5BA813071C",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "锚点缺失 → 期望 2"
     },
@@ -343,7 +343,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T10-no_anchor_diagnostic\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T10-no_anchor_diagnostic\\stderr.txt",
-      "stdout_sha256": "BBF84277607B233A67D8615686058E74341787F81D29A37C67AF411C43D2EDBC",
+      "stdout_sha256": "2475B40150427CB89C5C40390594767BFB4443BE31F648BFD09B616EE6126524",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "诊断模式：记录警告，结论不得用于受理"
     },
@@ -368,6 +368,6 @@
       }
     }
   ],
-  "passed": 25,
+  "passed": 27,
   "total": 27
 }

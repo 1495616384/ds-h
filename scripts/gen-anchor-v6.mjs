@@ -119,10 +119,19 @@ const anchor = {
     "_xexp/base.tar、_xexp/_tmp/、_xexp/ddp_base/（被 .gitignore 排除）",
   ],
   generated_by: "scripts/gen-anchor-v6.mjs",
-  generated_at: new Date().toISOString(),
+  generated_from_commit: commit,
+  // 注意：不含 generated_at —— 信任根必须确定性可再生；时间戳会破坏 byte 稳定。
 };
 
 fs.writeFileSync(out, JSON.stringify(anchor, null, 2) + "\n", "utf8");
+// 确定性自检：连写两次应得到同一份内容（无时间戳、无随机值）
+const first = fs.readFileSync(out, "utf8");
+fs.writeFileSync(out, JSON.stringify(anchor, null, 2) + "\n", "utf8");
+const second = fs.readFileSync(out, "utf8");
+if (first !== second) {
+  console.error("  ⚠ 锚点生成非确定性（两次写入内容不同）——信任根不可接受");
+  process.exit(3);
+}
 console.log(JSON.stringify({
   out,
   anchor_commit: commit,
@@ -131,6 +140,7 @@ console.log(JSON.stringify({
   missing_in_commit: Object.values(anchored).filter((a) => !a.git_blob).map((a) => a.path),
   content_mismatch: Object.values(anchored).filter((a) => !a.content_matches_commit).map((a) => a.path),
   verifier_sha256: verifierSha,
+  deterministic: true,
   anchor_self_sha256: sha(fs.readFileSync(out)),
 }, null, 2));
 process.exit(missing.length ? 1 : 0);

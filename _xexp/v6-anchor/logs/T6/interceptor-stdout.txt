@@ -1,10 +1,10 @@
 ������������������˳��� = 5
 git ʧ�����Ƭ�Σ�
   | [OK  ] ê��ֿ�Ϊ���� git �ֿ⣨���û��ݣ�                         ���� g:/ds-h          ʵ�� g:/ds-h         
-  | [OK  ] current_manifest git blob ���� ID ��ê��һ��        ���� b9f26ca6e0235c84 ʵ�� b9f26ca6e0235c84
-  | [OK  ] expected_fingerprints git blob ���� ID ��ê��һ��   ���� 7ff57ced912b41d9 ʵ�� 7ff57ced912b41d9
-  | [OK  ] verifier git blob ���� ID ��ê��һ��                ���� c26a1d9c258056ec ʵ�� c26a1d9c258056ec
-  | [OK  ] selftest_v3 git blob ���� ID ��ê��һ��             ���� dae16574302ac8b4 ʵ�� dae16574302ac8b4
+  | [OK  ] current_manifest git blob ���� ID ��ê��һ��        ���� 9bb1db98d475d908 ʵ�� 9bb1db98d475d908
+  | [OK  ] expected_fingerprints git blob ���� ID ��ê��һ��   ���� 85a3cfa329dd40d1 ʵ�� 85a3cfa329dd40d1
+  | [OK  ] verifier git blob ���� ID ��ê��һ��                ���� cad779def67158f7 ʵ�� cad779def67158f7
+  | [OK  ] selftest_v3 git blob ���� ID ��ê��һ��             ���� 9f5852c1a52f50a5 ʵ�� 9f5852c1a52f50a5
   | [OK  ] expected_fingerprints_v1 git blob ���� ID ��ê��һ�� ���� 28c05b66c86f4219 ʵ�� 28c05b66c86f4219
   | [OK  ] expected_fingerprints_v2 git blob ���� ID ��ê��һ�� ���� 02134c48690c639b ʵ�� 02134c48690c639b
   | [OK  ] selected_cases git blob ���� ID ��ê��һ��          ���� 06fc45e435a0ba7b ʵ�� 06fc45e435a0ba7b
@@ -29,8 +29,8 @@ git ʧ�����Ƭ�Σ�
   |     stderr : ���߲��Ƕ��� git �ֿ⣺toplevel=g:/ds-h������ g:/ds-h/_xexp/base��git �ѻ��ݵ��ϲ�ֿ⣨rc=0��
   | === ���棨���ı��˳��룩===
   | ��git �������ʽ��pipe��
-  |   git ���� 1 ����ͬʱָ��ʧ���� 10 ����git ʧ�ܱ�����Ȼ���»�������ʧ�ܣ���ϸ���ϣ�
+  |   git ���� 1 ����ͬʱָ��ʧ���� 6 ����git ʧ�ܱ�����Ȼ���»�������ʧ�ܣ���ϸ���ϣ�
   |   [�˳��� 5] git ����ִ��ʧ�ܣ��������Ѱ�ʧ�ܴ�����
-  |   ͳ�ƣ������ 101��ͨ�� 91��ʧ�� 10������ 1��git ���� 1
+  |   ͳ�ƣ������ 101��ͨ�� 95��ʧ�� 6������ 1��git ���� 1
   |   �˳��빫ʽ��git �����5������ָ��/����ʧ�ܡ�2������δ��Ȩ���á�4�������ż�δ������3�������0���׸����м�ȡֵ���뺯��������ͬԴ��
 ��������.git �ѻָ� = True
