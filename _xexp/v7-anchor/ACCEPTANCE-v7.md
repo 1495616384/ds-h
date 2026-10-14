@@ -232,7 +232,7 @@
 | 推送前远端 HEAD | `893535dddd78860ecb6afe42529fd4afcc63e839`（与本地 `master` 同值） |
 | 本轮修订首发提交 | `27a96370022f203614ba1e3a7ed9affa73fe8581`（父 `893535dd…`，提交时间 2026-10-14 15:13:49 +0800；仅含 `ACCEPTANCE-v7.md` 与 `ANCHOR-COMMIT.md`，`2 files changed, 183 insertions(+), 30 deletions(-)`） |
 | 推送命令 / 真实退出码 | `git push origin master` / **0**（`893535d..27a9637  master -> master`） |
-| 推送后远端 HEAD | `27a96370022f203614ba1e3a7ed9affa73fe8581`（`git ls-remote origin refs/heads/master` rc=0，与本地 HEAD 同值） |
+| 首次推送后远端 HEAD | `27a96370022f203614ba1e3a7ed9affa73fe8581`（`git ls-remote origin refs/heads/master` rc=0，与本地 HEAD 同值） |
 | 仓库可见性 | **未改变**（仍为 public；本次操作未触碰可见性设置） |
 | 历史改写手段 | **未使用** `--amend`、`rebase`、`reset --hard`、强制推送 |
 | 推送后工作树 | `git status --porcelain` 空 |
