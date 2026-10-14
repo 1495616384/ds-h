@@ -1,0 +1,184 @@
+{
+  "anchor_schema": "freeze-anchor-v1",
+  "purpose": "X 项目 H3 冻结链的独立信任锚点：以内容寻址的 git 提交固定各冻结制品的字节内容，供任何第三方不依赖核验程序自行复核。",
+  "anchor_repo": ".",
+  "anchor_repo_abs": "G:/ds-h",
+  "anchor_commit": "2a720383d1059c8d239c8ea423d472358502428d",
+  "anchor_commit_tree": "f8892da99a19fddd0493b3df7eea38024961d3d1",
+  "anchor_commit_meta": {
+    "sha": "2a720383d1059c8d239c8ea423d472358502428d",
+    "tree": "f8892da99a19fddd0493b3df7eea38024961d3d1",
+    "author": "dsh",
+    "date": "Wed Oct 14 10:34:02 2026 +0800",
+    "subject": "X H3 冻结链修复：Manifest v6 + 独立信任锚点（阶段1 冻结制品）"
+  },
+  "anchored_files": {
+    "current_manifest": {
+      "path": "_xexp/H3-freeze-manifest-v6.md",
+      "content_sha256": "B84472D250BD7F98611EBCC97A105783A85CB892C3BDDA91DF0F7AF6AF24C07E",
+      "committed_content_sha256": "B84472D250BD7F98611EBCC97A105783A85CB892C3BDDA91DF0F7AF6AF24C07E",
+      "content_matches_commit": true,
+      "git_blob": "b9f26ca6e0235c842cf9a7d3d73cba6269a9784e"
+    },
+    "expected_fingerprints": {
+      "path": "_xexp/freeze-check/expected-fingerprints-v6.json",
+      "content_sha256": "76D750E9997E7E6C7B8BC1C7081464D61D7C3DEEEB4DC921F595598D6BC7E918",
+      "committed_content_sha256": "76D750E9997E7E6C7B8BC1C7081464D61D7C3DEEEB4DC921F595598D6BC7E918",
+      "content_matches_commit": true,
+      "git_blob": "7ff57ced912b41d9c3fa2756a870dc6da10fd9d2"
+    },
+    "verifier": {
+      "path": "_xexp/freeze-check/freeze_check_v3.py",
+      "content_sha256": "BA8BB4DB530E4DC4E1F1534001663FD4BA4A61B607CA02340322F2DC302036E5",
+      "committed_content_sha256": "BA8BB4DB530E4DC4E1F1534001663FD4BA4A61B607CA02340322F2DC302036E5",
+      "content_matches_commit": true,
+      "git_blob": "c26a1d9c258056ecf7b985b7b8002234de21b994"
+    },
+    "selftest_v3": {
+      "path": "_xexp/freeze-check/selftest_v3.py",
+      "content_sha256": "2729BFA1D10B359086FBE75E8916053D1DEB6AFBBBBACC27C460D3A621F93578",
+      "committed_content_sha256": "2729BFA1D10B359086FBE75E8916053D1DEB6AFBBBBACC27C460D3A621F93578",
+      "content_matches_commit": true,
+      "git_blob": "dae16574302ac8b48c7e9e4f0fdbd7028b0b1466"
+    },
+    "expected_fingerprints_v1": {
+      "path": "_xexp/freeze-check/expected-fingerprints-v1.json",
+      "content_sha256": "72F8A588E9F19DF4DF941747C7E23CB82D3CFE6A0289E3F0D20C3EFB17470BEA",
+      "committed_content_sha256": "72F8A588E9F19DF4DF941747C7E23CB82D3CFE6A0289E3F0D20C3EFB17470BEA",
+      "content_matches_commit": true,
+      "git_blob": "28c05b66c86f42193aba5e280f674f2b4d75f529"
+    },
+    "expected_fingerprints_v2": {
+      "path": "_xexp/freeze-check/expected-fingerprints-v2.json",
+      "content_sha256": "C4EF37E81615D2E0CAFC3326FDD7BBA11ACA8DE27F5C355539A2EC40E7F7B896",
+      "committed_content_sha256": "C4EF37E81615D2E0CAFC3326FDD7BBA11ACA8DE27F5C355539A2EC40E7F7B896",
+      "content_matches_commit": true,
+      "git_blob": "02134c48690c639b5fca9e91b647035bbdd7a57b"
+    },
+    "selected_cases": {
+      "path": "_xexp/freeze-check/selected-cases.json",
+      "content_sha256": "64B6F3CF6EB5722B3A63F4E537444BA0985C11E3A37165AF9D0F1F7FAADEB716",
+      "committed_content_sha256": "64B6F3CF6EB5722B3A63F4E537444BA0985C11E3A37165AF9D0F1F7FAADEB716",
+      "content_matches_commit": true,
+      "git_blob": "06fc45e435a0ba7be7c1b54b9deaff653e9cb79e"
+    },
+    "case_protocol": {
+      "path": "_xexp/h3-case-protocol/H3-case-registration-protocol-v1.md",
+      "content_sha256": "EB416BA9D41650A2F722329B28C2DD1277516E7B69C11E661E489CB3F63D4544",
+      "committed_content_sha256": "EB416BA9D41650A2F722329B28C2DD1277516E7B69C11E661E489CB3F63D4544",
+      "content_matches_commit": true,
+      "git_blob": "fd52421509d712ae7fd96bb295fe92f3c178bfe2"
+    },
+    "authorization_review": {
+      "path": "_xexp/h3-case-protocol/H3-constraint-authorization-review-v1.json",
+      "content_sha256": "AC867B702AEF25EDFEC4CF62F156F064EF131DB00D8B350795D5181791F65518",
+      "committed_content_sha256": "AC867B702AEF25EDFEC4CF62F156F064EF131DB00D8B350795D5181791F65518",
+      "content_matches_commit": true,
+      "git_blob": "582094b8b320e10c6b5941f9b3e27a55a4508b0b"
+    },
+    "risk_registry": {
+      "path": "_xexp/risk-registry/RISK-REGISTRY-v1.json",
+      "content_sha256": "981FB92AD80104AE9D66D877EC82ABE29D250893AF759F39A134DAB1D02FC5D0",
+      "committed_content_sha256": "981FB92AD80104AE9D66D877EC82ABE29D250893AF759F39A134DAB1D02FC5D0",
+      "content_matches_commit": true,
+      "git_blob": "c1f069ae6b8abd1dbf11ae104aebd7f9818c43bb"
+    },
+    "registry_verifier": {
+      "path": "_xexp/risk-registry/verify_registry.py",
+      "content_sha256": "BE2109BB228EF572CD7A97233E8BB2E85F1569774DBB5A2C907275A8548155DA",
+      "committed_content_sha256": "BE2109BB228EF572CD7A97233E8BB2E85F1569774DBB5A2C907275A8548155DA",
+      "content_matches_commit": true,
+      "git_blob": "f6400bb938399598975ee396d6f59e7bec530549"
+    },
+    "registry_selftest": {
+      "path": "_xexp/risk-registry/selftest_registry_v3.py",
+      "content_sha256": "EE27C65D2BC23386F4FDC700D76AF607309657F851F993B13A7251D36445D394",
+      "committed_content_sha256": "EE27C65D2BC23386F4FDC700D76AF607309657F851F993B13A7251D36445D394",
+      "content_matches_commit": true,
+      "git_blob": "985f9b1aaa5002d368a2454748ec904b3fb931c1"
+    },
+    "proc_capture": {
+      "path": "_xexp/tools/proc_capture.py",
+      "content_sha256": "2B45B0427D508FA4C10D136364E13B6CD9C747C0F489C080304E46A05D7B81C8",
+      "committed_content_sha256": "2B45B0427D508FA4C10D136364E13B6CD9C747C0F489C080304E46A05D7B81C8",
+      "content_matches_commit": true,
+      "git_blob": "493f799e3a0947002ebb40a586b2f5fa74bf316c"
+    },
+    "manifest_v5": {
+      "path": "_xexp/H3-freeze-manifest-v5.md",
+      "content_sha256": "207CCEC5558B9A11B482B9A730CCFACD2D8D074071452F83437D2E1748750FD0",
+      "committed_content_sha256": "207CCEC5558B9A11B482B9A730CCFACD2D8D074071452F83437D2E1748750FD0",
+      "content_matches_commit": true,
+      "git_blob": "c4df68d4b21e3e24c6a6fce2537a95ae89c77532"
+    },
+    "manifest_v4": {
+      "path": "_xexp/H3-freeze-manifest-v4.md",
+      "content_sha256": "27E0B651786B3C94EC133F11247124D7AFB22D8C6CDBC2619145A491F098812C",
+      "committed_content_sha256": "27E0B651786B3C94EC133F11247124D7AFB22D8C6CDBC2619145A491F098812C",
+      "content_matches_commit": true,
+      "git_blob": "95157d3876d1d737693247b5a61ee5bc1843feff"
+    },
+    "manifest_v3": {
+      "path": "_xexp/H3-freeze-manifest-v3.md",
+      "content_sha256": "D88F2A71AB1A126798E6DAD5E3C0EC61D7B1942EB1C889504006E987AC8239D0",
+      "committed_content_sha256": "D88F2A71AB1A126798E6DAD5E3C0EC61D7B1942EB1C889504006E987AC8239D0",
+      "content_matches_commit": true,
+      "git_blob": "57cd970e93b349ac22f6f5c1348580c17c38a760"
+    },
+    "manifest_v2": {
+      "path": "_xexp/H3-freeze-manifest-v2.md",
+      "content_sha256": "79D71385E4229DCB536B90B928F2F3838935CCEC159F754B7EB78358BBFE553E",
+      "committed_content_sha256": "79D71385E4229DCB536B90B928F2F3838935CCEC159F754B7EB78358BBFE553E",
+      "content_matches_commit": true,
+      "git_blob": "1fa87c89e1080505574a02264d19515809825af4"
+    },
+    "manifest_v1": {
+      "path": "_xexp/H3-freeze-manifest.md",
+      "content_sha256": "059CF06A6B04DAC9D895F184C724E958E070C4A50FD2E73414ECEA51D67C4F71",
+      "committed_content_sha256": "059CF06A6B04DAC9D895F184C724E958E070C4A50FD2E73414ECEA51D67C4F71",
+      "content_matches_commit": true,
+      "git_blob": "40dbe3614bc19726b04d2d335185aea532377efc"
+    },
+    "recovery_doc": {
+      "path": "_xexp/v6-anchor/RECOVERY.md",
+      "content_sha256": "A7061B4888A460B6C61A3B2456CE072A0CE92189612931982F1AB1650E186AD7",
+      "committed_content_sha256": "A7061B4888A460B6C61A3B2456CE072A0CE92189612931982F1AB1650E186AD7",
+      "content_matches_commit": true,
+      "git_blob": "0938a932ec22190e3cc185be41f21371d99e77e9"
+    },
+    "expected_gen": {
+      "path": "scripts/gen-expected-v6.mjs",
+      "content_sha256": "668F60DE30D60786EE2F6BC9E5427B38088CDC2D7906658309E24260EA4B6305",
+      "committed_content_sha256": "668F60DE30D60786EE2F6BC9E5427B38088CDC2D7906658309E24260EA4B6305",
+      "content_matches_commit": true,
+      "git_blob": "d9df8906b7b277c389570132029ad360816a625b"
+    },
+    "anchor_gen": {
+      "path": "scripts/gen-anchor-v6.mjs",
+      "content_sha256": "E9E030F57877C0F663C45D571E6338D53DD2A52507474646982EED03D493444E",
+      "committed_content_sha256": "E9E030F57877C0F663C45D571E6338D53DD2A52507474646982EED03D493444E",
+      "content_matches_commit": true,
+      "git_blob": "99399563757a14f10d0af1fc234e2f4f3ce3808e"
+    }
+  },
+  "verifier_declared_sha256": "BA8BB4DB530E4DC4E1F1534001663FD4BA4A61B607CA02340322F2DC302036E5",
+  "verifier_path": "_xexp/freeze-check/freeze_check_v3.py",
+  "self_reference": {
+    "note": "锚点文件无法包含自身哈希（写入即改变自身，属自指）；因此锚点**不自证**。锚点自身哈希与它所在提交，记录在同级 ANCHOR-COMMIT.md 中（作为独立留存值），测试套件与受理记录各自复制一份，形成多重独立留存。",
+    "recorded_in": "_xexp/v6-anchor/ANCHOR-COMMIT.md",
+    "protected_by": "后继提交（anchor 与 ANCHOR-COMMIT.md 一同提交，提交 SHA 与文件哈希互相印证）"
+  },
+  "verification": {
+    "tool": "_xexp/freeze-check/freeze_check_v3.py",
+    "independent_command": "git -C G:\\ds-h cat-file blob <anchor_commit>:<path>  →  SHA-256 应与 anchored_files[*].content_sha256 相等",
+    "recovery_doc": "_xexp/v6-anchor/RECOVERY.md",
+    "rule": "锚点提交建立后，任何被锚定文件变更 → 必须发布新清单 + 新锚点；禁止就地修改。"
+  },
+  "out_of_scope": [
+    "_xexp/base（基线子仓库，独立 git 仓库；由 commit/tree/工作树 clean 核验）",
+    "_xexp_dev2（引擎仓库，独立 git 仓库；由 commit/tree/文件 SHA-256 核验）",
+    "_xexp/base.tar、_xexp/_tmp/、_xexp/ddp_base/（被 .gitignore 排除）"
+  ],
+  "generated_by": "scripts/gen-anchor-v6.mjs",
+  "generated_at": "2026-10-14T02:34:13.301Z"
+}
