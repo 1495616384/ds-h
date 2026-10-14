@@ -8,39 +8,12 @@
 
 - 受理时间：2026-10-14
 - 工作目录：`G:\ds-h`
-- 受理版本：v7（锚定提交 C1 / 锚点提交 C2 的当前值见下方 <!--ANCHOR-VALUES--> 块，由 `sync-anchor-doc-v7.mjs` 回填）
-
-## 一、v6 文件内矛盾对账（审计查明；v6 原样保留，不在 v6 上修补）
-
-> 实测来源：`scripts/_v6-reconcile.mjs`（2026-10-14，27 项磁盘==C1-blob 字节级核验，见 `_xexp/v7-anchor-log/_v6_reconciliation.json`）。
-> 「实测/现行值」以磁盘与 C1(`1c7de009…`) git blob 双确认。
-
-| 编号 | 位置 | v6 声明 | 实测/现行 | 处置 |
-|---|---|---|---|---|
-| V-A | v6 第 63–64 行 | `ANCHOR_*_PLACEHOLDER` | v6 链现行：锚点 `1c7de009…`、锚点文件 `B9415C4E…` | v7 不嵌入占位符，指向独立留存记录（清单 §5.1） |
-| V-B | v6 第 92 行 | 核验程序 `FE35AC49…` | **现行 `099DC2E5…`**（磁盘+C1-blob）；FE35AC49=早期草稿 | v7 全程用 `099DC2E5…`；v6 自相矛盾（92 vs 176 行）已对账 |
-| V-C | v6 第 173 行 | 期望指纹 `39C244B0…` | **现行 `16477F51…`**（磁盘+C1-blob）；39C244B0=中间再生成 | v7 信任文档把 v6 信任文档登记为历史（值 16477F51…） |
-| V-D | v6 ANCHOR-COMMIT §三 | 复核命令硬编码 `2a720383…` | 现行锚定提交 `1c7de009…` | v7 复核命令从锚点文件读取 `anchor_commit`，不硬编码 |
-| V-E | v6 RECOVERY §4.2 | 假设 `self_sha256_bootstrap` | 实际为 `self_reference`（不自证） | v7 RECOVERY 按实际结构重写 |
-| V-F | v6 其余 §九 行 | 部分陈旧 | 与实测一致 | 已对账；v7 重列现行值表 |
-
-## 二、证据状态清单（已核实 / 仅有报告 / 未独立验证）
-
-| 证据项 | 状态 | 说明 |
-|---|---|---|
-| 磁盘 SHA-256（v6 链 27 制品、v7 链 8 文件） | **已核实** | 2026-10-14 直接对字节计算（`hash-v6-set.mjs`、本受理 §四 表） |
-| C1(`1c7de009…`) 的 commit/tree/blob 字节级核验 | **已核实** | `git rev-parse` + `git cat-file blob`（Node 字节安全）→ 27 项 disk==C1-blob |
-| 核验程序现行值 `099DC2E5…` | **已核实** | 磁盘 + v6-C1-blob + v7 信任文档声明 + v6 锚点声明，四处一致 |
-| 期望指纹现行值 `16477F51…` | **已核实** | 磁盘 + v6-C1-blob 一致 |
-| 预冻结核验（--no-anchor） | **已核实** | 退出码 3，35/35 通过（`v7-anchor-log/prefreeze/`） |
-| 终验（含锚点） | **已核实** | 退出码 3，见 §四 终验行（冻结后采集） |
-| 历史 27/27 套件结果（v6 时代） | **仅有报告** | 引用 v6 受理记录 `ACCEPTANCE-v6.md`（`refreeze-summary-*.json` 快照）；本轮未重跑套件（工具未变） |
-| GitHub 公布提交 | **已核实** | 推送后 `git ls-remote` 与提交 SHA 比对（见 §五） |
-
-## 三、v7 冻结链
-
-<!--ANCHOR-VALUES-->
-（由 sync-anchor-doc-v7.mjs 回填）
+- 受理版本：v7（锚定提交 C1 / 锚点提交 C2 的当前值见下方 <!--ANCHOR-VALUES-->
+| 锚点文件 SHA-256 | `4D6AB7F3EE44E5F06626E1B21932D9756C459DB9A00990F520F2E3FB77DB8383` |
+| 锚定提交 C1 | `fa907a0c43ff71b9937df45e41c1d87b53f3fe64`（树 `e653e8e260ff73abb6a1309da83922ae50dd3d79`） |
+| 锚点提交 C2 | `见下方`（本文件随 C2 入库后回填） |
+| 锚定制品数 | `25`（content_mismatch = [] 要求） |
+| 核验程序声明 | `099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848` |
 <!--ANCHOR-VALUES-END-->
 
 | 项 | 值 |
