@@ -17,6 +17,8 @@
 | **锚点文件 SHA-256** | `4D6AB7F3EE44E5F06626E1B21932D9756C459DB9A00990F520F2E3FB77DB8383` |
 | 锚定文件数 | `25`（逐项见下表） |
 
+4D6AB7F3EE44E5F06626E1B21932D9756C459DB9A00990F520F2E3FB77DB8383  _xexp/v7-anchor/freeze-anchor.json（锚点文件自身 SHA-256；供核验程序 E3 独立校验解析，与上表同一值）
+
 ## 二、C1 中制品的 git blob 与内容哈希（实测，字节安全）
 
 | 文件 | git blob（SHA-1） | 内容 SHA-256 | 锚点键 |
