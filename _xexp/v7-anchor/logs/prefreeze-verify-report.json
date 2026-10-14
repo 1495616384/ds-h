@@ -1,0 +1,325 @@
+{
+  "tool": "freeze_check_v3.py",
+  "tool_path": "G:\\ds-h\\_xexp\\freeze-check\\freeze_check_v3.py",
+  "tool_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
+  "tool_registered_in_trust_doc": true,
+  "root": "G:\\ds-h",
+  "trust_doc": "G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v7.json",
+  "trust_doc_sha256": "D46C02C901556D549995911AF4FA7AB1E3B05E45429BE0890E9B8943E80F60EA",
+  "anchor": "G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
+  "anchor_sha256": "B9415C4E45A0DA72EF571C5DDC1AD12B0F3F56894D8DEAC1E06D4B833209F843",
+  "anchor_commit": null,
+  "anchor_used": false,
+  "git_capture_mode": "pipe",
+  "checks": [
+    {
+      "section": "A 程序身份",
+      "item": "核验程序自身（信任文档声明）",
+      "expected": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
+      "actual": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "B 冻结记录",
+      "item": "当前冻结记录 H3-freeze-manifest-v7.md",
+      "expected": "D5E924021FC14FEBB0524CF411FF3AA813CF7952C79715920625690B3CC493EF",
+      "actual": "D5E924021FC14FEBB0524CF411FF3AA813CF7952C79715920625690B3CC493EF",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "B 冻结记录",
+      "item": "历史记录 H3-freeze-manifest.md",
+      "expected": "059CF06A6B04DAC9D895F184C724E958E070C4A50FD2E73414ECEA51D67C4F71",
+      "actual": "059CF06A6B04DAC9D895F184C724E958E070C4A50FD2E73414ECEA51D67C4F71",
+      "ok": true,
+      "note": "改写历史清单即失败"
+    },
+    {
+      "section": "B 冻结记录",
+      "item": "历史记录 H3-freeze-manifest-v2.md",
+      "expected": "79D71385E4229DCB536B90B928F2F3838935CCEC159F754B7EB78358BBFE553E",
+      "actual": "79D71385E4229DCB536B90B928F2F3838935CCEC159F754B7EB78358BBFE553E",
+      "ok": true,
+      "note": "改写历史清单即失败"
+    },
+    {
+      "section": "B 冻结记录",
+      "item": "历史记录 H3-freeze-manifest-v3.md",
+      "expected": "D88F2A71AB1A126798E6DAD5E3C0EC61D7B1942EB1C889504006E987AC8239D0",
+      "actual": "D88F2A71AB1A126798E6DAD5E3C0EC61D7B1942EB1C889504006E987AC8239D0",
+      "ok": true,
+      "note": "改写历史清单即失败"
+    },
+    {
+      "section": "B 冻结记录",
+      "item": "历史记录 H3-freeze-manifest-v4.md",
+      "expected": "27E0B651786B3C94EC133F11247124D7AFB22D8C6CDBC2619145A491F098812C",
+      "actual": "27E0B651786B3C94EC133F11247124D7AFB22D8C6CDBC2619145A491F098812C",
+      "ok": true,
+      "note": "改写历史清单即失败"
+    },
+    {
+      "section": "B 冻结记录",
+      "item": "历史记录 H3-freeze-manifest-v5.md",
+      "expected": "207CCEC5558B9A11B482B9A730CCFACD2D8D074071452F83437D2E1748750FD0",
+      "actual": "207CCEC5558B9A11B482B9A730CCFACD2D8D074071452F83437D2E1748750FD0",
+      "ok": true,
+      "note": "改写历史清单即失败"
+    },
+    {
+      "section": "B 冻结记录",
+      "item": "历史记录 H3-freeze-manifest-v6.md",
+      "expected": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
+      "actual": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
+      "ok": true,
+      "note": "改写历史清单即失败"
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "规范 v1_2_1_current",
+      "expected": "7BFBE4F2C7B4F2240F3AE8F34306A1F6A37CB0277837667D6031CB627312650D",
+      "actual": "7BFBE4F2C7B4F2240F3AE8F34306A1F6A37CB0277837667D6031CB627312650D",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "规范 v1_2_revised",
+      "expected": "8EA1B356500DC41DE91A7140E39CA3838DCE8E847397EA5A7ED8722E678091E2",
+      "actual": "8EA1B356500DC41DE91A7140E39CA3838DCE8E847397EA5A7ED8722E678091E2",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "规范 v1_1_superseded",
+      "expected": "016D79D32AD171CB17EDF7F1DC52F10A27F0389F027780FC4BB93CB5800B172D",
+      "actual": "016D79D32AD171CB17EDF7F1DC52F10A27F0389F027780FC4BB93CB5800B172D",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "规范 v1_0_historical",
+      "expected": "7B1A2E2DBC208831973FA318FAE68322620DF09268DAC3FE7662881D95E35922",
+      "actual": "7B1A2E2DBC208831973FA318FAE68322620DF09268DAC3FE7662881D95E35922",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "RISK-REGISTRY v1",
+      "expected": "981FB92AD80104AE9D66D877EC82ABE29D250893AF759F39A134DAB1D02FC5D0",
+      "actual": "981FB92AD80104AE9D66D877EC82ABE29D250893AF759F39A134DAB1D02FC5D0",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "登记表校验程序",
+      "expected": "BE2109BB228EF572CD7A97233E8BB2E85F1569774DBB5A2C907275A8548155DA",
+      "actual": "BE2109BB228EF572CD7A97233E8BB2E85F1569774DBB5A2C907275A8548155DA",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "案例登记协议 v1",
+      "expected": "EB416BA9D41650A2F722329B28C2DD1277516E7B69C11E661E489CB3F63D4544",
+      "actual": "EB416BA9D41650A2F722329B28C2DD1277516E7B69C11E661E489CB3F63D4544",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "逐条授权审查文件",
+      "expected": "AC867B702AEF25EDFEC4CF62F156F064EF131DB00D8B350795D5181791F65518",
+      "actual": "AC867B702AEF25EDFEC4CF62F156F064EF131DB00D8B350795D5181791F65518",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "C 冻结对象",
+      "item": "检测引擎 detect_x0.py",
+      "expected": "2DB2D828424C17D2B69EB568E2C49E31EC602AD7BA4B3F4354B1A74840BBCD83",
+      "actual": "2DB2D828424C17D2B69EB568E2C49E31EC602AD7BA4B3F4354B1A74840BBCD83",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "D 冻结输入",
+      "item": "expected_fingerprints_v1",
+      "expected": "72F8A588E9F19DF4DF941747C7E23CB82D3CFE6A0289E3F0D20C3EFB17470BEA",
+      "actual": "72F8A588E9F19DF4DF941747C7E23CB82D3CFE6A0289E3F0D20C3EFB17470BEA",
+      "ok": true,
+      "note": "历史信任文档（绑定 Manifest v4）"
+    },
+    {
+      "section": "D 冻结输入",
+      "item": "expected_fingerprints_v2",
+      "expected": "C4EF37E81615D2E0CAFC3326FDD7BBA11ACA8DE27F5C355539A2EC40E7F7B896",
+      "actual": "C4EF37E81615D2E0CAFC3326FDD7BBA11ACA8DE27F5C355539A2EC40E7F7B896",
+      "ok": true,
+      "note": "v2 工具信任文档（历史）"
+    },
+    {
+      "section": "D 冻结输入",
+      "item": "expected_fingerprints_v6",
+      "expected": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
+      "actual": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
+      "ok": true,
+      "note": "v6 链现行信任文档（历史链；其现行冻结值 16477F51… 在 v6 锚点中，见 Manifest v7 对账表）"
+    },
+    {
+      "section": "D 冻结输入",
+      "item": "selected_cases",
+      "expected": "64B6F3CF6EB5722B3A63F4E537444BA0985C11E3A37165AF9D0F1F7FAADEB716",
+      "actual": "64B6F3CF6EB5722B3A63F4E537444BA0985C11E3A37165AF9D0F1F7FAADEB716",
+      "ok": true,
+      "note": "已选正式案例登记（当前为空）"
+    },
+    {
+      "section": "D 冻结工具",
+      "item": "freeze_check_v1_historical",
+      "expected": "7251A1E06BA18D56D2C16E6665EEA5D3567B0C0D2C67FC7C53924D7D0696477E",
+      "actual": "7251A1E06BA18D56D2C16E6665EEA5D3567B0C0D2C67FC7C53924D7D0696477E",
+      "ok": true,
+      "note": "v1 历史"
+    },
+    {
+      "section": "D 冻结工具",
+      "item": "freeze_check_v2_historical",
+      "expected": "AB28A6EA187E40760C3EA3B9D254E406B63A34908BFAD8E9140F52A69202B892",
+      "actual": "AB28A6EA187E40760C3EA3B9D254E406B63A34908BFAD8E9140F52A69202B892",
+      "ok": true,
+      "note": "v2 历史"
+    },
+    {
+      "section": "D 冻结工具",
+      "item": "proc_capture",
+      "expected": "2B45B0427D508FA4C10D136364E13B6CD9C747C0F489C080304E46A05D7B81C8",
+      "actual": "2B45B0427D508FA4C10D136364E13B6CD9C747C0F489C080304E46A05D7B81C8",
+      "ok": true,
+      "note": "受限环境子进程捕获 helper"
+    },
+    {
+      "section": "D 冻结工具",
+      "item": "selftest_v2",
+      "expected": "462987AA8FA2EFE33C3257BF5D8F2E6FAAF2356DD4F4B0A6D637CEBD1B243E43",
+      "actual": "462987AA8FA2EFE33C3257BF5D8F2E6FAAF2356DD4F4B0A6D637CEBD1B243E43",
+      "ok": true,
+      "note": "v2 自测套件（历史）"
+    },
+    {
+      "section": "D 冻结工具",
+      "item": "selftest_registry_v3",
+      "expected": "EE27C65D2BC23386F4FDC700D76AF607309657F851F993B13A7251D36445D394",
+      "actual": "EE27C65D2BC23386F4FDC700D76AF607309657F851F993B13A7251D36445D394",
+      "ok": true,
+      "note": "登记表校验自测套件"
+    },
+    {
+      "section": "D 冻结工具",
+      "item": "selftest_v3",
+      "expected": "165CF28A0E770C4B3805537D11B97D3689DDA509AE6A089B8BE59D5B823955E8",
+      "actual": "165CF28A0E770C4B3805537D11B97D3689DDA509AE6A089B8BE59D5B823955E8",
+      "ok": true,
+      "note": "v3 端到端测试套件（冻结链自身验证）"
+    },
+    {
+      "section": "F 授权判决",
+      "item": "authorized 集合与信任文档一致",
+      "expected": "DI-001,DI-002,NV-001,NV-002,PI-001,PI-002,SEC-001",
+      "actual": "DI-001,DI-002,NV-001,NV-002,PI-001,PI-002,SEC-001",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "F 授权判决",
+      "item": "blocked 集合与信任文档一致",
+      "expected": "AU-001,CV-001,DS-001,FZ-001,PERM-000,TZ-001",
+      "actual": "AU-001,CV-001,DS-001,FZ-001,PERM-000,TZ-001",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "F 基线",
+      "item": "基线为独立 git 仓库（不得回溯父仓库）",
+      "expected": "g:/ds-h/_xexp/base",
+      "actual": "g:/ds-h/_xexp/base",
+      "ok": true,
+      "note": "若基线 .git 缺失，git 会回溯到父仓库并返回父仓库 HEAD —— 必须显式拦截"
+    },
+    {
+      "section": "F 基线",
+      "item": "commit",
+      "expected": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+      "actual": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "F 基线",
+      "item": "tree",
+      "expected": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+      "actual": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "F 基线",
+      "item": "工作树干净",
+      "expected": "<空>",
+      "actual": "<空>",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "F 基线",
+      "item": "登记表声明 commit 与实测",
+      "expected": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+      "actual": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
+      "ok": true,
+      "note": ""
+    },
+    {
+      "section": "F 基线",
+      "item": "登记表声明 tree 与实测",
+      "expected": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+      "actual": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
+      "ok": true,
+      "note": ""
+    }
+  ],
+  "warnings": [
+    "已跳过锚点核验（--no-anchor）：本轮结论不得用于受理",
+    "锚点未声明 verifier_declared_sha256：工具身份无可独立核验的声明值"
+  ],
+  "git_errors": [],
+  "baseline_worktree_state": "CLEAN",
+  "authorized": [
+    "DI-001",
+    "DI-002",
+    "NV-001",
+    "NV-002",
+    "PI-001",
+    "PI-002",
+    "SEC-001"
+  ],
+  "blocked": [
+    "AU-001",
+    "CV-001",
+    "DS-001",
+    "FZ-001",
+    "PERM-000",
+    "TZ-001"
+  ],
+  "formal_cases": 0,
+  "manual_review_completed": null,
+  "exit_code": 3,
+  "exit_code_formula": "git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0",
+  "verdict": "指纹一致，但正式门槛未就绪",
+  "checked_at": "2026-10-14T11:31:41"
+}
