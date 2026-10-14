@@ -1,0 +1,31 @@
+A-01: exp=ALARM got=ALARM rc=0 OK
+A-02: exp=ALARM got=ALARM rc=0 OK
+A-03: exp=ALARM_HIGH got=ALARM_HIGH rc=0 OK
+B-01: exp=OK got=OK rc=0 OK
+B-02: exp=OK got=OK rc=0 OK
+C-01: exp=LOW_CONF got=LOW_CONF rc=0 OK
+E-01: exp=UNKNOWN got=UNKNOWN rc=0 OK
+F-01: exp=OK got=OK rc=0 OK
+A-11: exp=ALARM got=ALARM rc=0 OK
+A-12: exp=ALARM_HIGH got=ALARM_HIGH rc=0 OK
+B-11: exp=OK got=OK rc=0 OK
+B-12: exp=OK got=OK rc=0 OK
+C-11: exp=LOW_CONF got=LOW_CONF rc=0 OK
+E-11: exp=UNKNOWN got=UNKNOWN rc=0 OK
+F-11: exp=OK got=OK rc=0 OK
+G-11: exp=ALARM_HIGH got=ALARM_HIGH rc=0 OK
+H-01: exp=ALARM got=ALARM rc=0 OK
+H-02: exp=OK got=OK rc=0 OK
+H-03: exp=UNKNOWN got=UNKNOWN rc=0 OK
+H-04: exp=ALARM_HIGH got=ALARM_HIGH rc=0 OK
+H2-01: exp=ALARM got=ALARM rc=0 OK
+H2-02: exp=OK got=OK rc=0 OK
+H2-03: exp=UNKNOWN got=UNKNOWN rc=0 OK
+H2-04: exp=ALARM_HIGH got=ALARM_HIGH rc=0 OK
+
+=== 回归结果: 24/24 ===
+
+=== fixture 错误处理测试（此测试不计入检测成绩）===
+H3-01(fixture错误样本): rc=2 (期望2) stderr含标记=True OK
+
+全部通过（开发阶段回归；H2 独立验证结论不变）

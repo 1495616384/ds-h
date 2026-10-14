@@ -22,9 +22,27 @@
 !MCP操控Dify-分享对话完整文档.md
 
 # _xexp 内排除临时/大文件
-_xexp/base.tar
 _xexp/_tmp/
 _xexp/__pycache__/
 _xexp/_indep_results.txt
 # 独立子项目（DDP base，不在 X 冻结链内，见 Manifest v7 G-5/G-9）
 _xexp/ddp_base/
+
+# ===== X 项目完整性归档（2026-10-14 追加；内容已做密钥扫描，0 命中） =====
+# 基线归档（溯源：zixun4@27afc5e → base.tar → base/ 提交 72f06e5c）
+!_xexp/base.tar
+!base.tar
+# 归档目录：bundle（精确身份复现）+ tree 快照（可读浏览）
+!_xexp/archives/
+!_xexp/archives/**
+# X 概念源文档（分享对话：完整版/精简版/原始 JSON）与提示词
+!deepseek-share-r2pfqj5ctjatq899vp.md
+!deepseek-share-r2pfqj5ctjatq899vp-正文精简版.md
+!deepseek-share-r2pfqj5ctjatq899vp.json
+!关于X功能的持续运行的提示词.md
+
+# ===== 排除：本地活仓库（内容以 archives/ 归档入库，活仓库仅供本机核验） =====
+# _xexp/base：冻结基线活仓库（核验脚本按 commit/tree 现场校验；gitlink 已移除，避免 clone 出现空子模块）
+_xexp/base/
+_xexp_dev2/
+

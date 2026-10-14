@@ -1,0 +1,10 @@
+{
+  "case_id": "case-002",
+  "case_level": "silver",
+  "report_type": "structure_safety_appraisal",
+  "source_project": "prj-002",
+  "created_at": "2026-02-10T09:00:00",
+  "traps": [
+    "partial_g1"
+  ]
+}

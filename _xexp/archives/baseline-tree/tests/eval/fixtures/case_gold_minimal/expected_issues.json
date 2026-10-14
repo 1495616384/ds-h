@@ -1,0 +1,7 @@
+[
+  {
+    "rule_id": "FACT.MISSING",
+    "severity": "warning",
+    "note": "historical report omitted fact:material.M001.density"
+  }
+]

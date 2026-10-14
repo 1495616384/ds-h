@@ -1,0 +1,9 @@
+# 排除运行产物与临时调试文件
+__pycache__/
+*.pyc
+_trace.py
+_repro.py
+_regress_precheck.py
+.pytest_cache/
+regression-run-log*.txt
+*run-log*.txt

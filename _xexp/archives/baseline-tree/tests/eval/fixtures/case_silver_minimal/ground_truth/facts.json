@@ -1,0 +1,9 @@
+[
+  {
+    "fact_id": "fact:component.K001.concrete_strength",
+    "value": 42.0,
+    "quantity_kind": "pressure",
+    "precision": 1,
+    "unit": "MPa"
+  }
+]

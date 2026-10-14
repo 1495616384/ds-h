@@ -1,0 +1,24 @@
+{
+  "chapter_paths": [
+    "1. Project Summary",
+    "2. Inspection Results",
+    "3. Conclusions"
+  ],
+  "table_count": 2,
+  "table_headers": [
+    [
+      "Component ID",
+      "Concrete Strength (MPa)",
+      "Result"
+    ],
+    [
+      "Defect ID",
+      "Width (mm)",
+      "Severity"
+    ]
+  ],
+  "figure_count": 1,
+  "required_elements": [
+    "signature_block"
+  ]
+}

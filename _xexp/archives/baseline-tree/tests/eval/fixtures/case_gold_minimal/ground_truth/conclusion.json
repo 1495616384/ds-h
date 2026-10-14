@@ -1,0 +1,9 @@
+{
+  "direction": "qualified",
+  "required_evaluation_ids": [
+    "evaluation-001",
+    "evaluation-002",
+    "evaluation-003"
+  ],
+  "notes": "All evaluations must be covered"
+}

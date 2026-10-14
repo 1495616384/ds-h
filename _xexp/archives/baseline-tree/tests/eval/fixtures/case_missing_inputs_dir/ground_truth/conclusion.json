@@ -1,0 +1,6 @@
+{
+  "direction": "qualified",
+  "required_evaluation_ids": [
+    "evaluation-001"
+  ]
+}

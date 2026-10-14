@@ -1,0 +1,22 @@
+[
+  {
+    "fact_id": "fact:component.K001.concrete_strength",
+    "value": 35.6,
+    "quantity_kind": "pressure",
+    "precision": 1,
+    "unit": "MPa"
+  },
+  {
+    "fact_id": "fact:defect.C001.width",
+    "value": 2.5,
+    "quantity_kind": "length",
+    "precision": 1,
+    "unit": "mm"
+  },
+  {
+    "fact_id": "fact:building.B01.floor_count",
+    "value": 5,
+    "quantity_kind": "count",
+    "precision": 0
+  }
+]

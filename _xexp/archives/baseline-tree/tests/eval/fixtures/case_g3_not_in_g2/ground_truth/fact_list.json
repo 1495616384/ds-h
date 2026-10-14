@@ -1,0 +1,6 @@
+{
+  "fact_ids": [
+    "fact:component.K001.concrete_strength",
+    "fact:defect.C001.width"
+  ]
+}

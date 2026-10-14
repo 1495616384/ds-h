@@ -1,0 +1,16 @@
+{
+  "chapter_paths": [
+    "1. Summary",
+    "2. Results"
+  ],
+  "table_count": 1,
+  "table_headers": [
+    [
+      "Component",
+      "Value",
+      "Pass/Fail"
+    ]
+  ],
+  "figure_count": 0,
+  "required_elements": []
+}
