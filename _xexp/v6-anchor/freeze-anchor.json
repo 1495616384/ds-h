@@ -3,29 +3,29 @@
   "purpose": "X 项目 H3 冻结链的独立信任锚点：以内容寻址的 git 提交固定各冻结制品的字节内容，供任何第三方不依赖核验程序自行复核。",
   "anchor_repo": ".",
   "anchor_repo_abs": "G:/ds-h",
-  "anchor_commit": "1aa92ab1bf7f0637ddd42cc884c323ecb5949552",
-  "anchor_commit_tree": "df97a0b6a15600ff9d0e3fbcf94868c205a4c055",
+  "anchor_commit": "4595ae252deee0010a65644c8bc4b60153013c88",
+  "anchor_commit_tree": "31d42888a9d6a7388eb287ae9fc305e63b128fcb",
   "anchor_commit_meta": {
-    "sha": "1aa92ab1bf7f0637ddd42cc884c323ecb5949552",
-    "tree": "df97a0b6a15600ff9d0e3fbcf94868c205a4c055",
+    "sha": "4595ae252deee0010a65644c8bc4b60153013c88",
+    "tree": "31d42888a9d6a7388eb287ae9fc305e63b128fcb",
     "author": "dsh",
-    "date": "Wed Oct 14 10:40:20 2026 +0800",
-    "subject": "X H3 冻结链 v6 终稿：修复 git 回溯假通过（G-12）+ 记录实测结果"
+    "date": "Wed Oct 14 10:42:58 2026 +0800",
+    "subject": "X H3 冻结链 v6 登记：受理记录 + 清单缺口（G-13/G-14）"
   },
   "anchored_files": {
     "current_manifest": {
       "path": "_xexp/H3-freeze-manifest-v6.md",
-      "content_sha256": "92AB4D26D05F008C0FCBE1B4A78FD7B6E12FFE5CEF956FFB8C222058CF09CBBD",
-      "committed_content_sha256": "92AB4D26D05F008C0FCBE1B4A78FD7B6E12FFE5CEF956FFB8C222058CF09CBBD",
+      "content_sha256": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
+      "committed_content_sha256": "56B53477BAED695C7DCDB52D238C7B90917C2306F9B999113FCDCE05B136C52B",
       "content_matches_commit": true,
-      "git_blob": "992e321a5fc1a93fd2795341b297af5c6ec7ca9c"
+      "git_blob": "9bb1db98d475d908d8ff46fe15fc17dfeb5b461c"
     },
     "expected_fingerprints": {
       "path": "_xexp/freeze-check/expected-fingerprints-v6.json",
-      "content_sha256": "A56CECF86FDCFB7C60665B33ED14ECD928419A053CACBDEE4ABD3A2AE6DC2E64",
-      "committed_content_sha256": "A56CECF86FDCFB7C60665B33ED14ECD928419A053CACBDEE4ABD3A2AE6DC2E64",
+      "content_sha256": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
+      "committed_content_sha256": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
       "content_matches_commit": true,
-      "git_blob": "6b4ac7e325223dd96eafaeb6d36eff11fbb4e917"
+      "git_blob": "85a3cfa329dd40d1cfa1352281f3c4492321939b"
     },
     "verifier": {
       "path": "_xexp/freeze-check/freeze_check_v3.py",
@@ -180,5 +180,5 @@
     "_xexp/base.tar、_xexp/_tmp/、_xexp/ddp_base/（被 .gitignore 排除）"
   ],
   "generated_by": "scripts/gen-anchor-v6.mjs",
-  "generated_at": "2026-10-14T02:40:28.286Z"
+  "generated_at": "2026-10-14T02:43:03.048Z"
 }
