@@ -3,43 +3,43 @@
   "purpose": "X 项目 H3 冻结链的独立信任锚点：以内容寻址的 git 提交固定各冻结制品的字节内容，供任何第三方不依赖核验程序自行复核。",
   "anchor_repo": ".",
   "anchor_repo_abs": "G:/ds-h",
-  "anchor_commit": "2a720383d1059c8d239c8ea423d472358502428d",
-  "anchor_commit_tree": "f8892da99a19fddd0493b3df7eea38024961d3d1",
+  "anchor_commit": "1aa92ab1bf7f0637ddd42cc884c323ecb5949552",
+  "anchor_commit_tree": "df97a0b6a15600ff9d0e3fbcf94868c205a4c055",
   "anchor_commit_meta": {
-    "sha": "2a720383d1059c8d239c8ea423d472358502428d",
-    "tree": "f8892da99a19fddd0493b3df7eea38024961d3d1",
+    "sha": "1aa92ab1bf7f0637ddd42cc884c323ecb5949552",
+    "tree": "df97a0b6a15600ff9d0e3fbcf94868c205a4c055",
     "author": "dsh",
-    "date": "Wed Oct 14 10:34:02 2026 +0800",
-    "subject": "X H3 冻结链修复：Manifest v6 + 独立信任锚点（阶段1 冻结制品）"
+    "date": "Wed Oct 14 10:40:20 2026 +0800",
+    "subject": "X H3 冻结链 v6 终稿：修复 git 回溯假通过（G-12）+ 记录实测结果"
   },
   "anchored_files": {
     "current_manifest": {
       "path": "_xexp/H3-freeze-manifest-v6.md",
-      "content_sha256": "B84472D250BD7F98611EBCC97A105783A85CB892C3BDDA91DF0F7AF6AF24C07E",
-      "committed_content_sha256": "B84472D250BD7F98611EBCC97A105783A85CB892C3BDDA91DF0F7AF6AF24C07E",
+      "content_sha256": "92AB4D26D05F008C0FCBE1B4A78FD7B6E12FFE5CEF956FFB8C222058CF09CBBD",
+      "committed_content_sha256": "92AB4D26D05F008C0FCBE1B4A78FD7B6E12FFE5CEF956FFB8C222058CF09CBBD",
       "content_matches_commit": true,
-      "git_blob": "b9f26ca6e0235c842cf9a7d3d73cba6269a9784e"
+      "git_blob": "992e321a5fc1a93fd2795341b297af5c6ec7ca9c"
     },
     "expected_fingerprints": {
       "path": "_xexp/freeze-check/expected-fingerprints-v6.json",
-      "content_sha256": "76D750E9997E7E6C7B8BC1C7081464D61D7C3DEEEB4DC921F595598D6BC7E918",
-      "committed_content_sha256": "76D750E9997E7E6C7B8BC1C7081464D61D7C3DEEEB4DC921F595598D6BC7E918",
+      "content_sha256": "A56CECF86FDCFB7C60665B33ED14ECD928419A053CACBDEE4ABD3A2AE6DC2E64",
+      "committed_content_sha256": "A56CECF86FDCFB7C60665B33ED14ECD928419A053CACBDEE4ABD3A2AE6DC2E64",
       "content_matches_commit": true,
-      "git_blob": "7ff57ced912b41d9c3fa2756a870dc6da10fd9d2"
+      "git_blob": "6b4ac7e325223dd96eafaeb6d36eff11fbb4e917"
     },
     "verifier": {
       "path": "_xexp/freeze-check/freeze_check_v3.py",
-      "content_sha256": "BA8BB4DB530E4DC4E1F1534001663FD4BA4A61B607CA02340322F2DC302036E5",
-      "committed_content_sha256": "BA8BB4DB530E4DC4E1F1534001663FD4BA4A61B607CA02340322F2DC302036E5",
+      "content_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
+      "committed_content_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
       "content_matches_commit": true,
-      "git_blob": "c26a1d9c258056ecf7b985b7b8002234de21b994"
+      "git_blob": "cad779def67158f7b32a6e06f8553f27eed8cfee"
     },
     "selftest_v3": {
       "path": "_xexp/freeze-check/selftest_v3.py",
-      "content_sha256": "2729BFA1D10B359086FBE75E8916053D1DEB6AFBBBBACC27C460D3A621F93578",
-      "committed_content_sha256": "2729BFA1D10B359086FBE75E8916053D1DEB6AFBBBBACC27C460D3A621F93578",
+      "content_sha256": "165CF28A0E770C4B3805537D11B97D3689DDA509AE6A089B8BE59D5B823955E8",
+      "committed_content_sha256": "165CF28A0E770C4B3805537D11B97D3689DDA509AE6A089B8BE59D5B823955E8",
       "content_matches_commit": true,
-      "git_blob": "dae16574302ac8b48c7e9e4f0fdbd7028b0b1466"
+      "git_blob": "9f5852c1a52f50a59360b3f0f4e04fc36e3c2f0d"
     },
     "expected_fingerprints_v1": {
       "path": "_xexp/freeze-check/expected-fingerprints-v1.json",
@@ -161,7 +161,7 @@
       "git_blob": "99399563757a14f10d0af1fc234e2f4f3ce3808e"
     }
   },
-  "verifier_declared_sha256": "BA8BB4DB530E4DC4E1F1534001663FD4BA4A61B607CA02340322F2DC302036E5",
+  "verifier_declared_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
   "verifier_path": "_xexp/freeze-check/freeze_check_v3.py",
   "self_reference": {
     "note": "锚点文件无法包含自身哈希（写入即改变自身，属自指）；因此锚点**不自证**。锚点自身哈希与它所在提交，记录在同级 ANCHOR-COMMIT.md 中（作为独立留存值），测试套件与受理记录各自复制一份，形成多重独立留存。",
@@ -180,5 +180,5 @@
     "_xexp/base.tar、_xexp/_tmp/、_xexp/ddp_base/（被 .gitignore 排除）"
   ],
   "generated_by": "scripts/gen-anchor-v6.mjs",
-  "generated_at": "2026-10-14T02:34:13.301Z"
+  "generated_at": "2026-10-14T02:40:28.286Z"
 }
