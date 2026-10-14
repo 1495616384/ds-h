@@ -862,6 +862,14 @@
     },
     {
       "section": "E 独立锚点",
+      "item": "锚点文件哈希与独立留存值一致",
+      "expected": "4D6AB7F3EE44E5F06626E1B21932D9756C459DB9A00990F520F2E3FB77DB8383",
+      "actual": "4D6AB7F3EE44E5F06626E1B21932D9756C459DB9A00990F520F2E3FB77DB8383",
+      "ok": true,
+      "note": "锚点被就地修改即失败"
+    },
+    {
+      "section": "E 独立锚点",
       "item": "核验程序身份（锚点声明值）",
       "expected": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
       "actual": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
@@ -933,9 +941,7 @@
       "note": ""
     }
   ],
-  "warnings": [
-    "未找到锚点文件的独立留存哈希（ANCHOR-COMMIT.md 未记录或格式不符）"
-  ],
+  "warnings": [],
   "git_errors": [],
   "baseline_worktree_state": "CLEAN",
   "authorized": [
@@ -960,5 +966,5 @@
   "exit_code": 3,
   "exit_code_formula": "git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0",
   "verdict": "指纹一致，但正式门槛未就绪",
-  "checked_at": "2026-10-14T11:33:58"
+  "checked_at": "2026-10-14T11:35:39"
 }
