@@ -7,7 +7,7 @@
   "trust_doc": "G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v6.json",
   "trust_doc_sha256": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
   "anchor": "G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
-  "anchor_sha256": "672EF29E58AB5FF6BB5423EFB206178DBAEBA493EB51F53A1D75005D77BAB28E",
+  "anchor_sha256": "B9415C4E45A0DA72EF571C5DDC1AD12B0F3F56894D8DEAC1E06D4B833209F843",
   "anchor_commit": null,
   "anchor_used": false,
   "git_capture_mode": "pipe",
@@ -305,5 +305,5 @@
   "exit_code": 3,
   "exit_code_formula": "git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0",
   "verdict": "指纹一致，但正式门槛未就绪",
-  "checked_at": "2026-10-14T10:43:28"
+  "checked_at": "2026-10-14T10:47:25"
 }

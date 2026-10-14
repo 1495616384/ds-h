@@ -6,6 +6,8 @@
 > 本记录是**受理与血缘依据**；判定依据是 `expected-fingerprints-v6.json` + `freeze-anchor.json` + `freeze_check_v3.py`。
 
 - 受理时间：2026-10-14
+- 受理版本：**v1.1（终稿）**——锚定提交更新为 C1=`1c7de009…` / C2=`6bca08b…`，锚点哈希 `B9415C4E…`；
+  锚点生成器已确定性化（去时间戳，双写自检），连续重跑零漂移。
 - 工作目录：`G:\ds-h`
 - 纪律确认：**未运行任何正式 H3 案例**；**未修改检测引擎 / 原始基线 / 登记表 / 授权集合 / 历史规范与清单**；
   `formal_cases_selected` 仍为空；`manual_review_completed` 仍未完成。
@@ -42,12 +44,13 @@ v1/v2/v3-初版与 v5 工具均存在此行为，且**既有测试无法发现**
 | 项 | 值 |
 |---|---|
 | 锚点文件 | `_xexp/v6-anchor/freeze-anchor.json` |
-| **锚点文件 SHA-256** | `E9BA05A9E1532632E8B80BA070ECB5E64174D16EF259734D59DC9B78B9E96333` |
-| 锚定提交 **C1** | `1aa92ab1bf7f0637ddd42cc884c323ecb5949552`（树 `df97a0b6a15600ff9d0e3fbcf94868c205a4c055`） |
-| 锚点提交 **C2** | `f0ecb252300465d913563180bf12505767ea5a36` |
+| **锚点文件 SHA-256** | `B9415C4E45A0DA72EF571C5DDC1AD12B0F3F56894D8DEAC1E06D4B833209F843` |
+| 锚定提交 **C1** | `1c7de009ff270d276b311ffc6842f22eacc83593`（树 `b9256e82e60e411a49e9dae56327108096062ad9`） |
+| 锚点提交 **C2** | `6bca08b1219b71918e52818fa4902ab4bbf2c903` |
 | 锚定制品数 | **21**（逐项 `content_sha256` + `git_blob`，生成时 `content_mismatch = []`） |
 | 工具身份声明 | `verifier_declared_sha256 = 099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848` |
 | 独立复核手段 | `_xexp/v6-anchor/RECOVERY.md`（不依赖任何项目脚本，仅用 git）；独立留存值见 `ANCHOR-COMMIT.md` |
+| 确定性 | **已验证**：锚点生成器无时间戳/随机值，`freeze-v6.mjs` 连续重跑后 `freeze-anchor.json` 与 `ANCHOR-COMMIT.md` **零漂移**（git status 为空） |
 
 **为什么不是循环**：
 
@@ -81,7 +84,13 @@ v1/v2/v3-初版与 v5 工具均存在此行为，且**既有测试无法发现**
 | T10 | 诊断模式 | `--no-anchor` | **3** | `T10-no_anchor_diagnostic/exit_code.txt` | `24BA1E99DC06B19351323AAE0D7370243D586475A634B7F6FF7927FBC72CFAED` | 输出警告；**不得用于受理** |
 | Z | 基线现场复核 | `git -C _xexp/base status/rev-parse` | **0** | `selftest-report.json → baseline_after` | 报告 `A7CBE914076E81CAC9C1576E0050041527716CF7B92A046864DCA6264BFEC22C` | HEAD `72f06e5c…`、tree `2110ccbf…`、工作树 clean，全程未变 |
 
-**套件汇总：27/27 通过**（`logs/refreeze-summary-final.json`，`8902AF0A430479CFB75E512F1B281B3C1B0D854014AD355BA4D039D498D3CC22`）。
+**套件汇总：27/27 通过**（`logs/refreeze-summary-final2.json`，`D1643147C5D9CFE93EE2C77CD5BB1EB50227773CE4F496408B5D23C74C9C38C9`；
+`logs/selftest-report.json`，`AC98129A45EB53DF39EFB6D57C2644D4CAF668ACC4F174BD5DD03F27D7C70493`）。
+
+> **日志可复现性说明**：`logs/` 中部分文件（`verify-report.json`、`stdout.txt`）含 `checked_at` 时间戳，
+> 每次运行会再生（G-13），故**逐测试哈希以提交 `1c7de00` 内的 logs 快照为准**；本文第四节的
+> exit_code / tamper_probe 等确定性文件哈希不随运行变化。锚点与 `ANCHOR-COMMIT.md` 已确定性化，
+> 连续重跑零漂移。
 
 > 环境说明：本机受限环境**禁止创建管道**，且 PowerShell 的 `>`/`|` 重定向会导致命令**未执行**而 `$LASTEXITCODE` 取到脏值。
 > 因此所有证据采集均通过 `spawn`+文件描述符重定向（Node）或 `Popen`+文件重定向（Python）完成，

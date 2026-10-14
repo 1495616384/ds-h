@@ -1,13 +1,13 @@
 {
   "suite": "selftest_v3.py",
-  "run_at": "2026-10-14T10:43:29",
+  "run_at": "2026-10-14T10:47:25",
   "root": "G:\\ds-h",
   "out_dir": "G:\\ds-h\\_xexp\\v6-anchor\\logs",
   "freeze_check_v3_sha256": "099DC2E59DAC1BA3CA77CFDF9D531B0CBF47D48C3ECCB0E9BB55691C79E62848",
   "trust_doc": "G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v6.json",
   "trust_doc_sha256": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
   "anchor": "G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
-  "anchor_sha256": "672EF29E58AB5FF6BB5423EFB206178DBAEBA493EB51F53A1D75005D77BAB28E",
+  "anchor_sha256": "B9415C4E45A0DA72EF571C5DDC1AD12B0F3F56894D8DEAC1E06D4B833209F843",
   "baseline_before": {
     "head": "72f06e5c66b8797ae51b95f1ae9bc871be1eccbc",
     "tree": "2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2",
@@ -90,7 +90,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T4-freeze_check_normal\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T4-freeze_check_normal\\stderr.txt",
-      "stdout_sha256": "C55AF861327C0D24BDB664E2306C00E1EB771940304381FE3DBCD453C4B71AE7",
+      "stdout_sha256": "F778C1E3102D43BA5D271B9F25E744205F0064FFB18D2AB5AB4D62EAA3665005",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "正常冻结核验：期望 3（指纹一致、门槛未就绪）"
     },
@@ -117,7 +117,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T5-worktree_dirty\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T5-worktree_dirty\\stderr.txt",
-      "stdout_sha256": "965E2A4858EBEA0810CFE10D8EF7B699CF87E471119C39292F3A472E76D10480",
+      "stdout_sha256": "466D35147F797C84C8D6FFA2BC4F0E70CF5D97BAB4773C6235EC5CD4A0BFB0FF",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "植入未跟踪文件 → 期望 2 且逐条列出路径"
     },
@@ -164,7 +164,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-selected_cases\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-selected_cases\\stderr.txt",
-      "stdout_sha256": "CB0755349D02C0ED2192C186AD7D17F0E311B2D127E487330ACDDAB04B093237",
+      "stdout_sha256": "7B84CEDB763A84D6F805C249C1FE078CC9A22E80A6F61FB29FE06A726DF458A1",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 frozen_inputs.selected_cases"
     },
@@ -189,7 +189,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-expected_fingerprints_v1\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-expected_fingerprints_v1\\stderr.txt",
-      "stdout_sha256": "8A4C0E0758B72054F05B00633E5F4C5E09CFA08B3D986A996F6599E0A39AB273",
+      "stdout_sha256": "265D295833BB93BA28BC46D82590DDE2CDA616CF4305AFDF54626FC1B4B3E253",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 frozen_inputs.expected_fingerprints_v1"
     },
@@ -214,7 +214,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-authorization_review\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-authorization_review\\stderr.txt",
-      "stdout_sha256": "62FF7066D1AE8538105F3B4C513FB8BBF8823214359DA1850EAB62586BB333D5",
+      "stdout_sha256": "494DC113BD7754A3C8ECF795D403E3524AEDAA56BE6669AE6199B27B5372DFCD",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 authorization_review"
     },
@@ -239,7 +239,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-current_manifest\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-current_manifest\\stderr.txt",
-      "stdout_sha256": "4D2870EB1DAB38B26D6767B5EEA8EFC325D74CB4361D0AC90146E2160BB80B11",
+      "stdout_sha256": "7070C1A74DD42E5B2FBB4A9A5742E1E568455B7F212593B5297CF430BBD2AA53",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 current_manifest"
     },
@@ -264,7 +264,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-engine\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T7-tamper-engine\\stderr.txt",
-      "stdout_sha256": "46766EB75C0C3AE391A8E320D06F79EA47A7BA24C78D520C77528C1908B99383",
+      "stdout_sha256": "F53F164336845C9D7905B57CBC60D3DA01B5335BE01A689B22B945344BC2A760",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "可恢复篡改 engine"
     },
@@ -288,7 +288,7 @@
       "ok": true,
       "stdout": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T8-threshold_must_be_3\\stdout.txt",
       "stderr": "G:\\ds-h\\_xexp\\v6-anchor\\logs\\T8-threshold_must_be_3\\stderr.txt",
-      "stdout_sha256": "2E09C10D90FA32DB3195F0DA590D9CACBEC393C5A4D69D92CCA530406B3DA69A",
+      "stdout_sha256": "16C800166C110F80A920D5B7A7351016371FA388F3C0D662361F17EAAC5770FF",
       "stderr_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
       "note": "无正式案例 + 人工审查未完成 → 必须 3，不得 0"
     },

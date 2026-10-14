@@ -7,8 +7,8 @@
   "trust_doc": "G:\\ds-h\\_xexp\\freeze-check\\expected-fingerprints-v6.json",
   "trust_doc_sha256": "16477F51501F010F84EFE24085C13CE225015B53769D4903A4C1DE40716F21CB",
   "anchor": "G:\\ds-h\\_xexp\\v6-anchor\\freeze-anchor.json",
-  "anchor_sha256": "672EF29E58AB5FF6BB5423EFB206178DBAEBA493EB51F53A1D75005D77BAB28E",
-  "anchor_commit": "4595ae252deee0010a65644c8bc4b60153013c88",
+  "anchor_sha256": "B9415C4E45A0DA72EF571C5DDC1AD12B0F3F56894D8DEAC1E06D4B833209F843",
+  "anchor_commit": "1c7de009ff270d276b311ffc6842f22eacc83593",
   "anchor_used": true,
   "git_capture_mode": "pipe",
   "checks": [
@@ -231,8 +231,8 @@
     {
       "section": "E 独立锚点",
       "item": "锚定提交存在",
-      "expected": "4595ae252deee001",
-      "actual": "4595ae252deee001",
+      "expected": "1c7de009ff270d27",
+      "actual": "1c7de009ff270d27",
       "ok": true,
       "note": ""
     },
@@ -719,24 +719,24 @@
     {
       "section": "E 独立锚点",
       "item": "anchor_gen 磁盘内容 == 锚定内容",
-      "expected": "E9E030F57877C0F663C45D571E6338D53DD2A52507474646982EED03D493444E",
-      "actual": "E9E030F57877C0F663C45D571E6338D53DD2A52507474646982EED03D493444E",
+      "expected": "FF27702C629D2106C441620EC05C2DF0491338B7131D09B3BC91E59665FECFC5",
+      "actual": "FF27702C629D2106C441620EC05C2DF0491338B7131D09B3BC91E59665FECFC5",
       "ok": true,
       "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "anchor_gen 提交内内容 == 锚定内容",
-      "expected": "E9E030F57877C0F6",
-      "actual": "E9E030F57877C0F6",
+      "expected": "FF27702C629D2106",
+      "actual": "FF27702C629D2106",
       "ok": true,
       "note": ""
     },
     {
       "section": "E 独立锚点",
       "item": "anchor_gen git blob 对象 ID 与锚点一致",
-      "expected": "99399563757a14f1",
-      "actual": "99399563757a14f1",
+      "expected": "67a394d0f139734e",
+      "actual": "67a394d0f139734e",
       "ok": true,
       "note": ""
     },
@@ -848,5 +848,5 @@
   "exit_code": 3,
   "exit_code_formula": "git 错误→5；否则指纹/案例失败→2；否则未授权引用→4；否则门槛未就绪→3；否则→0",
   "verdict": "指纹一致，但正式门槛未就绪",
-  "checked_at": "2026-10-14T10:43:15"
+  "checked_at": "2026-10-14T10:47:10"
 }

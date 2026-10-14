@@ -43,7 +43,7 @@
 -- E 独立锚点 --
 [OK  ] 信任文档（期望指纹）未被静默改写                             期望 16477F51501F010F 实测 16477F51501F010F
 [OK  ] 锚点仓库为独立 git 仓库（不得回溯）                         期望 g:/ds-h          实测 g:/ds-h         
-[OK  ] 锚定提交存在                                       期望 4595ae252deee001 实测 4595ae252deee001
+[OK  ] 锚定提交存在                                       期望 1c7de009ff270d27 实测 1c7de009ff270d27
 [OK  ] current_manifest 磁盘内容 == 锚定内容                期望 56B53477BAED695C 实测 56B53477BAED695C
 [OK  ] current_manifest 提交内内容 == 锚定内容               期望 56B53477BAED695C 实测 56B53477BAED695C
 [OK  ] current_manifest git blob 对象 ID 与锚点一致        期望 9bb1db98d475d908 实测 9bb1db98d475d908
@@ -104,9 +104,9 @@
 [OK  ] expected_gen 磁盘内容 == 锚定内容                    期望 668F60DE30D60786 实测 668F60DE30D60786
 [OK  ] expected_gen 提交内内容 == 锚定内容                   期望 668F60DE30D60786 实测 668F60DE30D60786
 [OK  ] expected_gen git blob 对象 ID 与锚点一致            期望 d9df8906b7b277c3 实测 d9df8906b7b277c3
-[OK  ] anchor_gen 磁盘内容 == 锚定内容                      期望 E9E030F57877C0F6 实测 E9E030F57877C0F6
-[OK  ] anchor_gen 提交内内容 == 锚定内容                     期望 E9E030F57877C0F6 实测 E9E030F57877C0F6
-[OK  ] anchor_gen git blob 对象 ID 与锚点一致              期望 99399563757a14f1 实测 99399563757a14f1
+[OK  ] anchor_gen 磁盘内容 == 锚定内容                      期望 FF27702C629D2106 实测 FF27702C629D2106
+[OK  ] anchor_gen 提交内内容 == 锚定内容                     期望 FF27702C629D2106 实测 FF27702C629D2106
+[OK  ] anchor_gen git blob 对象 ID 与锚点一致              期望 67a394d0f139734e 实测 67a394d0f139734e
 [OK  ] 锚点自身哈希的独立留存文件存在                              期望 存在               实测 存在              
 [OK  ] 核验程序身份（锚点声明值）                                期望 099DC2E59DAC1BA3 实测 099DC2E59DAC1BA3
 
@@ -116,44 +116,18 @@
 
 -- F 基线 --
 [FAIL] 基线为独立 git 仓库（不得回溯父仓库）                        期望 g:/ds-h/_xexp/ba 实测 g:/ds-h            [若基线 .git 缺失，git 会回溯到父仓库并返回父仓库 HEAD —— 必须显式拦截]
-[FAIL] commit                                       期望 72f06e5c66b8797a 实测 5e8a73f1219b7191
-[FAIL] tree                                         期望 2110ccbfc89c81f3 实测 a38ec4f67779a4b3
-[FAIL] 工作树干净                                        期望 <空>              实测 32 项改动/未跟踪      
-[FAIL] 登记表声明 commit 与实测                             期望 72f06e5c66b8797a 实测 5e8a73f1219b7191
-[FAIL] 登记表声明 tree 与实测                               期望 2110ccbfc89c81f3 实测 a38ec4f67779a4b3
+[FAIL] commit                                       期望 72f06e5c66b8797a 实测 6bca08b03bffe0aa
+[FAIL] tree                                         期望 2110ccbfc89c81f3 实测 00378df2268eeeac
+[FAIL] 工作树干净                                        期望 <空>              实测 6 项改动/未跟踪       
+[FAIL] 登记表声明 commit 与实测                             期望 72f06e5c66b8797a 实测 6bca08b03bffe0aa
+[FAIL] 登记表声明 tree 与实测                               期望 2110ccbfc89c81f3 实测 00378df2268eeeac
 
 === 基线工作树脏项（逐条列出）===
-  M _xexp/v6-anchor/ANCHOR-COMMIT.md
-   M _xexp/v6-anchor/freeze-anchor.json
-   M _xexp/v6-anchor/logs/T10-no_anchor_diagnostic/sha256.txt
-   M _xexp/v6-anchor/logs/T10-no_anchor_diagnostic/stdout.txt
-   M _xexp/v6-anchor/logs/T10-no_anchor_diagnostic/verify-report.json
-   M _xexp/v6-anchor/logs/T4-freeze_check_normal/exit_code.txt
-   M _xexp/v6-anchor/logs/T4-freeze_check_normal/sha256.txt
+  M _xexp/v6-anchor/logs/T4-freeze_check_normal/sha256.txt
    M _xexp/v6-anchor/logs/T4-freeze_check_normal/stdout.txt
    M _xexp/v6-anchor/logs/T4-freeze_check_normal/verify-report.json
    M _xexp/v6-anchor/logs/T5-worktree_dirty/sha256.txt
    M _xexp/v6-anchor/logs/T5-worktree_dirty/stdout.txt
-   M _xexp/v6-anchor/logs/T6/interceptor-stdout.txt
-   M _xexp/v6-anchor/logs/T6/target-report.json
-   M _xexp/v6-anchor/logs/T6/target-stdout.txt
-   M _xexp/v6-anchor/logs/T7-tamper-authorization_review/sha256.txt
-   M _xexp/v6-anchor/logs/T7-tamper-authorization_review/stdout.txt
-   M _xexp/v6-anchor/logs/T7-tamper-current_manifest/sha256.txt
-   M _xexp/v6-anchor/logs/T7-tamper-current_manifest/stdout.txt
-   M _xexp/v6-anchor/logs/T7-tamper-engine/sha256.txt
-   M _xexp/v6-anchor/logs/T7-tamper-engine/stdout.txt
-   M _xexp/v6-anchor/logs/T7-tamper-expected_fingerprints_v1/sha256.txt
-   M _xexp/v6-anchor/logs/T7-tamper-expected_fingerprints_v1/stdout.txt
-   M _xexp/v6-anchor/logs/T7-tamper-selected_cases/sha256.txt
-   M _xexp/v6-anchor/logs/T7-tamper-selected_cases/stdout.txt
-   M _xexp/v6-anchor/logs/T8-threshold_must_be_3/sha256.txt
-   M _xexp/v6-anchor/logs/T8-threshold_must_be_3/stdout.txt
-   M _xexp/v6-anchor/logs/T8-threshold_must_be_3/verify-report.json
-   M _xexp/v6-anchor/logs/T9-anchor_missing/sha256.txt
-   M _xexp/v6-anchor/logs/T9-anchor_missing/stdout.txt
-   M _xexp/v6-anchor/logs/selftest-console-final.txt
-   M _xexp/v6-anchor/logs/selftest-report.json
   ?? _xexp/ddp_base/
 
 === git 命令失败（真实 stderr 与返回码）===

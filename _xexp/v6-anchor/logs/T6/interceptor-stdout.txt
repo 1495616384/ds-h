@@ -21,7 +21,7 @@ git ʧ�����Ƭ�Σ�
   | [OK  ] manifest_v1 git blob ���� ID ��ê��һ��             ���� 40dbe3614bc19726 ʵ�� 40dbe3614bc19726
   | [OK  ] recovery_doc git blob ���� ID ��ê��һ��            ���� 0938a932ec22190e ʵ�� 0938a932ec22190e
   | [OK  ] expected_gen git blob ���� ID ��ê��һ��            ���� d9df8906b7b277c3 ʵ�� d9df8906b7b277c3
-  | [OK  ] anchor_gen git blob ���� ID ��ê��һ��              ���� 99399563757a14f1 ʵ�� 99399563757a14f1
+  | [OK  ] anchor_gen git blob ���� ID ��ê��һ��              ���� 67a394d0f139734e ʵ�� 67a394d0f139734e
   | [FAIL] ����Ϊ���� git �ֿ⣨���û��ݸ��ֿ⣩                        ���� g:/ds-h/_xexp/ba ʵ�� g:/ds-h            [������ .git ȱʧ��git ����ݵ����ֿⲢ���ظ��ֿ� HEAD ���� ������ʽ����]
   | === git ����ʧ�ܣ���ʵ stderr �뷵���룩===
   |   git -C G:\ds-h\_xexp\base rev-parse --show-toplevel
