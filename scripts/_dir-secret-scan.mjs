@@ -24,24 +24,30 @@ const textExt = /\.(md|txt|json|ya?ml|ini|cfg|toml|py|mjs|cjs|js|ts|ps1|sh|bat|e
 const skipDir = new Set([".git", "__pycache__", ".pytest_cache", "node_modules", ".venv", "venv"]);
 
 let scanned = 0, hits = 0;
+const scanFile = (p) => {
+  if (!textExt.test(path.basename(p)) && !/^\.env/i.test(path.basename(p))) return;
+  let t; try { t = fs.readFileSync(p, "utf8"); } catch { return; }
+  scanned++;
+  t.split(/\r?\n/).forEach((ln, i) => {
+    for (const [re, name] of pats) {
+      if (re.test(ln)) {
+        hits++;
+        console.log(`HIT [${name}] ${p}:${i + 1}  ${ln.trim().slice(0, 120)}`);
+        break;
+      }
+    }
+  });
+};
 const walk = (dir) => {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, ent.name);
     if (ent.isDirectory()) { if (!skipDir.has(ent.name)) walk(p); continue; }
-    if (!textExt.test(ent.name) && !/^\.env/i.test(ent.name)) continue;
-    let t; try { t = fs.readFileSync(p, "utf8"); } catch { continue; }
-    scanned++;
-    t.split(/\r?\n/).forEach((ln, i) => {
-      for (const [re, name] of pats) {
-        if (re.test(ln)) {
-          hits++;
-          console.log(`HIT [${name}] ${p}:${i + 1}  ${ln.trim().slice(0, 120)}`);
-          break;
-        }
-      }
-    });
+    scanFile(p);
   }
 };
-for (const r of roots) { if (fs.existsSync(r)) walk(r); else console.error("（不存在）", r); }
+for (const r of roots) {
+  if (!fs.existsSync(r)) { console.error("（不存在）", r); continue; }
+  if (fs.statSync(r).isDirectory()) walk(r); else scanFile(r);
+}
 console.log(`\n扫描文本文件：${scanned}，命中：${hits}`);
 process.exit(hits ? 1 : 0);
