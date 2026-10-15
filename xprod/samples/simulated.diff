@@ -1,0 +1,47 @@
+diff --git a/src/cdm/registry.py b/src/cdm/registry.py
+index 8c1a2b3..d4e5f60 100644
+--- a/src/cdm/registry.py
++++ b/src/cdm/registry.py
+@@ -83,7 +83,8 @@
+ 
+ def is_valid_scope_class(value: str) -> bool:
+-    return value in SCOPE_CLASSES
++    # 显式类型护栏：非字符串输入一律判为非法（避免 unhashable 类型抛 TypeError）
++    return isinstance(value, str) and value in SCOPE_CLASSES
+ 
+ 
+ def is_valid_method(value: str) -> bool:
+     return value in METHODS
+diff --git a/src/cdm/id.py b/src/cdm/id.py
+index 4b1c0ae..9f2d13c 100644
+--- a/src/cdm/id.py
++++ b/src/cdm/id.py
+@@ -105,6 +105,6 @@ def build_fact_id(scope_class: str, instance_key: str,
+ def is_valid_fact_id(
+     raw: str,
+     registry: Optional[FactTypeRegistry] = None,
+-    fact_type: Optional[str] = None,
++    fact_type: Optional[str] = None,  # 与既有调用方签名保持一致
+ ) -> Optional[str]:
+     """Full validation of a Fact ID.
+diff --git a/src/eval/enums.py b/src/eval/enums.py
+index 2b7f9d1..6a0c3e8 100644
+--- a/src/eval/enums.py
++++ b/src/eval/enums.py
+@@ -7,6 +7,6 @@
+ # Case level (05_EVALUATION.md §4)
+-CASE_LEVELS: frozenset[str] = frozenset({"gold", "silver", "bronze"})
++CASE_LEVELS: frozenset[str] = frozenset({"gold", "silver", "bronze", "platinum"})
+ 
+ # Issue severity (05_EVALUATION.md §5.2)
+ SEVERITIES: frozenset[str] = frozenset({"error", "warning"})
+ 
+diff --git a/docs/05_EVALUATION.md b/docs/05_EVALUATION.md
+index 7d3e1f2..a5b6c70 100644
+--- a/docs/05_EVALUATION.md
++++ b/docs/05_EVALUATION.md
+@@ -1,3 +1,3 @@
+ # 评测与回归体系
+ 
+-> 状态：Draft
++> 状态：Approved
