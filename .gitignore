@@ -51,3 +51,10 @@ _xexp_dev2/
 # G-3 gitlink 差异独立审查记录：非冻结、不在 v7 锚定集、不替代 v7 清单（见记录 §一）
 !_xexp/h3-case-protocol/G3-gitlink-discrepancy-record-v1.md
 
+# ===== xprod：产品化工作区（独立顶层目录，与 _xexp 冻结链物理隔离；2026-10-15 追加） =====
+# 见 X产品化路线图-v1.md §七：产品代码只读引用归档副本，不读写冻结链制品
+!xprod/
+!xprod/**
+# 运行产物（Python 字节码缓存）不纳入跟踪
+xprod/**/__pycache__/
+
