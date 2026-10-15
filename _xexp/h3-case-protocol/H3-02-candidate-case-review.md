@@ -1,9 +1,12 @@
-# H3-02 候选案例审查记录（草稿·重生成版 v1）
+# H3-02 候选案例审查记录（草稿·重生成版 v1 之校正版 v2）
 
 ## 一、文档性质与溯源声明
 
 - 本文件是**草稿**，**不是**已经签署的人工审查结果。
-- 本文件是**重生成版 v1**，**不是原稿**。
+- 本文件是**重生成版 v1 的校正版 v2**（校正日期 2026-10-15），**不是原稿**。
+- 本版（v2）相对重生成版 v1 的**主要变更方向**：按**用户裁定（2026-10-15）**，本案
+  `H3-02` 的**案例级 U1 主体由 `DI-001` 改为 `PI-002`**；`DI-001` **不删除**，
+  降为**排队候选**（见 §二 2.2）。该改选属**用户裁定**，不是由我推断的技术必要性。
 - 存在一份**历史声明**：曾有一版原稿「H3-02 候选案例审查记录」为 88 行 / SHA-256
   `14F95ADCF022A151BB07B7CB86FE9F4D9BEC7A6744F480EB2FF380B36ADB3391`。
 - 该原稿**未被取得**：此前可访问的本机检索记录未找到它；当前可访问的 GitHub 文件树
@@ -16,41 +19,87 @@
 
 ## 二、候选方向
 
-- 候选约束：`DI-001`（ID 三段式语法）。
-- 依据 `_xexp/risk-registry/RISK-REGISTRY-v1.json`，该条目**原文**如下：
-  - `constraint_id`：`DI-001`
-  - `constraint_type`：`数据完整性`
-  - `expected_invariant`（原文范围与描述）：「Fact ID 必须为三段式
-    `fact:<scope_class>.<instance_key>.<attribute>`，且 scope_class 属于 SCOPE_CLASSES、
-    attribute 与 fact_type 登记一致；不得接受任何非法格式」
-  - `change_control`：`frozen`
-  - `severity`：`high`
-  - `impact_rationale`（原文）：「放宽语法将使非法标识进入数据模型，破坏事实引用完整性，
-    使下游判定依据不可信（判定建立在 fact_id 绑定之上）。后果属数据完整性关键契约破坏，
-    非普通构建失败。」
+### 2.1 本案候选约束：`PI-002`
+
+依据 `_xexp/risk-registry/RISK-REGISTRY-v1.json`，该条目**原文**如下：
+
+- `constraint_id`：`PI-002`
+- `constraint_type`：`公共接口`
+- `expected_invariant`（原文）：「`src/cdm/__init__.py` 的 `__all__` 所声明的名字必须
+  均能在包上绑定（声明与绑定一致）」
+- `change_control`：`frozen`
+- `severity`：`normal`
+- `impact_rationale`（原文）：「与 `PI-001` 同类：包级再导出被移除时，影响限于从包导入的
+  依赖方（主要是测试与外部调用），`cdm` 内部模块之间使用相对导入；不触及权限、安全或审计出口。」
+- `required_evidence`（原文三项）：① `src/cdm/__init__.py` 的 `__all__` 与 import 块；
+  ② `src/cdm` 内部相对导入关系；③ `tests/` 中从 `cdm` 包导入的位置。
+- `action_policy`：`人工复核`
+
+### 2.2 排队候选（后续案例，本案不采用）
+
+- 候选约束：`DI-001`（`constraint_type`：`数据完整性`；`severity`：`high`；
+  `change_control`：`frozen`；`action_policy`：`阻断合并`）。
+- 依 `RISK-REGISTRY-v1.json` 原文，其 `expected_invariant` 为「Fact ID 必须为三段式
+  `fact:<scope_class>.<instance_key>.<attribute>`，且 scope_class 属于 SCOPE_CLASSES、
+  attribute 与 fact_type 登记一致；不得接受任何非法格式」。
+- 该条目同为 **AUTHORIZED**（基线侧 `U1–U5` 全 `PASS`），**不删除、不改等级、不改登记表**；
+  仅**退出本案主体位置**，作为后续案例候选。其是否对应 `ALARM_HIGH` 路径，
+  取决于后续**独立案例设计**所确认的变更方向，**本文件不作宣告**。
+- **不得**由「约束级授权通过」推出「任一具体案例应选它」；本案主体改选依据是**用户裁定**。
 
 ## 三、授权边界
 
-- `DI-001` 属 **AUTHORIZED**（依据 `H3-constraint-authorization-review-v1.json`：U1–U5 基线侧 PASS）。
+- `PI-002` 属 **AUTHORIZED**（依据 `H3-constraint-authorization-review-v1.json`：
+  `U1–U5` 基线侧全部 `PASS`）。
 - **AUTHORIZED 全集（7 条）**：`DI-001`、`DI-002`、`NV-001`、`NV-002`、`PI-001`、`PI-002`、`SEC-001`。
 - **BLOCKED 全集（6 条）**：`AU-001`、`CV-001`、`DS-001`、`FZ-001`、`PERM-000`、`TZ-001`。
-- 本案**只引用 AUTHORIZED 条目**，**未触及**任何 BLOCKED 条目。
+- 本案**只以 AUTHORIZED 条目为引用来源**（主体 `PI-002`；`DI-001` 仅作排队候选登记，
+  不参与本案判定），**未触及**任何 BLOCKED 条目。
+- 授权集合**唯一来源**为 `H3-constraint-authorization-review-v1.json`；本文件**不新增、
+  不合并、不改写**任何授权条目。
 - **约束级授权 ≠ 案例级审查**：条目进入 AUTHORIZED 只代表「基线侧」门槛通过；
   案例级 U1（适用范围一致性）与整体人工审查**仍未完成**，未完成前不得运行该案例。
 
-## 四、案例级 U1–U6 检查表
+## 四、案例级 U1–U6 检查表（本案主体：`PI-002`）
 
 > 检查内容取自 `H3-case-registration-protocol-v1.md` §1 原文；「本案结论」如实标注，
 > **不得把未做的检查写成已完成**。
 
-| 编号 | 检查内容（协议 §1） | 本案结论 |
+| 编号 | 检查内容（协议 §1） | 本案结论（`PI-002`） |
 |---|---|---|
-| **U1** | 来源存在且适用范围一致：该约束的证据来源必须**实际存在**于目标基线（或以显式「缺失/待补」声明登记），且该约束的适用范围必须与**目标基线 commit/tree** 及**拟设计案例的适用范围**一致。 | **登记时核验**（案例级 U1）：拟设计案例的适用范围须与 DI-001 范围一致；**未完成前不得运行该案例**。约束级部分（来源存在）基线侧 PASS。 |
-| **U2** | `expected_invariant` 必须能够明确判定：不变量须**无歧义、可判定**（可被测试或人工按明确步骤核验）；含"尽量/合理/适当"等不可判定措辞者判不满足。 | 已具备的**既有证据（基线侧）**：授权审查 v1 记 DI-001 `U2=PASS`。不变量为「三段式 `fact:<scope_class>.<instance_key>.<attribute>` + `scope_class ∈ SCOPE_CLASSES` + attribute 与 `fact_type` 一致」，可对给定 ID 字符串机械判定；依据为**公共归档内**的 `_xexp/archives/baseline-tree/src/cdm/id.py`（`parse_fact_id` / `is_valid_fact_id`）与 `_xexp/archives/baseline-tree/docs/03_CANONICAL_DATA_MODEL.md` §8.1。**案例级语义复核仍待人工完成**。 |
-| **U3** | `severity` 必须已经确定：`severity` ∈ {`high`, `normal`}；取值为 `PENDING` 者**不满足**。 | 已具备的**既有证据**：`RISK-REGISTRY-v1.json` 中 DI-001 `severity=high`（非 `PENDING`）。 |
-| **U4** | 支持标准答案的关键证据必须**实际存在**：须有至少一条可在基线内解析的证据（代码位置 / 契约条文 / 测试结果）；**仅有函数名、命名模式或代码注释，不足以满足 U4**。 | 已具备的**既有证据（授权审查 v1 记 DI-001 `key_evidence`；本轮已在公共归档路径逐项复核，2026-10-14）**：① `_xexp/archives/baseline-tree/src/cdm/id.py`：`parse_fact_id` 定义于 **L63**、`is_valid_fact_id` 定义于 **L106**（实测）；② `_xexp/archives/baseline-tree/docs/03_CANONICAL_DATA_MODEL.md` **L436**「示意（v0.3.1 冻结为三段式，格式见 §8.1）」，语法规则正文见同文件 §8.1（L319 起）。**案例级整体人工审查仍待完成**。 |
-| **U5** | 契约来源或约束适用性未确认的条目，**即使 `severity=high` 也不得**直接用作正式标准答案依据；判据：`change_control=PENDING`（契约来源或管制状态未确认）→ **不满足 U5**。 | 已具备的**既有证据**：DI-001 `change_control=frozen`（非 `PENDING`）；授权审查 v1 记 `U5=PASS`。 |
-| **U6** | 「条目属于高严重度」与「证据已足以支持正式使用」是两件事：`severity=high` **不蕴含**可用；**禁止**由 `severity=high` 或 `HIGH_RISK_CONTRACT_FUNCS` 名字匹配直接推出可用。 | **待人工完成**：须由人工确认「U1–U5 **全部满足**」后 DI-001 方可用；本案尚未完成案例级整体审查，**不得据 `severity=high` 直接登记**。 |
+| **U1** | 来源存在且适用范围一致：该约束的证据来源必须**实际存在**于目标基线（或以显式「缺失/待补」声明登记），且该约束的适用范围必须与**目标基线 commit/tree** 及**拟设计案例的适用范围**一致。 | 约束级部分（来源存在）：授权审查 v1 记 `U1_source_exists=PASS`。案例级 U1（案例适用范围一致性）：本案拟设计案例的范围＝`src/cdm/__init__.py` 的**公开再导出声明面**；注入点落在**同一文件、同一 `__all__` 声明面** → **初步判定：一致（待人工复核与签署；本行非已完成结论）**。**人工签署前不得运行该案例。** |
+| **U2** | `expected_invariant` 必须能够明确判定：不变量须**无歧义、可判定**（可被测试或人工按明确步骤核验）；含"尽量/合理/适当"等不可判定措辞者判不满足。 | **可机械判定**：不变量为「`src/cdm/__init__.py` 的 `__all__` 所声明的名字必须均能在包上绑定」；判定式例：`[n for n in cdm.__all__ if not hasattr(cdm, n)]` 须为空。授权审查 v1 记 `U2=PASS`。**已有证据（公共归档，本轮 2026-10-15 实测）**：`_xexp/archives/baseline-tree/src/cdm/__init__.py` 的 import 块（`L18` 起）与 `__all__`（`L44` 起，至 `L78`）。**案例级语义复核仍待人工完成**。 |
+| **U3** | `severity` 必须已经确定：`severity` ∈ {`high`, `normal`}；取值为 `PENDING` 者**不满足**。 | 已具备的**既有证据**：`RISK-REGISTRY-v1.json` 中 `PI-002` `severity=normal`（非 `PENDING`）。 |
+| **U4** | 支持标准答案的关键证据必须**实际存在**：须有至少一条可在基线内解析的证据（代码位置 / 契约条文 / 测试结果）；**仅有函数名、命名模式或代码注释，不足以满足 U4**。 | 授权审查 v1 记 `PI-002` `key_evidence` 三项；**本轮已在公共归档路径逐项复核（2026-10-15）**：① **成立** — `_xexp/archives/baseline-tree/src/cdm/__init__.py`：import 块自 `L8` 起、`from .id import …` 见 **`L18`**、`__all__` 自 **`L44`** 起、`"is_valid_fact_id"` 见 **`L58`**（实测）；② **成立** — 同文件 `L8` 起整块均为 `.registry` / `.id` / `.types` / `.domain` / `.domain_validate` 的**相对导入**；③ **实测为空** — 全基线树检索 `from cdm import …` **0 命中**，测试与生产一律从子模块导入（`tests/cdm/test_types.py:11/21/27/34`、`tests/cdm/test_domain.py:21/29/36/70`、`src/eval/validator.py:17`、`src/eval/accuracy/binding.py:19`、`src/eval/accuracy/__init__.py:26`）。U4 判据「**至少一条**可在基线内解析的证据」由 ①② **满足**；③ **实测为空**，构成**证据缺口 P-2**（**本文件初步识别，尚未按公开登记流程登记**）；**不得**以该缺陷证据指针作为案例设计依据。**案例级整体人工审查仍待完成**。 |
+| **U5** | 契约来源或约束适用性未确认的条目，**即使 `severity=high` 也不得**直接用作正式标准答案依据；判据：`change_control=PENDING`（契约来源或管制状态未确认）→ **不满足 U5**。 | 已具备的**既有证据**：`PI-002` `change_control=frozen`（非 `PENDING`）；授权审查 v1 记 `U5=PASS`。 |
+| **U6** | 「条目属于高严重度」与「证据已足以支持正式使用」是两件事：`severity=high` **不蕴含**可用；**禁止**由 `severity=high` 或 `HIGH_RISK_CONTRACT_FUNCS` 名字匹配直接推出可用。 | **待人工完成**：须由人工确认「U1–U5 **全部满足**」后 `PI-002` 方可用；本案尚未完成案例级整体审查，**不得**据此直接登记。（`PI-002` `severity=normal`。按**规范 v1.1 §2 C1–C4 与 §4**、**v1.2 §2 与 §3**，`ALARM_HIGH` 只读登记表中 `severity=high` 的条目，**名字匹配不构成**判定依据。） |
+
+### 4.1 案例级 U1 分析（`H3-02` · 约束 `PI-002`）
+
+> **本小节性质**：属**拟设计方案推导**，**未经人工签署**；表内所有结论（含「案例级 U1」与
+> 「预期定级」）均为**初步分析**，**不构成**已完成的人工审查结果，也**不构成**登记或运行授权。
+
+| 项 | 内容 |
+|---|---|
+| 案例编号 | `H3-02`（**拟作为**第 1 个正式 H3 案例；单一约束引用） |
+| 引用约束 | `PI-002`（唯一；AUTHORIZED） |
+| 目标基线 | `_xexp/base` @ commit `72f06e5c66b8797ae51b95f1ae9bc871be1eccbc`、tree `2110ccbfc89c81f3d2f3bd6e0a2d50bd6e7519b2` — 与登记表 `subject_baseline` 一致 |
+| 注入面 | `src/cdm/__init__.py` **`L18`**：`from .id import FactID, parse_fact_id, build_fact_id, is_valid_fact_id`（实测原文） |
+| 破坏方式 | 移除 `is_valid_fact_id` 的**包级绑定**，而 `__all__` 仍声明该名字（`__all__` 自 **`L44`** 起，`"is_valid_fact_id"` 见 **`L58`**）→ 破坏「`__all__` 声明与包上绑定一致」 |
+| 案例级 U1 适用范围一致性 | 约束范围＝`cdm` 包的**公开再导出声明面**；注入点落在**同一文件、同一声明面** → **初步判定：一致（待人工复核与签署）** |
+| 预期定级（**依据规范，非自拟**） | **`ALARM`**。推导链：① 规范 v1.2 §2 判定规则「`ALARM_HIGH` ⟺ `severity=high` 且变更方向 ∈ {放宽, 绕过, 削弱, 外泄, 致不可核验}」——`PI-002` `severity=normal`，**不满足**升级条件；② 规范 v1.2 §4 C3 第 1 行「普通公开 API 导出被移除（无生产依赖受损）→ 默认 `ALARM`，升级条件＝该导出所属登记条目 `severity=high`」——不满足升级条件；③ 规范 v1.1 §3 判定顺序第 2 步「违明确约束 → `ALARM`」。三条独立指向同一标签。 |
+| 「无生产依赖受损」这一前提的实测支撑 | 全基线树**无** `from cdm import …`；`is_valid_fact_id` 的两个生产调用方均走**子模块**导入（`src/eval/validator.py:17`、`src/eval/accuracy/binding.py:19`）→ 移除包级绑定**不影响生产**，符合 C3 第 1 行形态。 |
+| 该案例所需证据（`ALARM` 档） | 规范 v1.1 §3 `ALARM` 行要求「引用的设计条目 + 代码位置 + 测试/契约结果」三类齐备；**须在正式案例设计中齐备**，本文件**不生成**。 |
+| 案例级残留风险（须人工确认） | **证据缺口 P-2（本文件初步识别，尚未按公开登记流程登记）**：公开登记表 `required_evidence` 第 3 项（"`tests/` 中从 `cdm` 包导入的位置"）在基线全树**实测为空**（`from cdm import …` 0 命中）→ 本案**不存在现成的包级依赖方**；该破坏是否仍成立，只能依靠 `__all__` 声明面本身（即约束本体）判定。此点**须人工确认**，**不得**由我单方裁定。 |
+| 非注入面（红线） | 不改基线 commit/tree、不改检测引擎、不改登记表本体、不改任何历史文件 |
+
+### 4.2 覆盖边界（不得降格为「冻结完整性检查」）
+
+- 本案（`PI-002`）的预期输出状态为 **`ALARM`** 一种。H3 要求的**四状态覆盖**
+  （`ALARM`、`ALARM_HIGH`、`OK`、`UNKNOWN`）**不能**由本案单独满足，须由其余案例承担
+  （目标声明见 `_xexp/h3-case-protocol/local-deepseek-continuation-prompt.md` §二 第 1 条）。
+- `DI-001`（`severity=high`）作为**排队候选**保留；其是否构成 `ALARM_HIGH` 路径，
+  **取决于后续独立案例设计，本文件不宣告、不预留成绩位**。
 
 ## 五、冻结链与不可改动项
 
@@ -64,7 +113,7 @@
   与 `baseline-tree/`（read-only 工作树快照，91 文件）。**不应**假定 `_xexp/base` 能在
   GitHub 上作为常规目录浏览。
 - v7 锚定集（约 25 项制品）**零改动**；v1–v7 历史链**原样保留**。
-- `selected-cases.json` 当前为**空**（`formal_cases_selected` 为空）且**已冻结**，**不得修改**。
+- `_xexp/freeze-check/selected-cases.json` 当前为**空**（`formal_cases_selected` 为空）且**已冻结**，**不得修改**。
 - 退出码语义（固定）：**3 = 指纹一致、正式门槛未就绪**；`3 ≠ 失败 ≠ 通过`，
   不产生任何结果判定；正式门槛就绪为 **0**。
 - 锚定提交建立后，任何被锚定文件变更必须走「**新清单 + 新锚点**」流程。
@@ -78,14 +127,26 @@
   （预期标签由引擎机制反推）被定为 `DIAGNOSTIC_NOT_COUNTED`（见 `_xexp/H3-01R-record-ERRATUM.md`）。
   标准答案须按规范 v1.1 §3 五要素（①设计约束 ②公开接口 ③调用依赖 ④实际影响
   ⑤既定风险政策/登记表）推出，**不得**由检测器规则或 `HIGH_RISK_CONTRACT_FUNCS` 匹配结果反推。
+- **证据缺口 P-2（本文件初步识别；**尚未**按公开登记流程登记）**：`PI-002` 的
+  `required_evidence` 第 3 项（"`tests/` 中从 `cdm` 包导入的位置"）在基线全树**实测为空**
+  （`from cdm import …` 0 命中；见 §四 `U4` 行）。**必须区分两件事**：「该缺口**已被识别**」
+  ≠「该缺陷**已登记**」——当前**公开仓库中不存在**该缺陷的正式登记载体；本机另有一份
+  **未发布、未跟踪**的审查记录提及 P-2，但**它不构成公开登记**，本文档**不依赖**它。
+  是否将该缺口登记为正式缺陷、以何载体登记，须遵守既有登记与授权流程
+  （依据：`_xexp/X最小闭环实验规范-v1.2.1.md` **M-3 哈希固定时点**（L35）与
+  **M-4 运行后禁改**（L38））。本文件**不改写** `RISK-REGISTRY-v1.json`。
+  **初步意见（非认定）**：该缺口**不**改变授权审查 v1 中 `PI-002` 的 `AUTHORIZED` 记录
+  （该记录已按 `U4`「至少一条可在基线内解析的证据成立」判为 `PASS`）；**正式认定须走登记流程**。
 - 当前**尚无** `case.json` / `diff.patch` / `standard-answer.md`；本文件**不生成**上述制品。
 
 ## 七、本文件未做与不得做的事项清单
 
-- **未**登记正式案例（`selected-cases.json` 保持为空）。
+- **未**登记正式案例（`_xexp/freeze-check/selected-cases.json` 保持为空）。
 - **未**置 `manual_review_completed`（该文件内本无此字段，核验程序按「字段缺失，视为未完成」处理；本文件不改写该文件）。
 - **未**运行正式 H3。
 - **未**生成新冻结链（未产出新清单 / 新锚点 / 新受理记录）。
+- **未**删除、**未**改动 `DI-001` 的任何登记信息（仅在本文件内将其由「本案主体」降为「排队候选」；
+  `RISK-REGISTRY-v1.json` 与授权审查文件均**未**改写）。
 - **未**修改、覆盖、删除任何**其他**既有文件（本文件自身的版本更新除外）。
 
 ## 八、待人工签署栏（空白待填）
@@ -94,7 +155,7 @@
 |---|---|
 | 案例级 U1（适用范围一致性）核对 | |
 | 案例级 U1–U6 整体确认 | |
-| 是否同意登记 H3-02 三哈希到 `selected-cases.json` | |
+| 是否同意登记 H3-02 三哈希到 `_xexp/freeze-check/selected-cases.json` | |
 | 是否同意进入 v8 链规划 | |
 
 > 说明：本栏须由**人**填写；填写完成前，本文件仅为草稿，**不构成任何授权或就绪声明**。
