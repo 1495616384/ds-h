@@ -1,0 +1,20 @@
+node: src/eval/types.py
+  module: eval.types
+  symbols (11):
+    L22 function _asdict
+    L40 function _coerce
+    L48 class Meta
+    L97 class GroundTruthFact
+    L141 class GroundTruthFactList
+    L159 class GroundTruthStructure
+    L190 class GroundTruthConclusion
+    L224 class GroundTruthBundle
+    L252 class KnownIssue
+    L300 class ExpectedIssue
+    L334 class EvaluationCase
+  imports (1):
+    src/eval/validator.py [import]
+  imported-by (3):
+    src/eval/__init__.py [reexport]
+    src/eval/validator.py [import]
+    tests/eval/test_accuracy.py [import]

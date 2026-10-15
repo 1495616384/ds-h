@@ -1,0 +1,1428 @@
+{
+  "node_count": 25,
+  "edge_count": 47,
+  "nodes": [
+    {
+      "id": "src/cdm/__init__.py",
+      "module": "cdm",
+      "symbols": []
+    },
+    {
+      "id": "src/cdm/domain.py",
+      "module": "cdm.domain",
+      "symbols": [
+        {
+          "name": "Project",
+          "kind": "class",
+          "line": 47
+        },
+        {
+          "name": "Structure",
+          "kind": "class",
+          "line": 86
+        },
+        {
+          "name": "Component",
+          "kind": "class",
+          "line": 138
+        },
+        {
+          "name": "Defect",
+          "kind": "class",
+          "line": 179
+        },
+        {
+          "name": "Evidence",
+          "kind": "class",
+          "line": 218
+        }
+      ]
+    },
+    {
+      "id": "src/cdm/domain_validate.py",
+      "module": "cdm.domain_validate",
+      "symbols": [
+        {
+          "name": "_check_id_non_empty",
+          "kind": "function",
+          "line": 61
+        },
+        {
+          "name": "_check_fact_ids_scope",
+          "kind": "function",
+          "line": 68
+        },
+        {
+          "name": "_check_list_elements_non_empty",
+          "kind": "function",
+          "line": 109
+        },
+        {
+          "name": "validate_project",
+          "kind": "function",
+          "line": 131
+        },
+        {
+          "name": "validate_struct",
+          "kind": "function",
+          "line": 151
+        },
+        {
+          "name": "validate_component",
+          "kind": "function",
+          "line": 215
+        },
+        {
+          "name": "validate_defect",
+          "kind": "function",
+          "line": 253
+        },
+        {
+          "name": "validate_evidence",
+          "kind": "function",
+          "line": 287
+        }
+      ]
+    },
+    {
+      "id": "src/cdm/id.py",
+      "module": "cdm.id",
+      "symbols": [
+        {
+          "name": "FactID",
+          "kind": "class",
+          "line": 32
+        },
+        {
+          "name": "parse_fact_id",
+          "kind": "function",
+          "line": 63
+        },
+        {
+          "name": "build_fact_id",
+          "kind": "function",
+          "line": 97
+        },
+        {
+          "name": "is_valid_fact_id",
+          "kind": "function",
+          "line": 106
+        }
+      ]
+    },
+    {
+      "id": "src/cdm/registry.py",
+      "module": "cdm.registry",
+      "symbols": [
+        {
+          "name": "is_valid_scope_class",
+          "kind": "function",
+          "line": 84
+        },
+        {
+          "name": "is_valid_method",
+          "kind": "function",
+          "line": 88
+        },
+        {
+          "name": "is_valid_provenance",
+          "kind": "function",
+          "line": 92
+        },
+        {
+          "name": "is_valid_fact_status",
+          "kind": "function",
+          "line": 96
+        },
+        {
+          "name": "is_valid_review_status",
+          "kind": "function",
+          "line": 100
+        },
+        {
+          "name": "is_valid_quantity_kind",
+          "kind": "function",
+          "line": 104
+        },
+        {
+          "name": "is_valid_raw_source_type",
+          "kind": "function",
+          "line": 126
+        },
+        {
+          "name": "is_valid_resolution_policy",
+          "kind": "function",
+          "line": 141
+        },
+        {
+          "name": "FactTypeEntry",
+          "kind": "class",
+          "line": 152
+        },
+        {
+          "name": "FactTypeRegistry",
+          "kind": "class",
+          "line": 167
+        },
+        {
+          "name": "_build_default_registry",
+          "kind": "function",
+          "line": 255
+        },
+        {
+          "name": "get_default_registry",
+          "kind": "function",
+          "line": 310
+        }
+      ]
+    },
+    {
+      "id": "src/cdm/types.py",
+      "module": "cdm.types",
+      "symbols": [
+        {
+          "name": "SourceRef",
+          "kind": "class",
+          "line": 18
+        },
+        {
+          "name": "RawSource",
+          "kind": "class",
+          "line": 49
+        },
+        {
+          "name": "ConflictCandidate",
+          "kind": "class",
+          "line": 84
+        },
+        {
+          "name": "Conflict",
+          "kind": "class",
+          "line": 118
+        },
+        {
+          "name": "_FactFields",
+          "kind": "class",
+          "line": 162
+        },
+        {
+          "name": "Fact",
+          "kind": "class",
+          "line": 185
+        }
+      ]
+    },
+    {
+      "id": "src/cdm/validate.py",
+      "module": "cdm.validate",
+      "symbols": [
+        {
+          "name": "validate_source_ref",
+          "kind": "function",
+          "line": 41
+        },
+        {
+          "name": "validate_raw_source",
+          "kind": "function",
+          "line": 54
+        },
+        {
+          "name": "validate_conflict_candidate",
+          "kind": "function",
+          "line": 73
+        },
+        {
+          "name": "validate_conflict",
+          "kind": "function",
+          "line": 95
+        },
+        {
+          "name": "validate_fact",
+          "kind": "function",
+          "line": 144
+        },
+        {
+          "name": "_validate_value_status_consistency",
+          "kind": "function",
+          "line": 277
+        },
+        {
+          "name": "_validate_supersedes",
+          "kind": "function",
+          "line": 318
+        }
+      ]
+    },
+    {
+      "id": "src/eval/__init__.py",
+      "module": "eval",
+      "symbols": []
+    },
+    {
+      "id": "src/eval/accuracy/__init__.py",
+      "module": "eval.accuracy",
+      "symbols": []
+    },
+    {
+      "id": "src/eval/accuracy/binding.py",
+      "module": "eval.accuracy.binding",
+      "symbols": [
+        {
+          "name": "parse_fact_id",
+          "kind": "function",
+          "line": 88
+        },
+        {
+          "name": "derive_fact_type",
+          "kind": "function",
+          "line": 99
+        },
+        {
+          "name": "_full_parse",
+          "kind": "function",
+          "line": 105
+        },
+        {
+          "name": "FactDisplaySpecSnapshot",
+          "kind": "class",
+          "line": 115
+        },
+        {
+          "name": "WhitelistEntry",
+          "kind": "class",
+          "line": 124
+        },
+        {
+          "name": "WhitelistRegistry",
+          "kind": "class",
+          "line": 140
+        },
+        {
+          "name": "is_span_contained",
+          "kind": "function",
+          "line": 158
+        },
+        {
+          "name": "find_covering_declarations",
+          "kind": "function",
+          "line": 169
+        },
+        {
+          "name": "has_duplicate_fact_ids",
+          "kind": "function",
+          "line": 190
+        },
+        {
+          "name": "BindingIssue",
+          "kind": "class",
+          "line": 199
+        },
+        {
+          "name": "NumericBindingResult",
+          "kind": "class",
+          "line": 209
+        },
+        {
+          "name": "IdentifierBindingResult",
+          "kind": "class",
+          "line": 218
+        },
+        {
+          "name": "_count_anchorable_tokens_after_whitelist",
+          "kind": "function",
+          "line": 226
+        },
+        {
+          "name": "bind_and_validate",
+          "kind": "function",
+          "line": 247
+        },
+        {
+          "name": "_validate_identifier_binding",
+          "kind": "function",
+          "line": 394
+        },
+        {
+          "name": "_validate_numeric_binding",
+          "kind": "function",
+          "line": 427
+        },
+        {
+          "name": "bind_table_cell",
+          "kind": "function",
+          "line": 575
+        },
+        {
+          "name": "bind_rendered_segment",
+          "kind": "function",
+          "line": 602
+        }
+      ]
+    },
+    {
+      "id": "src/eval/accuracy/data_structures.py",
+      "module": "eval.accuracy.data_structures",
+      "symbols": [
+        {
+          "name": "AnchorDeclaration",
+          "kind": "class",
+          "line": 18
+        },
+        {
+          "name": "RenderedSegment",
+          "kind": "class",
+          "line": 34
+        },
+        {
+          "name": "TableCell",
+          "kind": "class",
+          "line": 44
+        },
+        {
+          "name": "StructuredTable",
+          "kind": "class",
+          "line": 60
+        },
+        {
+          "name": "SystemIssue",
+          "kind": "class",
+          "line": 70
+        },
+        {
+          "name": "SystemEvaluation",
+          "kind": "class",
+          "line": 79
+        },
+        {
+          "name": "SystemOutput",
+          "kind": "class",
+          "line": 86
+        },
+        {
+          "name": "ActualIssueLocation",
+          "kind": "class",
+          "line": 100
+        },
+        {
+          "name": "ActualIssue",
+          "kind": "class",
+          "line": 106
+        },
+        {
+          "name": "_compute_issue_id",
+          "kind": "function",
+          "line": 183
+        }
+      ]
+    },
+    {
+      "id": "src/eval/accuracy/frozen_round.py",
+      "module": "eval.accuracy.frozen_round",
+      "symbols": [
+        {
+          "name": "frozen_round",
+          "kind": "function",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "id": "src/eval/accuracy/tokenizer.py",
+      "module": "eval.accuracy.tokenizer",
+      "symbols": [
+        {
+          "name": "TokenKind",
+          "kind": "class",
+          "line": 42
+        },
+        {
+          "name": "Token",
+          "kind": "class",
+          "line": 48
+        },
+        {
+          "name": "_extract_numeric_tokens",
+          "kind": "function",
+          "line": 64
+        },
+        {
+          "name": "_extract_identifier_tokens",
+          "kind": "function",
+          "line": 120
+        },
+        {
+          "name": "_sort_key",
+          "kind": "function",
+          "line": 144
+        },
+        {
+          "name": "tokenize",
+          "kind": "function",
+          "line": 157
+        }
+      ]
+    },
+    {
+      "id": "src/eval/enums.py",
+      "module": "eval.enums",
+      "symbols": [
+        {
+          "name": "is_valid_case_level",
+          "kind": "function",
+          "line": 20
+        },
+        {
+          "name": "is_valid_severity",
+          "kind": "function",
+          "line": 24
+        },
+        {
+          "name": "is_valid_issue_type",
+          "kind": "function",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "id": "src/eval/types.py",
+      "module": "eval.types",
+      "symbols": [
+        {
+          "name": "_asdict",
+          "kind": "function",
+          "line": 22
+        },
+        {
+          "name": "_coerce",
+          "kind": "function",
+          "line": 40
+        },
+        {
+          "name": "Meta",
+          "kind": "class",
+          "line": 48
+        },
+        {
+          "name": "GroundTruthFact",
+          "kind": "class",
+          "line": 97
+        },
+        {
+          "name": "GroundTruthFactList",
+          "kind": "class",
+          "line": 141
+        },
+        {
+          "name": "GroundTruthStructure",
+          "kind": "class",
+          "line": 159
+        },
+        {
+          "name": "GroundTruthConclusion",
+          "kind": "class",
+          "line": 190
+        },
+        {
+          "name": "GroundTruthBundle",
+          "kind": "class",
+          "line": 224
+        },
+        {
+          "name": "KnownIssue",
+          "kind": "class",
+          "line": 252
+        },
+        {
+          "name": "ExpectedIssue",
+          "kind": "class",
+          "line": 300
+        },
+        {
+          "name": "EvaluationCase",
+          "kind": "class",
+          "line": 334
+        }
+      ]
+    },
+    {
+      "id": "src/eval/validator.py",
+      "module": "eval.validator",
+      "symbols": [
+        {
+          "name": "validate_meta",
+          "kind": "function",
+          "line": 42
+        },
+        {
+          "name": "validate_ground_truth_fact",
+          "kind": "function",
+          "line": 72
+        },
+        {
+          "name": "validate_ground_truth_facts",
+          "kind": "function",
+          "line": 107
+        },
+        {
+          "name": "validate_ground_truth_fact_list",
+          "kind": "function",
+          "line": 126
+        },
+        {
+          "name": "validate_ground_truth_structure",
+          "kind": "function",
+          "line": 149
+        },
+        {
+          "name": "validate_ground_truth_conclusion",
+          "kind": "function",
+          "line": 180
+        },
+        {
+          "name": "validate_known_issue",
+          "kind": "function",
+          "line": 215
+        },
+        {
+          "name": "validate_known_issues",
+          "kind": "function",
+          "line": 257
+        },
+        {
+          "name": "validate_expected_issue",
+          "kind": "function",
+          "line": 267
+        },
+        {
+          "name": "validate_expected_issues",
+          "kind": "function",
+          "line": 287
+        },
+        {
+          "name": "validate_case",
+          "kind": "function",
+          "line": 297
+        }
+      ]
+    },
+    {
+      "id": "tests/__init__.py",
+      "module": "tests",
+      "symbols": []
+    },
+    {
+      "id": "tests/cdm/__init__.py",
+      "module": "tests.cdm",
+      "symbols": []
+    },
+    {
+      "id": "tests/cdm/test_domain.py",
+      "module": "tests.cdm.test_domain",
+      "symbols": [
+        {
+          "name": "good_sr",
+          "kind": "function",
+          "line": 44
+        },
+        {
+          "name": "empty_sr",
+          "kind": "function",
+          "line": 49
+        },
+        {
+          "name": "TestStructureTypesEnum",
+          "kind": "class",
+          "line": 57
+        },
+        {
+          "name": "TestProject",
+          "kind": "class",
+          "line": 78
+        },
+        {
+          "name": "TestStructure",
+          "kind": "class",
+          "line": 127
+        },
+        {
+          "name": "TestComponent",
+          "kind": "class",
+          "line": 275
+        },
+        {
+          "name": "TestDefect",
+          "kind": "class",
+          "line": 371
+        },
+        {
+          "name": "TestEvidence",
+          "kind": "class",
+          "line": 428
+        },
+        {
+          "name": "TestJSONRoundtrip",
+          "kind": "class",
+          "line": 519
+        }
+      ]
+    },
+    {
+      "id": "tests/cdm/test_types.py",
+      "module": "tests.cdm.test_types",
+      "symbols": [
+        {
+          "name": "reg",
+          "kind": "function",
+          "line": 47
+        },
+        {
+          "name": "good_source_ref",
+          "kind": "function",
+          "line": 52
+        },
+        {
+          "name": "good_raw_source",
+          "kind": "function",
+          "line": 57
+        },
+        {
+          "name": "TestRegistry",
+          "kind": "class",
+          "line": 70
+        },
+        {
+          "name": "TestFactID",
+          "kind": "class",
+          "line": 109
+        },
+        {
+          "name": "TestSourceRef",
+          "kind": "class",
+          "line": 204
+        },
+        {
+          "name": "TestRawSource",
+          "kind": "class",
+          "line": 236
+        },
+        {
+          "name": "TestFactFilledQuantitative",
+          "kind": "class",
+          "line": 264
+        },
+        {
+          "name": "TestFactFilledQualitative",
+          "kind": "class",
+          "line": 313
+        },
+        {
+          "name": "TestFactMissing",
+          "kind": "class",
+          "line": 356
+        },
+        {
+          "name": "TestFactSupersedes",
+          "kind": "class",
+          "line": 413
+        },
+        {
+          "name": "TestFactStatusInvalid",
+          "kind": "class",
+          "line": 490
+        },
+        {
+          "name": "TestFactMethodProvenance",
+          "kind": "class",
+          "line": 535
+        },
+        {
+          "name": "TestFactConfidence",
+          "kind": "class",
+          "line": 580
+        },
+        {
+          "name": "TestFactTypeFailures",
+          "kind": "class",
+          "line": 638
+        },
+        {
+          "name": "TestFactJSON",
+          "kind": "class",
+          "line": 695
+        },
+        {
+          "name": "TestConflictValid",
+          "kind": "class",
+          "line": 761
+        },
+        {
+          "name": "TestConflictInvalid",
+          "kind": "class",
+          "line": 807
+        },
+        {
+          "name": "TestConflictJSON",
+          "kind": "class",
+          "line": 879
+        },
+        {
+          "name": "TestDefectFacts",
+          "kind": "class",
+          "line": 909
+        }
+      ]
+    },
+    {
+      "id": "tests/eval/__init__.py",
+      "module": "tests.eval",
+      "symbols": []
+    },
+    {
+      "id": "tests/eval/test_accuracy.py",
+      "module": "tests.eval.test_accuracy",
+      "symbols": [
+        {
+          "name": "_make_whitelist",
+          "kind": "function",
+          "line": 55
+        },
+        {
+          "name": "_whitelist_gb_full",
+          "kind": "function",
+          "line": 68
+        },
+        {
+          "name": "_make_g3_by_id",
+          "kind": "function",
+          "line": 74
+        },
+        {
+          "name": "_make_display_spec",
+          "kind": "function",
+          "line": 78
+        },
+        {
+          "name": "_has_issue_type",
+          "kind": "function",
+          "line": 82
+        },
+        {
+          "name": "_find_issue_types",
+          "kind": "function",
+          "line": 86
+        },
+        {
+          "name": "TestFrozenRound",
+          "kind": "class",
+          "line": 109
+        },
+        {
+          "name": "TestActualIssue",
+          "kind": "class",
+          "line": 153
+        },
+        {
+          "name": "TestUnitRegistry",
+          "kind": "class",
+          "line": 209
+        },
+        {
+          "name": "TestTokenizer",
+          "kind": "class",
+          "line": 233
+        },
+        {
+          "name": "TestWhitelist",
+          "kind": "class",
+          "line": 323
+        },
+        {
+          "name": "TestB5SingleTokenLegacy",
+          "kind": "class",
+          "line": 354
+        },
+        {
+          "name": "TestB5SingleTokenExplicit",
+          "kind": "class",
+          "line": 394
+        },
+        {
+          "name": "TestB5MultiNumeric",
+          "kind": "class",
+          "line": 421
+        },
+        {
+          "name": "TestB5Range",
+          "kind": "class",
+          "line": 468
+        },
+        {
+          "name": "TestB5IdentifierPlusNumeric",
+          "kind": "class",
+          "line": 498
+        },
+        {
+          "name": "TestB5MultiTokenWithLegacyInert",
+          "kind": "class",
+          "line": 543
+        },
+        {
+          "name": "TestB5IdPlusNumericWithLegacyInert",
+          "kind": "class",
+          "line": 562
+        },
+        {
+          "name": "TestB5WhitelistExempts",
+          "kind": "class",
+          "line": 581
+        },
+        {
+          "name": "TestB5PartialOverlap",
+          "kind": "class",
+          "line": 599
+        },
+        {
+          "name": "TestB5DuplicateBinding",
+          "kind": "class",
+          "line": 616
+        },
+        {
+          "name": "TestB5InvalidFactId",
+          "kind": "class",
+          "line": 637
+        },
+        {
+          "name": "TestB5ValueMismatch",
+          "kind": "class",
+          "line": 657
+        },
+        {
+          "name": "TestB5TableHeaders",
+          "kind": "class",
+          "line": 685
+        },
+        {
+          "name": "TestB4Regression",
+          "kind": "class",
+          "line": 717
+        },
+        {
+          "name": "TestComparisonChain",
+          "kind": "class",
+          "line": 877
+        },
+        {
+          "name": "TestFactIdHelpers",
+          "kind": "class",
+          "line": 988
+        },
+        {
+          "name": "TestSpanContainment",
+          "kind": "class",
+          "line": 1011
+        }
+      ]
+    },
+    {
+      "id": "tests/eval/test_loader.py",
+      "module": "tests.eval.test_loader",
+      "symbols": [
+        {
+          "name": "_path",
+          "kind": "function",
+          "line": 11
+        },
+        {
+          "name": "test_load_gold_case_success",
+          "kind": "function",
+          "line": 19
+        },
+        {
+          "name": "test_load_silver_case_success",
+          "kind": "function",
+          "line": 28
+        },
+        {
+          "name": "test_load_bronze_case_success",
+          "kind": "function",
+          "line": 36
+        },
+        {
+          "name": "test_from_dir_raises_on_missing_directory",
+          "kind": "function",
+          "line": 48
+        },
+        {
+          "name": "test_from_dir_raises_on_missing_required_file",
+          "kind": "function",
+          "line": 53
+        },
+        {
+          "name": "test_from_dir_raises_keyerror_on_missing_required_key",
+          "kind": "function",
+          "line": 68
+        },
+        {
+          "name": "test_from_dir_raises_on_missing_inputs_dir",
+          "kind": "function",
+          "line": 95
+        },
+        {
+          "name": "test_case_gold_minimal_validates_cleanly",
+          "kind": "function",
+          "line": 109
+        },
+        {
+          "name": "test_case_silver_minimal_validates_cleanly",
+          "kind": "function",
+          "line": 115
+        },
+        {
+          "name": "test_case_bronze_minimal_validates_cleanly",
+          "kind": "function",
+          "line": 121
+        },
+        {
+          "name": "test_case_bronze_facts_nonempty_fails_validation",
+          "kind": "function",
+          "line": 127
+        },
+        {
+          "name": "test_case_g3_not_in_g2_fails_validation",
+          "kind": "function",
+          "line": 133
+        },
+        {
+          "name": "test_case_g2_g3_duplicate_ids_fails_validation",
+          "kind": "function",
+          "line": 140
+        }
+      ]
+    },
+    {
+      "id": "tests/eval/test_types.py",
+      "module": "tests.eval.test_types",
+      "symbols": [
+        {
+          "name": "test_meta_roundtrip",
+          "kind": "function",
+          "line": 23
+        },
+        {
+          "name": "test_ground_truth_fact_quantitative_roundtrip",
+          "kind": "function",
+          "line": 43
+        },
+        {
+          "name": "test_ground_truth_fact_qualitative_roundtrip",
+          "kind": "function",
+          "line": 62
+        },
+        {
+          "name": "test_ground_truth_fact_list_roundtrip",
+          "kind": "function",
+          "line": 79
+        },
+        {
+          "name": "test_ground_truth_structure_roundtrip",
+          "kind": "function",
+          "line": 86
+        },
+        {
+          "name": "test_ground_truth_conclusion_roundtrip",
+          "kind": "function",
+          "line": 100
+        },
+        {
+          "name": "test_known_issue_fact_value_error_roundtrip",
+          "kind": "function",
+          "line": 112
+        },
+        {
+          "name": "test_known_issue_conclusion_error_roundtrip",
+          "kind": "function",
+          "line": 128
+        },
+        {
+          "name": "test_expected_issue_with_fact_id_roundtrip",
+          "kind": "function",
+          "line": 146
+        },
+        {
+          "name": "test_expected_issue_without_fact_id_roundtrip",
+          "kind": "function",
+          "line": 158
+        },
+        {
+          "name": "test_ground_truth_bundle_roundtrip",
+          "kind": "function",
+          "line": 174
+        },
+        {
+          "name": "test_evaluation_case_full_roundtrip",
+          "kind": "function",
+          "line": 195
+        },
+        {
+          "name": "test_case_dir_not_in_serialization",
+          "kind": "function",
+          "line": 223
+        },
+        {
+          "name": "test_required_key_missing_raises_keyerror",
+          "kind": "function",
+          "line": 249
+        },
+        {
+          "name": "test_optional_default_fields_missing_use_defaults",
+          "kind": "function",
+          "line": 261
+        },
+        {
+          "name": "test_precision_required_keyerror_if_missing",
+          "kind": "function",
+          "line": 276
+        },
+        {
+          "name": "test_bronze_facts_empty_but_fact_list_nonempty",
+          "kind": "function",
+          "line": 291
+        },
+        {
+          "name": "test_meta_to_json_then_from_dict",
+          "kind": "function",
+          "line": 312
+        }
+      ]
+    },
+    {
+      "id": "tests/eval/test_validator.py",
+      "module": "tests.eval.test_validator",
+      "symbols": [
+        {
+          "name": "_make_valid_bronze_case",
+          "kind": "function",
+          "line": 30
+        },
+        {
+          "name": "_make_valid_gold_case",
+          "kind": "function",
+          "line": 49
+        },
+        {
+          "name": "TestValidateMetaPass",
+          "kind": "class",
+          "line": 75
+        },
+        {
+          "name": "TestValidateGroundTruthFactPass",
+          "kind": "class",
+          "line": 92
+        },
+        {
+          "name": "TestValidateGroundTruthFactListPass",
+          "kind": "class",
+          "line": 112
+        },
+        {
+          "name": "TestValidateGroundTruthStructurePass",
+          "kind": "class",
+          "line": 124
+        },
+        {
+          "name": "TestValidateGroundTruthConclusionPass",
+          "kind": "class",
+          "line": 138
+        },
+        {
+          "name": "TestValidateKnownIssuePass",
+          "kind": "class",
+          "line": 153
+        },
+        {
+          "name": "TestValidateExpectedIssuePass",
+          "kind": "class",
+          "line": 174
+        },
+        {
+          "name": "TestValidateMetaFail",
+          "kind": "class",
+          "line": 191
+        },
+        {
+          "name": "TestValidateGroundTruthFactFail",
+          "kind": "class",
+          "line": 208
+        },
+        {
+          "name": "TestValidateGroundTruthFactListFail",
+          "kind": "class",
+          "line": 248
+        },
+        {
+          "name": "TestValidateKnownIssueFail",
+          "kind": "class",
+          "line": 260
+        },
+        {
+          "name": "TestValidateExpectedIssueFail",
+          "kind": "class",
+          "line": 302
+        },
+        {
+          "name": "TestValidateGroundTruthConclusionFail",
+          "kind": "class",
+          "line": 319
+        },
+        {
+          "name": "TestValidateCase",
+          "kind": "class",
+          "line": 341
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "src/cdm/__init__.py",
+      "to": "src/cdm/domain.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/cdm/__init__.py",
+      "to": "src/cdm/domain_validate.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/cdm/__init__.py",
+      "to": "src/cdm/id.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/cdm/__init__.py",
+      "to": "src/cdm/registry.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/cdm/__init__.py",
+      "to": "src/cdm/types.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/cdm/domain.py",
+      "to": "src/cdm/types.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/cdm/domain_validate.py",
+      "to": "src/cdm/domain.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/cdm/domain_validate.py",
+      "to": "src/cdm/id.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/cdm/domain_validate.py",
+      "to": "src/cdm/validate.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/cdm/id.py",
+      "to": "src/cdm/registry.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/cdm/validate.py",
+      "to": "src/cdm/id.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/cdm/validate.py",
+      "to": "src/cdm/registry.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/cdm/validate.py",
+      "to": "src/cdm/types.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/__init__.py",
+      "to": "src/eval/enums.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/eval/__init__.py",
+      "to": "src/eval/types.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/eval/__init__.py",
+      "to": "src/eval/validator.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/eval/accuracy/__init__.py",
+      "to": "src/cdm/registry.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/eval/accuracy/__init__.py",
+      "to": "src/eval/accuracy/binding.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/eval/accuracy/__init__.py",
+      "to": "src/eval/accuracy/data_structures.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/eval/accuracy/__init__.py",
+      "to": "src/eval/accuracy/frozen_round.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/eval/accuracy/__init__.py",
+      "to": "src/eval/accuracy/tokenizer.py",
+      "kind": "reexport"
+    },
+    {
+      "from": "src/eval/accuracy/binding.py",
+      "to": "src/cdm/id.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/accuracy/binding.py",
+      "to": "src/cdm/registry.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/accuracy/binding.py",
+      "to": "src/eval/accuracy/data_structures.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/accuracy/binding.py",
+      "to": "src/eval/accuracy/frozen_round.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/accuracy/binding.py",
+      "to": "src/eval/accuracy/tokenizer.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/types.py",
+      "to": "src/eval/validator.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/validator.py",
+      "to": "src/cdm/id.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/validator.py",
+      "to": "src/cdm/registry.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/validator.py",
+      "to": "src/eval/enums.py",
+      "kind": "import"
+    },
+    {
+      "from": "src/eval/validator.py",
+      "to": "src/eval/types.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/cdm/test_domain.py",
+      "to": "src/cdm/domain.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/cdm/test_domain.py",
+      "to": "src/cdm/domain_validate.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/cdm/test_domain.py",
+      "to": "src/cdm/registry.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/cdm/test_domain.py",
+      "to": "src/cdm/types.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/cdm/test_types.py",
+      "to": "src/cdm/id.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/cdm/test_types.py",
+      "to": "src/cdm/registry.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/cdm/test_types.py",
+      "to": "src/cdm/types.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/cdm/test_types.py",
+      "to": "src/cdm/validate.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/eval/test_accuracy.py",
+      "to": "src/eval/accuracy/__init__.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/eval/test_accuracy.py",
+      "to": "src/eval/accuracy/binding.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/eval/test_accuracy.py",
+      "to": "src/eval/accuracy/data_structures.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/eval/test_accuracy.py",
+      "to": "src/eval/accuracy/tokenizer.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/eval/test_accuracy.py",
+      "to": "src/eval/types.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/eval/test_loader.py",
+      "to": "src/eval/__init__.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/eval/test_types.py",
+      "to": "src/eval/__init__.py",
+      "kind": "import"
+    },
+    {
+      "from": "tests/eval/test_validator.py",
+      "to": "src/eval/__init__.py",
+      "kind": "import"
+    }
+  ],
+  "cycles": [
+    [
+      "src/eval/types.py",
+      "src/eval/validator.py"
+    ]
+  ]
+}
