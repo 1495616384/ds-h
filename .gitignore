@@ -46,3 +46,7 @@ _xexp/ddp_base/
 _xexp/base/
 _xexp_dev2/
 
+# ===== H3 案例协议目录：逐条白名单纳入（该目录默认被上方 `*` 忽略；2026-10-15 追加） =====
+# G-3 gitlink 差异独立审查记录：非冻结、不在 v7 锚定集、不替代 v7 清单（见记录 §一）
+!_xexp/h3-case-protocol/G3-gitlink-discrepancy-record-v1.md
+
