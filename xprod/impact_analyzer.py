@@ -38,7 +38,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import graph_builder, parser
+from . import contract, graph_builder, parser
 
 # 统一 diff 的结构标记（git diff 风格）
 _DIFF_HEADER = "diff --git "
@@ -186,11 +186,7 @@ def prepare(code_root: str | Path, design_doc: str | Path) -> dict:
         "graph": graph_builder.build_graph(code_root),
         "design": parser.parse_file(design_doc),
     }
-    if tuple(body) != PREPARED_REQUIRED_KEYS:
-        raise ImpactError(
-            f"prepare 产物键序与 PREPARED_REQUIRED_KEYS 分叉：{tuple(body)} != {PREPARED_REQUIRED_KEYS}；"
-            f"属生产者缺陷（impact_analyzer.prepare 与契约常量不一致），非调用方误传"
-        )
+    contract.assert_produced_keys(body, PREPARED_REQUIRED_KEYS, ImpactError, "impact_analyzer")
     return body
 
 
@@ -215,12 +211,7 @@ def analyze_prepared(prepared: dict, diff_text: str) -> dict:
     校验发生在**入口**：故「坏采集体 + 非法 diff 文本」同时成立时，**现在**先报采集体诊断
     （此前会先抛 `parse_unified_diff` 的 diff 错误）——仍是错误路径，错误类型仍是 `ImpactError`。
     """
-    missing = [k for k in PREPARED_REQUIRED_KEYS if k not in prepared]
-    if missing:
-        raise ImpactError(
-            f"analyze_prepared 收到非 impact_analyzer 采集体：缺少必需键 {missing}；"
-            f"应由 impact_analyzer.prepare 产出"
-        )
+    contract.require_prepared_keys(prepared, PREPARED_REQUIRED_KEYS, ImpactError, "impact_analyzer")
 
     changed = parse_unified_diff(diff_text)
     graph = prepared["graph"]

@@ -41,7 +41,7 @@ import json
 import re
 from pathlib import Path
 
-from . import drift, impact_analyzer, parser
+from . import contract, drift, impact_analyzer, parser
 
 # 步骤锚三态：与 M8 **同源**——明细判定收口在 `drift.anchor_state`（全仓唯一），
 # 此处只保留公开名，供调用方 / 自测引用，不再各持一份字面量或一份判定实现。
@@ -286,11 +286,7 @@ def prepare(flow_doc: str | Path, code_root: str | Path) -> dict:
         "edge_count": sum(len(f["edges"]) for f in flows),
         "flows": flows,
     }
-    if tuple(body) != PREPARED_REQUIRED_KEYS:
-        raise FlowError(
-            f"prepare 产物键序与 PREPARED_REQUIRED_KEYS 分叉：{tuple(body)} != {PREPARED_REQUIRED_KEYS}；"
-            f"属生产者缺陷（flow.prepare 与契约常量不一致），非调用方误传"
-        )
+    contract.assert_produced_keys(body, PREPARED_REQUIRED_KEYS, FlowError, "flow")
     return body
 
 
@@ -308,11 +304,7 @@ def analyze_prepared(prepared: dict, diff_file: str | Path | None = None) -> dic
     `KeyError`。此处用**本模块既有错误类型**报出「缺了哪些键 + 应由谁产出」，把误传变成一眼可懂。
     校验只读、只判必需键**子集**（多出的键不报错）；对合法采集体**恒真**，不产生任何分支差异。
     """
-    missing = [k for k in PREPARED_REQUIRED_KEYS if k not in prepared]
-    if missing:
-        raise FlowError(
-            f"analyze_prepared 收到非 flow 采集体：缺少必需键 {missing}；应由 flow.prepare 产出"
-        )
+    contract.require_prepared_keys(prepared, PREPARED_REQUIRED_KEYS, FlowError, "flow")
 
     impact = None
     if diff_file is not None:

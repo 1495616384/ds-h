@@ -335,16 +335,24 @@ def test_contract_regression() -> None:
 
 
 def test_structural_assertions() -> None:
-    """⑥ 结构断言精化（防复发）：`analyze_prepared` 仍含输入校验；`prepare` 含常量名但不含输入校验形态。"""
+    """⑥ 结构断言精化（防复发）：`analyze_prepared` **调用**共享输入校验、不内联模板；`prepare` **调用**产出不变量、不调输入校验。
+
+    M20 定点替换（原为匹配文本 `missing = [k for k in PREPARED_REQUIRED_KEYS`）——改为**守结构**（同 M18 ⑥）：
+    契约校验已收口为**唯一实现** `contract`，故断言锚在**是否调用共享函数**、模板是否**只存在于** `contract.py`。
+    """
     for mod in (flow, impact_analyzer, drift):
         src_ap = inspect.getsource(mod.analyze_prepared)
-        assert "missing = [k for k in PREPARED_REQUIRED_KEYS" in src_ap, \
-            f"{mod.__name__}.analyze_prepared 应含**输入**缺失键校验形态"
+        assert "require_prepared_keys" in src_ap, \
+            f"{mod.__name__}.analyze_prepared 应调用共享实现 contract.require_prepared_keys"
+        assert "收到非" not in src_ap and "属生产者缺陷" not in src_ap, \
+            f"{mod.__name__}.analyze_prepared 不得内联消息模板（模板全仓唯一，只在 contract.py）"
         src_prep = inspect.getsource(mod.prepare)
         assert "PREPARED_REQUIRED_KEYS" in src_prep, \
             f"{mod.__name__}.prepare 应含产出不变量（返回前引用常量名自证产物键序）"
-        assert "missing = [k for k in PREPARED_REQUIRED_KEYS" not in src_prep, \
-            f"{mod.__name__}.prepare 不得含**输入**缺失键校验（输入校验属消费端职责）"
+        assert "assert_produced_keys" in src_prep, \
+            f"{mod.__name__}.prepare 应调用共享实现 contract.assert_produced_keys"
+        assert "require_prepared_keys" not in src_prep, \
+            f"{mod.__name__}.prepare 不得调用**输入**校验（输入校验属消费端职责）"
 
 
 def test_read_only_and_determinism() -> None:

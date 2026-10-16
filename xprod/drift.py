@@ -47,7 +47,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import parser
+from . import contract, parser
 
 ANCHOR_EXACT = "exact"
 ANCHOR_PREFIX = "prefix"
@@ -166,11 +166,7 @@ def prepare(code_root: str | Path, design_doc: str | Path) -> dict:
         "file_set": file_set,
         "design": parser.parse_file(design_doc),
     }
-    if tuple(body) != PREPARED_REQUIRED_KEYS:
-        raise DriftError(
-            f"prepare 产物键序与 PREPARED_REQUIRED_KEYS 分叉：{tuple(body)} != {PREPARED_REQUIRED_KEYS}；"
-            f"属生产者缺陷（drift.prepare 与契约常量不一致），非调用方误传"
-        )
+    contract.assert_produced_keys(body, PREPARED_REQUIRED_KEYS, DriftError, "drift")
     return body
 
 
@@ -184,11 +180,7 @@ def analyze_prepared(prepared: dict) -> dict:
     逐字相同、都含 `design`），此前只会抛 `KeyError: 'files'`；现在报出缺了哪些键、应由谁产出。
     校验只读、只判必需键**子集**；对合法采集体**恒真**，不产生任何分支差异。
     """
-    missing = [k for k in PREPARED_REQUIRED_KEYS if k not in prepared]
-    if missing:
-        raise DriftError(
-            f"analyze_prepared 收到非 drift 采集体：缺少必需键 {missing}；应由 drift.prepare 产出"
-        )
+    contract.require_prepared_keys(prepared, PREPARED_REQUIRED_KEYS, DriftError, "drift")
 
     files = prepared["files"]
     dirs = prepared["dirs"]

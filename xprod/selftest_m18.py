@@ -392,22 +392,28 @@ def test_output_regression() -> None:
 
 
 def test_structural_assertions() -> None:
-    """⑥ 结构断言（防复发）：**输入**校验只在消费端入口；采集端（`prepare`）含**产出**不变量但不得含输入校验。
+    """⑥ 结构断言（防复发）：**输入**校验只在消费端入口、且经**唯一实现**；采集端含**产出**不变量、不含输入校验。
 
-    M19 定点精化：采集端**允许**引用常量名（`prepare` 返回前自证产物键序 == 契约常量，属**产出**不变量、
-    由生产者承担一致性）；但**不得**含**输入**缺失键校验（`missing = [k for k in PREPARED_REQUIRED_KEYS …]`
-    形态）——输入校验属消费端职责，职责边界不得漂移。
+    M20 定点替换（原为匹配文本 `missing = [k for k in PREPARED_REQUIRED_KEYS`）——改为**守结构**：
+    三个 `analyze_prepared` 必须**调用**共享实现 `contract.require_prepared_keys`，且**不得内联**消息模板；
+    三个 `prepare` 必须**调用** `contract.assert_produced_keys`，且**不得调用** `require_prepared_keys`
+    （输入校验属消费端职责）。理由：模板已收口为**全仓唯一**（只在 `contract.py`），
+    仍按源码文本匹配会随实现改写即失真（M19 已因此不得不精化一次）。
     """
     for mod in (flow, impact_analyzer, drift):
         src_ap = inspect.getsource(mod.analyze_prepared)
         assert "PREPARED_REQUIRED_KEYS" in src_ap, f"{mod.__name__}.analyze_prepared 应含入口必需键校验"
-        assert "missing = [k for k in PREPARED_REQUIRED_KEYS" in src_ap, \
-            f"{mod.__name__}.analyze_prepared 应含**输入**缺失键校验形态"
+        assert "require_prepared_keys" in src_ap, \
+            f"{mod.__name__}.analyze_prepared 应调用共享实现 contract.require_prepared_keys"
+        assert "收到非" not in src_ap and "属生产者缺陷" not in src_ap, \
+            f"{mod.__name__}.analyze_prepared 不得内联消息模板（模板全仓唯一，只在 contract.py）"
         src_prep = inspect.getsource(mod.prepare)
         assert "PREPARED_REQUIRED_KEYS" in src_prep, \
             f"{mod.__name__}.prepare 应含产出不变量（返回前引用常量名自证产物键序）"
-        assert "missing = [k for k in PREPARED_REQUIRED_KEYS" not in src_prep, \
-            f"{mod.__name__}.prepare 不得含**输入**缺失键校验（输入校验属消费端职责）"
+        assert "assert_produced_keys" in src_prep, \
+            f"{mod.__name__}.prepare 应调用共享实现 contract.assert_produced_keys"
+        assert "require_prepared_keys" not in src_prep, \
+            f"{mod.__name__}.prepare 不得调用**输入**校验（输入校验属消费端职责）"
 
 
 def test_key_sets_pairwise_distinct() -> None:
