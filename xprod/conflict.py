@@ -22,7 +22,8 @@
 M14 扩展（流程层并发冲突检测；对齐路线图 §十八 M14 行与设计稿 `X产品化-M14设计稿-v1.md` §四）：
     ⑦ **可选**流程文档：给了才计算流程层，并在输出末尾**追加** `flow_of_changesets` / `flow_conflict`
        两个键；**未给时输出与 M7 逐字节一致**（流程层键**不出现**，而非出现并置 `null`）；
-    ⑧ 流程面**一律**取自 M12 `flow.analyze`（逐改动各跑一次，取其 `direct_steps` / `affected_steps`），
+    ⑧ 流程面**一律**取自 M12 `flow` 的判定（M15 起：`flow.prepare` 对同一份流程文档**只做一次**，
+       再对每份 diff 各做一次 `flow.analyze_prepared`，取其 `direct_steps` / `affected_steps`），
        **零新解析**——本模块只做「两层结果相交」，不持有第二份流程判定实现；
     ⑨ 流程层冲突只有两类：`step` = 两份改动 `direct_steps` 交集非空（强）；`flow` = 两份改动
        `affected_steps` 所属流程 id 交集非空（弱）。`unanchored` 步骤**不参与**（无锚即无「命中」
@@ -158,16 +159,20 @@ def _pairwise_conflicts(summaries: list[dict]) -> list[dict]:
 
 
 def _flow_layer(plan: dict, code_root: str | Path, flow_doc: str | Path) -> list[dict]:
-    """逐改动取流程面：**一律**调 `flow.analyze` 取 `direct_steps` / `affected_steps`，不重算、不另造。
+    """逐改动取流程面：**一律**取自 `flow` 的判定，不重算、不另造。
 
-    为什么逐改动各跑一次 `flow.analyze` 而不是自己拼：流程解析与「直接命中 ∪ 正向下游闭包」
-    的判定口径只能有一个源头（M12）。此处若自己复刻，就会重演「同一规则两处实现 → 隐性漂移」。
+    为什么用「采集一次 + 逐改动构造」（M15）：流程解析与「直接命中 ∪ 正向下游闭包」的判定口径
+    只能有一个源头（M12），此处若自己复刻，就会重演「同一规则两处实现 → 隐性漂移」。
+    而同一份流程文档在本工作流里要供 N 份改动复用——此前是逐改动各调一次 `flow.analyze`，
+    于是「读 + 解析流程文档、扫树、判锚活性」这三件**与 diff 无关**的事被重复了 N 次。
+    M15 起改为：`flow.prepare` **只做一次**，再对每份 diff 各做一次 `flow.analyze_prepared`。
+    复用**写在调用点**（本函数显式持有 `prepared`），不引入任何隐式缓存；M14 的输出**逐字节不变**。
     `affected_steps` 与 `direct_steps` 在 `flow` 内已排序，此处原样透传以保确定性。
     """
+    prepared = flow.prepare(flow_doc, code_root)
     rows: list[dict] = []
     for change in plan["changesets"]:
-        doc = flow.analyze(flow_doc, code_root, change["diff"])
-        impact = doc["impact"]
+        impact = flow.analyze_prepared(prepared, change["diff"])["impact"]
         affected = list(impact["affected_steps"])
         rows.append(
             {

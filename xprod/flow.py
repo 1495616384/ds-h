@@ -15,7 +15,10 @@
        （步骤锚三态一律取自 `drift.anchor_state`——全仓唯一实现，与 M8 逐字同口径）；
     ⑥ `verdict` ∈ `clear` / `impacted`（`affected_steps` 非空即 `impacted`）；
     ⑦ 无 `--diff` 时 `impact` 为 `null`，只输出流程结构与步骤锚活性；
-    ⑧ 确定性（排序、无时间戳，同输入两次**逐字节一致**）、只读。
+    ⑧ 确定性（排序、无时间戳，同输入两次**逐字节一致**）、只读；
+    ⑨ M15 采集 / 构造分离：`prepare`（与 diff 无关：读 + 解析流程文档、扫树、判锚活性）与
+       `analyze_prepared`（按 diff 构造影响）各有**唯一实现**，`analyze` 退化为**薄编排**；
+       复用由调用方**显式持有**中间体，**不**引入隐式缓存（签名与输出**逐字节不变**）。
 
 流程文档格式（写死；与条目设计文档**分文件**——M1 解析器在首个条目之后遇到 `##` 行会报错）：
 
@@ -226,14 +229,16 @@ def _impact(flows: list[dict], changed: list[str]) -> dict:
     }
 
 
-def analyze(
-    flow_doc: str | Path,
-    code_root: str | Path,
-    diff_file: str | Path | None = None,
-) -> dict:
-    """解析流程文档、判定步骤锚活性；给了 `diff_file` 再算一次流程级影响。
+def prepare(flow_doc: str | Path, code_root: str | Path) -> dict:
+    """采集一次：**与 diff 无关**的部分——读 + 解析流程文档、扫一遍代码根树、逐步骤判锚活性。
 
-    返回键序固定、可逐字节复现的文档；无 `diff_file` 时 `impact` 为 `None`。
+    为什么拆出这一层（M15）：同一份流程文档在一个工作流里要供 N 份 diff 复用（M14 的流程层即是）。
+    把「与 diff 无关的采集」与「按 diff 构造」分成两个**显式传参**的入口，调用方只需**自己持有**
+    中间体即可只采集一次。**不**引入隐式缓存 / 全局状态：一旦用 `lru_cache` 或模块级字典复用，
+    「哪些调用共享了同一份采集」就变得不可见，键不覆盖真实语义时还会串味（A 的采集被 B 误用）——
+    本仓库的核心教训之一就是「隐式共享比显式传参更难防」。
+
+    返回键序固定为 `flow_count, step_count, edge_count, flows`（即 `analyze` 输出**去掉 `impact` 键**）。
     """
     root = Path(code_root)
     if not root.is_dir():
@@ -264,18 +269,49 @@ def analyze(
             }
         )
 
-    impact = None
-    if diff_file is not None:
-        changed = impact_analyzer.parse_unified_diff(Path(diff_file).read_text(encoding="utf-8"))
-        impact = _impact(flows, changed)
-
     return {
         "flow_count": len(flows),
         "step_count": sum(len(f["steps"]) for f in flows),
         "edge_count": sum(len(f["edges"]) for f in flows),
         "flows": flows,
+    }
+
+
+def analyze_prepared(prepared: dict, diff_file: str | Path | None = None) -> dict:
+    """按 diff 构造：**与 diff 有关**的部分——读 + 解析该 diff、做流程级影响判定（不可复用）。
+
+    **只读**传入的 `prepared`：既不修改它，也不注册任何全局状态，故同一 `prepared` 可安全供给
+    任意多份 diff 复用——复用次数与污染风险**写在调用点**，可读、可断言、可推理。
+    返回键序与 `analyze` **逐字一致**（`flow_count, step_count, edge_count, flows, impact`）；
+    无 `diff_file` 时 `impact` 为 `None`。
+    """
+    impact = None
+    if diff_file is not None:
+        changed = impact_analyzer.parse_unified_diff(Path(diff_file).read_text(encoding="utf-8"))
+        impact = _impact(prepared["flows"], changed)
+
+    return {
+        "flow_count": prepared["flow_count"],
+        "step_count": prepared["step_count"],
+        "edge_count": prepared["edge_count"],
+        "flows": prepared["flows"],
         "impact": impact,
     }
+
+
+def analyze(
+    flow_doc: str | Path,
+    code_root: str | Path,
+    diff_file: str | Path | None = None,
+) -> dict:
+    """解析流程文档、判定步骤锚活性；给了 `diff_file` 再算一次流程级影响。
+
+    返回键序固定、可逐字节复现的文档；无 `diff_file` 时 `impact` 为 `None`。
+
+    M15：本函数退化为**一层薄编排**——上面两个入口各有**唯一实现**，此处只顺次调用它们，
+    采集逻辑**不**在编排层被再写一遍（否则又回到「同一事实多处实现」的老路）。
+    """
+    return analyze_prepared(prepare(flow_doc, code_root), diff_file)
 
 
 def render_text(doc: dict) -> str:
