@@ -24,9 +24,10 @@
 from __future__ import annotations
 
 import ast
-import json
 from dataclasses import dataclass
 from pathlib import Path
+
+from . import textio
 
 IMPORT_KIND = "import"
 REEXPORT_KIND = "reexport"
@@ -304,5 +305,5 @@ def render_node_tree(doc: dict, node_id: str) -> str:
 
 
 def to_json(doc: dict) -> str:
-    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（与 M1 同口径）。"""
-    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（M21：口径由 `textio.to_json` 唯一提供，本函数只委派）。"""
+    return textio.to_json(doc)

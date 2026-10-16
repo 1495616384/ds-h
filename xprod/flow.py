@@ -37,11 +37,10 @@
 
 from __future__ import annotations
 
-import json
 import re
 from pathlib import Path
 
-from . import contract, drift, impact_analyzer, parser
+from . import contract, drift, impact_analyzer, parser, textio
 
 # 步骤锚三态：与 M8 **同源**——明细判定收口在 `drift.anchor_state`（全仓唯一），
 # 此处只保留公开名，供调用方 / 自测引用，不再各持一份字面量或一份判定实现。
@@ -366,5 +365,5 @@ def render_text(doc: dict) -> str:
 
 
 def to_json(doc: dict) -> str:
-    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（与 M1–M11 同口径）。"""
-    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（M21：口径由 `textio.to_json` 唯一提供，本函数只委派）。"""
+    return textio.to_json(doc)

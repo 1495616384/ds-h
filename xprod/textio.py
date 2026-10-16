@@ -10,14 +10,35 @@
     `write_text`。该约定由 M0 自测第四条**静态强制**（产品模块若出现对 `write_text`
     的直接调用即判失败）。
 
+M21（本模块成为「确定性文本口径」的唯一归属）：
+    与落盘口径**同一条链**的还有**生成**口径——确定性 JSON 怎么写（UTF-8 / 不转义非 ASCII /
+    缩进 2 / 键序按插入顺序 / 末尾单换行）。这一点原先在**九个模块**里各写一遍、
+    函数体**逐字节相同**，任一处被改动其余八处不会跟着动，属典型**隐性漂移**（与 M12 / M16 /
+    M17 / M20 同一族）。故把序列化也收归本模块：`to_json`（生成）+ `save_text`（落盘）
+    组成同一条链上的**唯一口径**，九个模块的 `to_json` 退化为**薄委派**（`return textio.to_json(doc)`），
+    既保住各自的对外公开名，又让「只有一份实现」可被**结构断言**直接证明。
+
 只依赖 Python 标准库。
 """
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 
 def save_text(path: str | Path, text: str) -> None:
     """把 `text` 以 UTF-8 字节**原样**落盘，不做任何换行翻译。"""
     Path(path).write_bytes(text.encode("utf-8"))
+
+
+def to_json(doc: dict) -> str:
+    """确定性 JSON 文本：UTF-8、**不转义**非 ASCII、缩进 2、键序按**插入顺序**、末尾**单换行**。
+
+    为什么收口成一个函数：这行序列化原先在**九个模块**里**逐字节**各写一遍，一致性靠编辑者记忆；
+    任一处改了缩进 / 加了 `sort_keys`，其余八处不会跟着动，而各处输出看上去都「正常」——
+    这类**隐性漂移**只能靠结构上只留一份实现来堵死（由 `selftest_m21` 的结构断言强制）。
+    函数体**逐字**等于收口前那九处的那一行：**只搬位置、不改内容**，故所有既有输出逐字节不变。
+    """
+    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+

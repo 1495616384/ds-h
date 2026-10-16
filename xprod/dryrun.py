@@ -22,6 +22,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Protocol
 
+from . import textio
+
 # 反馈交付模式（设计稿 §八：唯一独立变量）
 MODE_ENFORCED = "enforced"  # 门禁式：不通过不许合并
 MODE_CONSULTATIVE = "consultative"  # 咨询式：只提示，AI 自主决定是否采纳
@@ -342,5 +344,5 @@ def render_text(doc: dict) -> str:
 
 
 def to_json(doc: dict) -> str:
-    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（与 M1–M3 同口径）。"""
-    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（M21：口径由 `textio.to_json` 唯一提供，本函数只委派）。"""
+    return textio.to_json(doc)

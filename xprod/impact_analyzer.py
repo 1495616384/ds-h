@@ -35,10 +35,9 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
-from . import contract, graph_builder, parser
+from . import contract, graph_builder, parser, textio
 
 # 统一 diff 的结构标记（git diff 风格）
 _DIFF_HEADER = "diff --git "
@@ -325,5 +324,5 @@ def render_text(doc: dict) -> str:
 
 
 def to_json(doc: dict) -> str:
-    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（与 M1/M2 同口径）。"""
-    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（M21：口径由 `textio.to_json` 唯一提供，本函数只委派）。"""
+    return textio.to_json(doc)

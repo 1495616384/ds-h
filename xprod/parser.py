@@ -21,10 +21,11 @@
 
 from __future__ import annotations
 
-import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
+
+from . import textio
 
 # 值域与 RISK-REGISTRY v1 保持一致：解析阶段只做「取值合法性」校验，
 # 不做严重度/变更控制的语义判定（那是判定阶段的事，M1 不越界）。
@@ -212,5 +213,5 @@ def parse_file(path: str | Path) -> dict:
 
 
 def to_json(doc: dict) -> str:
-    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行。"""
-    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（M21：口径由 `textio.to_json` 唯一提供，本函数只委派）。"""
+    return textio.to_json(doc)

@@ -241,8 +241,8 @@ def load_snapshot(path: str | Path) -> FreezeSnapshot:
 
 
 def to_json(doc: dict) -> str:
-    """稳定 JSON：UTF-8、不转义非 ASCII、固定缩进、结尾换行。"""
-    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+    """稳定 JSON：UTF-8、不转义非 ASCII、固定缩进、结尾换行（M21：口径由 `textio.to_json` 唯一提供，本函数只委派）。"""
+    return textio.to_json(doc)
 
 
 _NEVER_PASS_NOTE = "note: 退出码 3 = 指纹一致、正式门槛未就绪；3 ≠ 失败 ≠ 通过"

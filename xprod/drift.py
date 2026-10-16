@@ -44,10 +44,9 @@ M17 拆分（采集 / 构造分离，承接 M15 / M16 同一治理规则）：
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
-from . import contract, parser
+from . import contract, parser, textio
 
 ANCHOR_EXACT = "exact"
 ANCHOR_PREFIX = "prefix"
@@ -269,5 +268,5 @@ def render_text(doc: dict) -> str:
 
 
 def to_json(doc: dict) -> str:
-    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（与 M1–M7 同口径）。"""
-    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+    """稳定序列化：UTF-8、缩进 2、键序按插入顺序、末尾单换行（M21：口径由 `textio.to_json` 唯一提供，本函数只委派）。"""
+    return textio.to_json(doc)
