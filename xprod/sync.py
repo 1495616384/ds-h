@@ -57,9 +57,12 @@ def _anchor_key(record: dict) -> tuple[str, str]:
     return (record["constraint_id"], record["evidence"])
 
 
-def snapshot(code_root: str | Path, design_doc: str | Path) -> dict:
-    """采集锚活性基线快照（仅记 `(条目id, 证据原文, 状态)` 这一稳定子集）。"""
-    d = drift.analyze(code_root, design_doc)
+def snapshot_from_drift(d: dict) -> dict:
+    """由**已有的** `drift` 结果构造锚活性快照。
+
+    单独成函数，供已持有 `drift` 结果的调用方（如可视面）复用：既避免对同一次采集
+    重复跑 `drift` 的二次计算，也避免两条路径各自拼快照导致口径分叉。
+    """
     records: list[dict] = []
     for r in d["active_anchors"]:
         records.append({"constraint_id": r["constraint_id"], "evidence": r["evidence"], "status": STATUS_ACTIVE})
@@ -78,6 +81,15 @@ def snapshot(code_root: str | Path, design_doc: str | Path) -> dict:
         "anchors": records,
         "uncovered_files": list(d["uncovered_files"]),
     }
+
+
+def snapshot(code_root: str | Path, design_doc: str | Path) -> dict:
+    """采集锚活性基线快照（仅记 `(条目id, 证据原文, 状态)` 这一稳定子集）。
+
+    薄封装：把 `drift` 采集与快照构造串起来；需要复用已算好的 `drift` 结果时，
+    直接调用 `snapshot_from_drift`。
+    """
+    return snapshot_from_drift(drift.analyze(code_root, design_doc))
 
 
 def save_snapshot(path: str | Path, snap: dict) -> None:

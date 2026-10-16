@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import html
 
-from . import drift, graph_builder, parser
+from . import drift, graph_builder, parser, sync
 
 # 证据在可视面上的三种状态（口径与 `drift` 一致，此处只是取给标签用）
 STATUS_ACTIVE = "active"
@@ -49,6 +49,9 @@ h2 { font-size: 15px; margin: 22px 0 8px; padding-bottom: 4px;
 .verdict { font-family: Consolas, monospace; font-size: 13px; margin: 0; }
 .verdict.ok { color: #3fb950; }
 .verdict.drift { color: #f85149; }
+.verdict.unchanged { color: #8b949e; }
+.verdict.changed { color: #d29922; }
+.verdict.regressed { color: #f85149; }
 ul { margin: 6px 0; padding-left: 20px; }
 code, .cid { font-family: Consolas, monospace; color: #79c0ff; }
 details { margin: 4px 0; border: 1px solid #21262d; border-radius: 4px; padding: 6px 10px; }
@@ -76,17 +79,18 @@ def _status_index(drift_doc: dict) -> dict[tuple[str, str], tuple[str, dict | No
     return index
 
 
-def analyze(code_root: str, design_doc: str) -> dict:
-    """汇总条目 / 锚活性 / 盲区 / 依赖图，返回键序固定、可逐字节复现的合成文档。
+def analyze(code_root: str, design_doc: str, baseline: dict | None = None) -> dict:
+    """汇总条目 / 锚活性 / 盲区 / 依赖图（+ 可选同步增量），返回键序固定、可逐字节复现的文档。
 
     对同一批次数据只取一次：`drift` 负责锚活性与盲区，`graph_builder` 负责依赖图，
-    本函数只做**汇合**，不改写任何一方的取值。
+    本函数只做**汇合**，不改写任何一方的取值。给了 `baseline` 时，增量段经
+    `sync.snapshot_from_drift` 由**同一份** `drift` 结果构造，不再重复采集。
     """
     drift_doc = drift.analyze(code_root, design_doc)
     design = parser.parse_file(design_doc)
     graph = graph_builder.build_graph(code_root)
 
-    return {
+    doc = {
         "verdict": drift_doc["verdict"],
         "entry_count": drift_doc["entry_count"],
         "active_count": drift_doc["active_count"],
@@ -105,6 +109,12 @@ def analyze(code_root: str, design_doc: str) -> dict:
         "edges": graph["edges"],
         "cycles": graph["cycles"],
     }
+    doc["sync"] = (
+        sync.compare_snapshots(baseline, sync.snapshot_from_drift(drift_doc))
+        if baseline is not None
+        else None
+    )
+    return doc
 
 
 def _ev(x: object) -> str:
@@ -165,6 +175,46 @@ def _render_node(node: dict) -> list[str]:
     return out
 
 
+def _render_sync(syncdoc: dict) -> list[str]:
+    """增量段：判定与六个变化清单**直接取自** `sync.compare_snapshots`，此处只做呈现。"""
+    v = syncdoc["verdict"]
+    lines = [
+        '<section id="sync">',
+        "<h2>同步增量（相对基线）</h2>",
+        f'<p class="verdict {_ev(v)}">判定：{_ev(v)}</p>',
+        "<ul>",
+        f"<li>新增失联：{len(syncdoc['newly_dangling'])}</li>",
+        f"<li>恢复：{len(syncdoc['recovered'])}</li>",
+        f"<li>新增证据：{len(syncdoc['added_evidence'])}</li>",
+        f"<li>移除证据：{len(syncdoc['removed_evidence'])}</li>",
+        f"<li>盲区新增：{len(syncdoc['uncovered_added'])}</li>",
+        f"<li>盲区移除：{len(syncdoc['uncovered_removed'])}</li>",
+        "</ul>",
+    ]
+    groups = (
+        ("新增失联", [(r["constraint_id"], r["evidence"]) for r in syncdoc["newly_dangling"]]),
+        ("恢复", [(r["constraint_id"], r["evidence"]) for r in syncdoc["recovered"]]),
+        ("新增证据", [(r["constraint_id"], r["evidence"]) for r in syncdoc["added_evidence"]]),
+        ("移除证据", [(r["constraint_id"], r["evidence"]) for r in syncdoc["removed_evidence"]]),
+        ("盲区新增", [(p, "") for p in syncdoc["uncovered_added"]]),
+        ("盲区移除", [(p, "") for p in syncdoc["uncovered_removed"]]),
+    )
+    for title, items in groups:
+        if not items:
+            continue
+        lines.append(f"<details><summary>{title}（{len(items)}）</summary>")
+        lines.append("<ul>")
+        for cid, ev in items:
+            if ev:
+                lines.append(f'<li><span class="cid">{_ev(cid)}</span> <code>{_ev(ev)}</code></li>')
+            else:
+                lines.append(f'<li><code>{_ev(cid)}</code></li>')
+        lines.append("</ul>")
+        lines.append("</details>")
+    lines.append("</section>")
+    return lines
+
+
 def render_html(doc: dict) -> str:
     """把合成文档渲染为单个自包含 HTML（末尾单换行；逐字节可断言）。"""
     index = _status_index(
@@ -202,9 +252,11 @@ def render_html(doc: dict) -> str:
         f"<li>依赖环：{doc['cycle_count']}</li>",
         "</ul>",
         "</section>",
-        '<section id="entries">',
-        "<h2>条目与锚</h2>",
     ]
+    if doc.get("sync") is not None:
+        lines.extend(_render_sync(doc["sync"]))
+    lines.append('<section id="entries">')
+    lines.append("<h2>条目与锚</h2>")
     for entry in doc["entries"]:
         lines.extend(_render_entry(entry, index))
     lines.append("</section>")
@@ -257,7 +309,7 @@ def render_html(doc: dict) -> str:
 
     lines.append("<footer>")
     lines.append(f"<p>{_ev(drift._DRIFT_NOTE)}</p>")
-    lines.append("<p>本页面为静态快照：不随代码变化自动刷新；判定口径与 drift 一致，本页不新增判定。</p>")
+    lines.append("<p>本页面为静态快照：不随代码变化自动刷新；判定口径与 drift 一致，增量段口径与 sync 一致，本页不新增判定。</p>")
     lines.append("</footer>")
     lines.extend(["</body>", "</html>"])
     return "\n".join(lines) + "\n"

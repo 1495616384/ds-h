@@ -8,7 +8,9 @@ M6 追加 `guard`——流程护栏：冻结快照「改动前 / 改动后」比
 M7 追加 `conflict`——并发改动冲突检测：给定分工计划（多份并发改动），报出相互冲突的改动对（`--text` 给人类可读版本）；
 M8 追加 `drift`——一致性漂移校验：给定代码根与设计文档，逐条证据锚解析活性，报出失联锚与设计盲区（`--text` 给人类可读版本）；
 M9 追加 `view`——逻辑控制面可视面：把条目、锚活性、设计盲区与依赖图汇成单个自包含 HTML（写到 stdout）；
-M10 追加 `sync`——同步基线比对：把锚活性存成基线，之后比对报出新增失联 / 恢复 / 证据增删 / 盲区变化（`--text` 给人类可读版本）。
+M10 追加 `sync`——同步基线比对：把锚活性存成基线，之后比对报出新增失联 / 恢复 / 证据增删 / 盲区变化（`--text` 给人类可读版本）；
+M11 扩展 `view`——可选 `--baseline <snap.json>`：给了基线就在可视面追加「同步增量（相对基线）」段，
+增量快照经 `sync.snapshot_from_drift` 由**同一次** `drift` 采集构造（不重复采集、不与 `sync` 分叉）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -28,7 +30,7 @@ USAGE = (
     "       python -m xprod guard push [--repo <dir>] [--git <path>] [--remote <name>] [--branch <name>] [--text]\n"
     "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--text]\n"
     "       python -m xprod drift <code-root> <design-doc> [--text]\n"
-    "       python -m xprod view <code-root> <design-doc>\n"
+    "       python -m xprod view <code-root> <design-doc> [--baseline <snap.json>]\n"
     "       python -m xprod sync <code-root> <design-doc> [--save <snap.json>|--compare <snap.json>] [--text]"
 )
 
@@ -228,15 +230,30 @@ def main(argv: list[str] | None = None) -> int:
         _write_bytes(text)
         return 0
     if args and args[0] == "view":
-        from . import drift, graph_builder, parser, viewer
+        from . import drift, graph_builder, parser, sync, viewer
 
         rest = args[1:]
+        baseline_path = None
+        if "--baseline" in rest:
+            i = rest.index("--baseline")
+            if i + 1 >= len(rest):
+                print(USAGE, file=sys.stderr)
+                return 2
+            baseline_path = rest[i + 1]
+            del rest[i : i + 2]
         if len(rest) != 2:
             print(USAGE, file=sys.stderr)
             return 2
         try:
-            doc = viewer.analyze(rest[0], rest[1])
-        except (drift.DriftError, graph_builder.GraphError, parser.ParseError, OSError) as exc:
+            baseline = sync.load_snapshot(baseline_path) if baseline_path is not None else None
+            doc = viewer.analyze(rest[0], rest[1], baseline)
+        except (
+            drift.DriftError,
+            graph_builder.GraphError,
+            parser.ParseError,
+            sync.SyncError,
+            OSError,
+        ) as exc:
             print(f"view error: {exc}", file=sys.stderr)
             return 1
         _write_bytes(viewer.render_html(doc))
