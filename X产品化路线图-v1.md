@@ -506,3 +506,52 @@ M16 把 M15 已确立的治理规则（「采集一次 / 复用多次」）**换
 或 H3 的结论；本项**不更改任何判定口径**，只改变「同一事实被采集**几次**」——判定结果重构前后**逐字节相同**。
 
 **授权归属**：M16 与 M0–M15 同属 §五 **B 类**（可自主启动）；同样**不触碰** v7 冻结链。
+
+---
+
+## 二十一、附录：M17 定义（viewer 设计文档双解析收口；2026-10-16 追加）
+
+> 本节为**追加**内容，**不改写**本文件上述任何原文。
+
+**为什么加这一行**：§二十 M16 的「已知边界」段**显式排除**了一条同类重复并列为候选，原话是
+「**不**消除 `viewer.analyze` 里「`drift.analyze` 内部解析一次设计文档 + `viewer` 再解析一次」的同类重复
+（**另一模块对**，本轮显式排除）」。这条候选就是本节：`viewer.analyze`
+（[viewer.py 第 103-105 行](file:///g:/ds-h/xprod/viewer.py#L103-L105)）先调 `drift.analyze`（其内部
+`parser.parse_file(design_doc)`，见 [drift.py 第 125 行](file:///g:/ds-h/xprod/drift.py#L125)），
+又自己 `parser.parse_file(design_doc)` 一次——**同一份设计文档被独立解析两遍**。
+M17 把 M15 / M16 已确立的治理规则（「采集一次 / 复用多次」）**再换一对模块**落实一遍。
+
+| 里程碑 | 核心目标 | 可交付物（可运行·可展示·可测试） | 验收标准（可写成测试） | 依赖 | 边界 |
+|---|---|---|---|---|---|
+| **M17 viewer 设计文档双解析收口** | 把 `drift` 里与调用方**无关**的采集（文件枚举、设计文档解析）抽成**显式传参**的中间体，让 `viewer` 只采集一次、把同一份模型同时供给 drift 判定与自己的条目区；`drift.analyze` 退化为薄编排 | `drift` 扩展（`prepare` / `analyze_prepared`）+ `viewer.analyze` 汇合层收敛为「采集一次 + 复用」+ 自测脚本（夹具临时自建，不依赖归档副本） | 夹具驱动的（drift 层 `analyze` 与 `prepare+analyze_prepared` **逐字节等价** / 准备体形状 / 复用不变性与只读 / **计数探针证明设计文档解析只发生 1 次**（对照旧路径为 2） / **`viewer.analyze` 端到端解析 == 1** / 结构断言 `drift.analyze` 不含 `scan_tree(` 与 `parse_file(`、`viewer.analyze` 不含 `parse_file(` / 确定性 / 只读 / CLI 回归 / M8 与 M9·M11·M13 回归）断言可写成测试并通过 | M8（锚活性口径）、M1（条目模型）、M9/M11/M13（viewer 调用点） | **不接真实 AI**、不运行正式 H3、不触碰冻结链；**不**改 `drift.analyze` 签名与输出、**不**改 `viewer` HTML 产物；**不**引入缓存 / 全局状态；**不**合并 `drift.scan_tree` 与 `graph_builder.build_graph` 的两次走树（不同事实）；**不**动 `flow` / `sync`；**不**改 CLI 参数面 |
+
+**判定口径（写死）**：详见设计稿 `X产品化-M17设计稿-v1.md` §四；要点：
+
+1. **`drift.prepare` 返回 = `{"files": <scan_tree 文件有序列表>, "dirs": <目录集合>,
+   "file_set": <文件集合>, "design": <M1 条目文档原样>}`**（键序 `files, dirs, file_set, design`）——
+   **只放原始事实**，不放派生查表（`_status_index` 这类呈现层查表不得塞进来，§十四 M11 的教训）；
+2. **`dirs` / `file_set` 保持集合类型**：`drift.analyze` 的 `file_set - covered` 是集合差，
+   `anchor_state` 按集合做成员判断；转列表会迫使构造层再转回集合（把消费方的类型假设写进构造层），
+   故 `prepared` 定位为**进程内中间体**（不出 JSON、不落盘）；
+3. **`drift.analyze` 签名与输出逐字节不变**（十个键逐字同序同义）——它只是薄编排；
+4. **`viewer.analyze` 的 HTML 产物逐字节不变**：其内部改为 `prepared = drift.prepare(...)` →
+   `drift.analyze_prepared(prepared)` → `design = prepared["design"]`，故条目区与锚活性区**必定同源**；
+5. **`analyze_prepared` 只读**传入的 `prepared`：调用前后其复合摘要**不变**；同一 `prepared` 供多次复用，
+   结果与单独 `analyze` **逐字节一致**；
+6. **错误语义与抛出阶段不变**（类型与退出码一字不改）：扫描根非目录 → `DriftError`（在 `prepare` 抛，
+   **先于**解析，与原检查顺序一致）、设计文档不合格式 → `ParseError`（在 `prepare` 抛）；
+7. **不引入隐式缓存 / 全局状态**：复用必须由调用方**显式持有**中间体；**不**给 `drift.analyze` 加
+   「可选注入已解析 design」的参数（那等于把复用藏进默认值）；
+8. 确定性（排序、无时间戳，同输入两次逐字节一致）、只读；**复用是否真的发生**由计数探针**实测**断言
+   （端到端以 `viewer.analyze` 为观察点，证明 `parser.parse_file` == 1）。
+
+**已知边界**：只消除 `drift`↔`viewer` 这一对的**设计文档重复解析**；**不**合并 `drift.scan_tree` 与
+`graph_builder.build_graph` 的两次「走树」（两者枚举的是**不同事实**：文件/目录存在性 vs `.py` 的 AST 依赖，
+合并会把 `drift` 与 `graph_builder` 耦合）；**不**动 `flow.prepare` 对 `drift.scan_tree` 的另一次调用
+（**另一消费者**：流程步骤锚活性，跨模块树枚举注入属更大改动，超本轮边界）；
+**不**做跨进程 / 跨调用的持久化中间体；**不**为提速引入并行 / 线程（确定性优先）。
+
+**性质声明**：自测通过**只**证明「采集与构造**已分离**、复用**可运行、可被断言**」，**不**证明任何关于真实编码 AI
+或 H3 的结论；本项**不更改任何判定口径**，只改变「同一事实被采集**几次**」——判定结果重构前后**逐字节相同**。
+
+**授权归属**：M17 与 M0–M16 同属 §五 **B 类**（可自主启动）；同样**不触碰** v7 冻结链。
