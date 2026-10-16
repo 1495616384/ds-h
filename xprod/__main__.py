@@ -5,7 +5,8 @@ M2 追加 `graph`——从只读代码副本构建模块依赖图，并可下钻
 M3 追加 `impact`——给定模拟 diff，输出受影响条目 / 文件清单（`--text` 给人类可读版本）；
 M5 追加 `dryrun`——按剧本回放 M4 设计的干跑骨架，输出收敛与否决判定（`--text` 给人类可读版本）；
 M6 追加 `guard`——流程护栏：冻结快照「改动前 / 改动后」比对 + 推送三态判定（`--text` 给人类可读版本）；
-M7 追加 `conflict`——并发改动冲突检测：给定分工计划（多份并发改动），报出相互冲突的改动对（`--text` 给人类可读版本）。
+M7 追加 `conflict`——并发改动冲突检测：给定分工计划（多份并发改动），报出相互冲突的改动对（`--text` 给人类可读版本）；
+M8 追加 `drift`——一致性漂移校验：给定代码根与设计文档，逐条证据锚解析活性，报出失联锚与设计盲区（`--text` 给人类可读版本）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -23,7 +24,8 @@ USAGE = (
     "       python -m xprod dryrun <scenarios.json> [--text]\n"
     "       python -m xprod guard freeze --checker <freeze-checker.py> [--root <dir>] [--save <snap.json>|--compare <snap.json>] [--text]\n"
     "       python -m xprod guard push [--repo <dir>] [--git <path>] [--remote <name>] [--branch <name>] [--text]\n"
-    "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--text]"
+    "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--text]\n"
+    "       python -m xprod drift <code-root> <design-doc> [--text]"
 )
 
 
@@ -201,6 +203,24 @@ def main(argv: list[str] | None = None) -> int:
             print(f"conflict error: {exc}", file=sys.stderr)
             return 1
         text = conflict.render_text(doc) if as_text else conflict.to_json(doc)
+        _write_bytes(text)
+        return 0
+    if args and args[0] == "drift":
+        from . import drift, parser
+
+        rest = args[1:]
+        as_text = "--text" in rest
+        if as_text:
+            del rest[rest.index("--text")]
+        if len(rest) != 2:
+            print(USAGE, file=sys.stderr)
+            return 2
+        try:
+            doc = drift.analyze(rest[0], rest[1])
+        except (drift.DriftError, parser.ParseError, OSError) as exc:
+            print(f"drift error: {exc}", file=sys.stderr)
+            return 1
+        text = drift.render_text(doc) if as_text else drift.to_json(doc)
         _write_bytes(text)
         return 0
     print(USAGE, file=sys.stderr)
