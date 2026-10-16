@@ -275,12 +275,23 @@ def prepare(flow_doc: str | Path, code_root: str | Path) -> dict:
             }
         )
 
-    return {
+    # M19：产出不变量——采集端**自证**其产物键序满足契约常量 `PREPARED_REQUIRED_KEYS`。
+    # 为什么加在**生产者侧**（而不是只靠消费端 M18 的入口校验）：契约以常量声明，若无人被要求遵守，
+    # 一旦两份字面量分叉，合法的调用会先撞上消费端校验、报出「你传错了」——**归因指错了方向**，
+    # 且只在某个消费者跑起来时才暴露。放在返回前，则缺陷在**定义点**、以**指向生产者**的诊断失败。
+    # 对合法输入恒真，不产生任何分支差异（对外产物逐字节不变）。
+    body = {
         "flow_count": len(flows),
         "step_count": sum(len(f["steps"]) for f in flows),
         "edge_count": sum(len(f["edges"]) for f in flows),
         "flows": flows,
     }
+    if tuple(body) != PREPARED_REQUIRED_KEYS:
+        raise FlowError(
+            f"prepare 产物键序与 PREPARED_REQUIRED_KEYS 分叉：{tuple(body)} != {PREPARED_REQUIRED_KEYS}；"
+            f"属生产者缺陷（flow.prepare 与契约常量不一致），非调用方误传"
+        )
+    return body
 
 
 def analyze_prepared(prepared: dict, diff_file: str | Path | None = None) -> dict:

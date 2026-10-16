@@ -157,12 +157,21 @@ def prepare(code_root: str | Path, design_doc: str | Path) -> dict:
     if not root.is_dir():
         raise DriftError(f"代码根不是目录：{root}")
     files, dirs, file_set = scan_tree(root)
-    return {
+    # M19：产出不变量——采集端**自证**其产物键序满足契约常量 `PREPARED_REQUIRED_KEYS`（详见 `flow.prepare`
+    # 同一注释）：把「契约常量与产物分叉」的失败点从某个消费者运行时，前移到**本定义点**，且诊断**指向生产者**。
+    # 对合法输入恒真，不产生任何分支差异（对外产物逐字节不变）。
+    body = {
         "files": files,
         "dirs": dirs,
         "file_set": file_set,
         "design": parser.parse_file(design_doc),
     }
+    if tuple(body) != PREPARED_REQUIRED_KEYS:
+        raise DriftError(
+            f"prepare 产物键序与 PREPARED_REQUIRED_KEYS 分叉：{tuple(body)} != {PREPARED_REQUIRED_KEYS}；"
+            f"属生产者缺陷（drift.prepare 与契约常量不一致），非调用方误传"
+        )
+    return body
 
 
 def analyze_prepared(prepared: dict) -> dict:

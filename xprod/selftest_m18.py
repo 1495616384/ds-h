@@ -392,12 +392,22 @@ def test_output_regression() -> None:
 
 
 def test_structural_assertions() -> None:
-    """⑥ 结构断言（防复发）：校验只在消费端入口，采集端（`prepare`）不得含校验。"""
+    """⑥ 结构断言（防复发）：**输入**校验只在消费端入口；采集端（`prepare`）含**产出**不变量但不得含输入校验。
+
+    M19 定点精化：采集端**允许**引用常量名（`prepare` 返回前自证产物键序 == 契约常量，属**产出**不变量、
+    由生产者承担一致性）；但**不得**含**输入**缺失键校验（`missing = [k for k in PREPARED_REQUIRED_KEYS …]`
+    形态）——输入校验属消费端职责，职责边界不得漂移。
+    """
     for mod in (flow, impact_analyzer, drift):
         src_ap = inspect.getsource(mod.analyze_prepared)
         assert "PREPARED_REQUIRED_KEYS" in src_ap, f"{mod.__name__}.analyze_prepared 应含入口必需键校验"
+        assert "missing = [k for k in PREPARED_REQUIRED_KEYS" in src_ap, \
+            f"{mod.__name__}.analyze_prepared 应含**输入**缺失键校验形态"
         src_prep = inspect.getsource(mod.prepare)
-        assert "PREPARED_REQUIRED_KEYS" not in src_prep, f"{mod.__name__}.prepare 不得含校验（校验属消费端职责）"
+        assert "PREPARED_REQUIRED_KEYS" in src_prep, \
+            f"{mod.__name__}.prepare 应含产出不变量（返回前引用常量名自证产物键序）"
+        assert "missing = [k for k in PREPARED_REQUIRED_KEYS" not in src_prep, \
+            f"{mod.__name__}.prepare 不得含**输入**缺失键校验（输入校验属消费端职责）"
 
 
 def test_key_sets_pairwise_distinct() -> None:
