@@ -38,7 +38,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import drift, impact_analyzer, parser, sync, viewer
+from . import drift, impact_analyzer, parser, scanscope, sync, viewer
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -318,9 +318,8 @@ def test_legal_path_byte_identical() -> None:
 def test_unique_implementation() -> None:
     """② 唯一实现（结构证据）：公式片段只在 `parser.py`；四处只调用、不自持实现；死代码已清。"""
     hits: list[str] = []
-    for p in sorted(PKG_DIR.glob("*.py")):
-        if p.name.startswith("selftest"):
-            continue  # 自测文件是度量器，其内嵌参照公式不属产品实现（边界写死，防度量器自证）
+    # 扫描边界由 `scanscope` **唯一提供**（M23）；自测文件是度量器，其内嵌参照公式不属产品实现
+    for p in scanscope.impl_modules():
         n = len(_marker_hits(p))
         if n:
             hits.append(f"{p.name}({n})")

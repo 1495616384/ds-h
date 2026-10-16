@@ -45,7 +45,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import drift, flow, parser, sync, viewer
+from . import drift, flow, parser, scanscope, sync, viewer
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -406,9 +406,8 @@ def test_anchor_rule_single_source() -> None:
     assert not hasattr(flow, "_status"), "flow 仍在自持锚活性判定实现（应委托 drift.anchor_state）"
 
     offenders = []
-    for py in PKG_DIR.rglob("*.py"):
-        if py.name.startswith("selftest"):
-            continue  # 自测里的断言文本不计入产品代码
+    # 扫描边界由 `scanscope` **唯一提供**（M23）；自测里的断言文本不计入产品代码
+    for py in scanscope.impl_modules():
         src = py.read_text(encoding="utf-8")
         if "def _anchor_of" in src or "def _status(" in src:
             offenders.append(py.relative_to(PKG_DIR).as_posix())
@@ -426,8 +425,9 @@ def test_anchor_rule_single_source() -> None:
     assert status_literal.search('    STATUS_DANGLING = "dangling"'), "缩进的字面量赋值应被抓出"
     assert not status_literal.search('<section id="dangling">'), "扫描正则误伤 HTML 属性写法"
     assert not status_literal.search("STATUS_ACTIVE = drift.STATUS_ACTIVE"), "改名后的别名引用不应误报"
-    for py in PKG_DIR.rglob("*.py"):
-        if py.name.startswith("selftest") or py.name == "drift.py":
+    # 扫描边界由 `scanscope` **唯一提供**（M23）；仅再排除三态字面量的唯一源头 `drift.py`
+    for py in scanscope.impl_modules():
+        if py.name == "drift.py":
             continue
         for lineno, line in enumerate(py.read_text(encoding="utf-8").splitlines(), 1):
             if status_literal.search(line):

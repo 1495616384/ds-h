@@ -45,7 +45,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import conflict, contract, drift, flow, impact_analyzer, viewer
+from . import conflict, contract, drift, flow, impact_analyzer, scanscope, viewer
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -330,7 +330,8 @@ def test_messages_verbatim() -> None:
 
 def test_unique_implementation() -> None:
     """③ 唯一实现确实成立（**核心证据**）：参数化模板全仓唯一 + 实现模块串唯一 + 各入口只调用共享函数。"""
-    py_files = sorted(p for p in PKG_DIR.rglob("*.py") if "__pycache__" not in p.parts)
+    # 扫描边界由 `scanscope` **唯一提供**（M23）：全集取 `all_modules()`（含自测文件，因 (a) 需全仓唯一性）
+    py_files = scanscope.all_modules()
     assert py_files, "未扫到任何 xprod 源码文件（扫描路径异常）"
 
     # (a) 参数化模板片段（带 {producer}）**全仓**各只出现 1 处，且只可能在 contract.py
@@ -342,8 +343,8 @@ def test_unique_implementation() -> None:
                 hits.append((p.name, src.count(tmpl)))
         assert hits == [("contract.py", 1)], f"参数化模板 {tmpl!r} 应全仓唯一（只在 contract.py 各 1 处），实际 {hits}"
 
-    # (b) **实现模块**（排除 selftest_*.py）中两串只存在于 contract.py（自测脚本内嵌的是**期望值**，非第二份实现）
-    impl = [p for p in py_files if not p.name.startswith("selftest_")]
+    # (b) **实现模块**（由 `scanscope` 唯一划定）中两串只存在于 contract.py（自测脚本内嵌的是**期望值**，非第二份实现）
+    impl = scanscope.impl_modules()
     assert any(p.name == "contract.py" for p in impl), "contract.py 应属实现模块集"
     for token in ("收到非", "属生产者缺陷"):
         for p in impl:

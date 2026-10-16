@@ -45,6 +45,7 @@ from . import (
     guard,
     impact_analyzer,
     parser,
+    scanscope,
     sync,
     textio,
 )
@@ -283,9 +284,8 @@ def test_legal_path_byte_identical() -> None:
 def test_unique_implementation() -> None:
     """② 唯一实现（结构证据）：公式片段只在 `textio.py`；九处只委派、不自持实现。"""
     hits: list[str] = []
-    for p in sorted(PKG_DIR.glob("*.py")):
-        if p.name.startswith("selftest"):
-            continue  # 自测文件是度量器，其内嵌对照公式不属产品实现
+    # 扫描边界由 `scanscope` **唯一提供**（M23）；自测文件是度量器，其内嵌对照公式不属产品实现
+    for p in scanscope.impl_modules():
         src = p.read_text(encoding="utf-8")
         if _MARK_CALL in src and _MARK_ARGS in src:
             hits.append(p.name)

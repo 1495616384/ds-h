@@ -14,10 +14,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import __version__
+from . import __version__, scanscope
 
 PKG_DIR = Path(__file__).resolve().parent
-SELF = Path(__file__).resolve()
 
 # 冻结链目录名特征：拼接构造，避免本文件自身被第 ③ 条检查误伤
 _FREEZE_MARKER = "_" + "xexp"
@@ -46,9 +45,10 @@ def test_cli_version() -> None:
 
 def test_isolation_no_freeze_paths() -> None:
     offenders = []
-    for py in PKG_DIR.rglob("*.py"):
-        if py.resolve() == SELF:
-            continue  # 本文件是检查器，不是产品代码
+    # 扫描边界由 `scanscope` **唯一提供**（M23）。此处按检查项文字口径取**实现模块**：
+    # 只查「产品源码」，自测文件不在口径内——原先的「排除自身」这一**第三种边界机制**随之移除
+    # （它本就是为「本文件是检查器」而设的特例，收口后不再需要）。
+    for py in scanscope.impl_modules():
         if _FREEZE_MARKER in py.read_text(encoding="utf-8"):
             offenders.append(py.relative_to(PKG_DIR).as_posix())
     assert not offenders, f"隔离性被破坏，以下产品文件引用了冻结链目录名：{offenders}"
@@ -61,9 +61,8 @@ def test_no_direct_write_text_in_product() -> None:
     确定性文本产物一律经 `textio.save_text`；自测文件用 write_text 造夹具，属正当用法。
     """
     offenders = []
-    for py in PKG_DIR.rglob("*.py"):
-        if py.name.startswith("selftest"):
-            continue  # 自测文件是夹具构造，不在产品代码口径内
+    # 扫描边界由 `scanscope` **唯一提供**（M23）；自测文件是夹具构造，不在产品代码口径内
+    for py in scanscope.impl_modules():
         if ".write_text(" in py.read_text(encoding="utf-8"):
             offenders.append(py.relative_to(PKG_DIR).as_posix())
     assert not offenders, f"以下产品模块绕过了 textio 直接用 write_text：{offenders}"
