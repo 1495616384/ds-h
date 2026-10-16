@@ -11,6 +11,8 @@ M9 追加 `view`——逻辑控制面可视面：把条目、锚活性、设计�
 M10 追加 `sync`——同步基线比对：把锚活性存成基线，之后比对报出新增失联 / 恢复 / 证据增删 / 盲区变化（`--text` 给人类可读版本）；
 M11 扩展 `view`——可选 `--baseline <snap.json>`：给了基线就在可视面追加「同步增量（相对基线）」段，
 增量快照经 `sync.snapshot_from_drift` 由**同一次** `drift` 采集构造（不重复采集、不与 `sync` 分叉）。
+M12 追加 `flow`——业务流 / 数据流影响图：给定流程文档与代码根，报出步骤锚活性、直接命中与沿下游闭包
+扩散的步骤；给了 `--diff` 再算一次流程级影响判定（`--text` 给人类可读版本）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -31,7 +33,8 @@ USAGE = (
     "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--text]\n"
     "       python -m xprod drift <code-root> <design-doc> [--text]\n"
     "       python -m xprod view <code-root> <design-doc> [--baseline <snap.json>]\n"
-    "       python -m xprod sync <code-root> <design-doc> [--save <snap.json>|--compare <snap.json>] [--text]"
+    "       python -m xprod sync <code-root> <design-doc> [--save <snap.json>|--compare <snap.json>] [--text]\n"
+    "       python -m xprod flow <flow-doc.md> <code-root> [--diff <diff-file>] [--text]"
 )
 
 
@@ -294,6 +297,32 @@ def main(argv: list[str] | None = None) -> int:
             print(f"sync error: {exc}", file=sys.stderr)
             return 1
         text = sync.render_text(doc) if as_text else sync.to_json(doc)
+        _write_bytes(text)
+        return 0
+    if args and args[0] == "flow":
+        from . import flow, impact_analyzer
+
+        rest = args[1:]
+        as_text = "--text" in rest
+        if as_text:
+            del rest[rest.index("--text")]
+        diff_file = None
+        if "--diff" in rest:
+            i = rest.index("--diff")
+            if i + 1 >= len(rest):
+                print(USAGE, file=sys.stderr)
+                return 2
+            diff_file = rest[i + 1]
+            del rest[i : i + 2]
+        if len(rest) != 2:
+            print(USAGE, file=sys.stderr)
+            return 2
+        try:
+            doc = flow.analyze(rest[0], rest[1], diff_file)
+        except (flow.FlowError, impact_analyzer.ImpactError, OSError) as exc:
+            print(f"flow error: {exc}", file=sys.stderr)
+            return 1
+        text = flow.render_text(doc) if as_text else flow.to_json(doc)
         _write_bytes(text)
         return 0
     print(USAGE, file=sys.stderr)
