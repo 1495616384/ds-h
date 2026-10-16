@@ -189,8 +189,12 @@ def _dir_digest(d: Path) -> str:
 
 
 def _doc_digest(doc: dict) -> str:
-    """对内存中的文档取摘要（键序不敏感）——用于证明 `prepared` 未被就地修改。"""
-    return hashlib.sha256(json.dumps(doc, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
+    """对内存中的文档取摘要——用本包**规范序列化**（保留键序），故「值」与「键序」一并受保护。
+
+    为什么不用 `json.dumps(..., sort_keys=True)`：`sort_keys` 会把键序抹平，于是「键序被就地改乱」
+    这类污染照不出来；而键序在本仓库是**写死口径**（确定性 / 逐字节可比），必须一并纳入只读证据。
+    """
+    return hashlib.sha256(flow.to_json(doc).encode("utf-8")).hexdigest()
 
 
 def _cli(*args: str) -> tuple[int, bytes, str]:
