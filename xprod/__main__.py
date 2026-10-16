@@ -3,7 +3,8 @@
 M0 实现 `--version`；M1 追加 `parse`——把设计文档译为「条目—约束—证据」JSON；
 M2 追加 `graph`——从只读代码副本构建模块依赖图，并可下钻单文件符号；
 M3 追加 `impact`——给定模拟 diff，输出受影响条目 / 文件清单（`--text` 给人类可读版本）；
-M5 追加 `dryrun`——按剧本回放 M4 设计的干跑骨架，输出收敛与否决判定（`--text` 给人类可读版本）。
+M5 追加 `dryrun`——按剧本回放 M4 设计的干跑骨架，输出收敛与否决判定（`--text` 给人类可读版本）；
+M6 追加 `guard`——流程护栏：冻结快照「改动前 / 改动后」比对 + 推送三态判定（`--text` 给人类可读版本）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -18,7 +19,9 @@ USAGE = (
     "       python -m xprod parse <design-doc.md>\n"
     "       python -m xprod graph <code-root> [--tree <node-id>]\n"
     "       python -m xprod impact <diff-file> <code-root> <design-doc> [--text]\n"
-    "       python -m xprod dryrun <scenarios.json> [--text]"
+    "       python -m xprod dryrun <scenarios.json> [--text]\n"
+    "       python -m xprod guard freeze --checker <freeze-checker.py> [--root <dir>] [--save <snap.json>|--compare <snap.json>] [--text]\n"
+    "       python -m xprod guard push [--repo <dir>] [--git <path>] [--remote <name>] [--branch <name>] [--text]"
 )
 
 
@@ -112,6 +115,66 @@ def main(argv: list[str] | None = None) -> int:
             print(f"dryrun error: {exc}", file=sys.stderr)
             return 1
         text = dryrun.render_text(doc) if as_text else dryrun.to_json(doc)
+        _write_bytes(text)
+        return 0
+    if args and args[0] == "guard":
+        from . import guard
+
+        rest = args[1:]
+        as_text = "--text" in rest
+        if as_text:
+            del rest[rest.index("--text")]
+        if not rest:
+            print(USAGE, file=sys.stderr)
+            return 2
+        mode, rest = rest[0], rest[1:]
+
+        def take(flag: str) -> str | None:
+            """取出 `--flag value` 并从 rest 中删除；不存在返回 None，缺值抛 GuardError。"""
+            if flag not in rest:
+                return None
+            i = rest.index(flag)
+            if i + 1 >= len(rest):
+                raise guard.GuardError(f"{flag} 缺少取值")
+            value = rest[i + 1]
+            del rest[i : i + 2]
+            return value
+
+        try:
+            if mode == "freeze":
+                checker = take("--checker")
+                if checker is None:
+                    print(USAGE, file=sys.stderr)
+                    return 2
+                root = take("--root")
+                save = take("--save")
+                compare = take("--compare")
+                if rest or (save and compare):
+                    print(USAGE, file=sys.stderr)
+                    return 2
+                current = guard.run_freeze_check(checker, root)
+                if save:
+                    guard.save_snapshot(save, current)
+                if compare:
+                    doc = guard.compare_snapshots(guard.load_snapshot(compare), current)
+                else:
+                    doc = current.to_dict()
+            elif mode == "push":
+                repo = take("--repo") or "."
+                git_path = take("--git") or "git"
+                remote = take("--remote") or "origin"
+                branch = take("--branch") or "master"
+                if rest:
+                    print(USAGE, file=sys.stderr)
+                    return 2
+                doc = guard.probe_push_state(repo, remote, branch, git_path)
+            else:
+                print(USAGE, file=sys.stderr)
+                return 2
+        except (guard.GuardError, OSError) as exc:
+            print(f"guard error: {exc}", file=sys.stderr)
+            return 1
+        text = guard.render_text(doc) if as_text else guard.to_json(doc)
         _write_bytes(text)
         return 0
     print(USAGE, file=sys.stderr)
