@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import html
 
-from . import drift, flow, graph_builder, parser, sync
+from . import drift, flow, graph_builder, sync
 
 # 证据在可视面上的三种状态：与 `drift` **同源**（直接取 `drift.STATUS_*`），此处只作标签用途，
 # 不再各持一份字面量——可视面是「呈现层」，三态口径只能有一个源头。
@@ -100,9 +100,14 @@ def analyze(
     `sync.snapshot_from_drift` 由**同一份** `drift` 结果构造，不再重复采集。
     给了 `flow_doc` 时，流程段经 `flow.analyze`**只跑一次**得到，其返回文档**原样**放入
     `doc["flow"]`（不裁剪、不改写、不重算）——这样呈现段就没有第二份判定实现的可能。
+    M17：`design` 与 `drift_doc` 由**同一份** `drift.prepare(...)` 中间体供给
+    （`design = prepared["design"]`），同一份设计文档只解析**一次**——条目区与锚活性区**必定同源**，
+    不可能再因两次解析而分叉。`graph` 仍单独取一次：`drift.scan_tree` 枚举的是**文件/目录存在性**、
+    `graph_builder.build_graph` 走的是 `.py` 的 **AST 依赖**，两者产出的**不是同一份事实**，不合并。
     """
-    drift_doc = drift.analyze(code_root, design_doc)
-    design = parser.parse_file(design_doc)
+    prepared = drift.prepare(code_root, design_doc)
+    drift_doc = drift.analyze_prepared(prepared)
+    design = prepared["design"]
     graph = graph_builder.build_graph(code_root)
 
     doc = {

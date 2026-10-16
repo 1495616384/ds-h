@@ -26,6 +26,18 @@
       是两件事，混在一起会把设计缺口冒充成漂移；
     * 多命中**全部列出**：本模块只报事实，不需要像 M3 那样为可判定性裁剪成「只取首个」。
 
+M17 拆分（采集 / 构造分离，承接 M15 / M16 同一治理规则）：
+    原 `analyze` 一次做完两件事——一件**与调用方无关**的采集（文件枚举 + 设计文档解析），
+    和一件**按模型构造**的判定（逐条证据锚判活性）。可视面需要**同时**拿到「条目模型」与
+    「锚活性」：于是它先调 `drift.analyze`（内部把设计文档解析一次），又自己 `parser.parse_file`
+    再解析一次——**同一份设计文档被独立采集两遍**，条目区与锚活性区当时之所以一致，**只因
+    「同解析器 + 同输入」**；这是典型的「同一事实两处采集 → 迟早改一处漏一处」隐性漂移隐患。
+    故拆为 `prepare`（采集一次，**显式传参**中间体）+ `analyze_prepared`（按模型构造，**只读**中间体），
+    `analyze` 退化为薄编排 `analyze_prepared(prepare(...))`（签名与输出**逐字节不变**）。
+    为什么不加隐式缓存（`lru_cache` / 模块级字典）：以路径为键，则设计文档改了仍命中**旧模型**；
+    以内容为键，则要读全文算哈希——成本回到原点；更关键的是**不可见**：看不出谁共享了同一份模型。
+    复用必须由调用方**显式持有**，才可读、可断言、可推理。
+
 隔离约定：本模块**不写死**任何冻结链路径；代码根 / 设计文档一律由调用方传入
 （由 M0 自测第三条校验本包源码不含冻结链目录名）。仅依赖 Python 标准库。
 """
@@ -117,13 +129,44 @@ def _by_entry(record: dict) -> tuple[str, str]:
     return (record["constraint_id"], record["evidence"])
 
 
-def analyze(code_root: str | Path, design_doc: str | Path) -> dict:
-    """逐条证据锚解析活性，返回键序固定、可逐字节复现的结果文档。"""
+def prepare(code_root: str | Path, design_doc: str | Path) -> dict:
+    """采集一次：**与调用方无关**的那部分——代码根文件枚举 + 设计文档解析。
+
+    M17：单独成入口，供**同时**需要「条目模型」与「锚活性」的调用方（如可视面）复用——
+    一次采集、两处消费，避免同一份设计文档被独立解析两遍后「只因同解析器同输入而恰好一致」。
+
+    返回 `{"files", "dirs", "file_set", "design"}`（键序固定）：前三项为 `scan_tree` 的返回**原样**，
+    `design` 为 `parser.parse_file` 的返回**原样**。
+    `dirs` / `file_set` **保持集合类型**（不转列表）：下游 `file_set - covered` 是**集合差**、
+    `anchor_state` 按集合判成员；为「JSON 可序列化」转列表，会迫使构造层再转回集合，
+    等于把**消费方的类型假设**写进采集层。故 `prepared` 定位为**进程内中间体**（不出 JSON、不落盘）。
+
+    为什么不做隐式缓存 / 不落盘：见模块 docstring「M17 拆分」——复用必须由调用方**显式持有**。
+
+    错误语义与拆分前一致：代码根不是目录 → `DriftError`（**先于**设计文档解析抛出）；
+    设计文档不合格式 → M1 `ParseError`。
+    """
     root = Path(code_root)
     if not root.is_dir():
         raise DriftError(f"代码根不是目录：{root}")
     files, dirs, file_set = scan_tree(root)
-    design = parser.parse_file(design_doc)
+    return {
+        "files": files,
+        "dirs": dirs,
+        "file_set": file_set,
+        "design": parser.parse_file(design_doc),
+    }
+
+
+def analyze_prepared(prepared: dict) -> dict:
+    """按模型构造：逐条证据锚解析活性，返回键序固定、可逐字节复现的结果文档（与 M8 同）。
+
+    **只读**传入的 `prepared`——不得就地修改，否则多次复用会互相污染（由自测强断言）。
+    """
+    files = prepared["files"]
+    dirs = prepared["dirs"]
+    file_set = prepared["file_set"]
+    design = prepared["design"]
 
     active: list[dict] = []
     dangling: list[dict] = []
@@ -170,6 +213,15 @@ def analyze(code_root: str | Path, design_doc: str | Path) -> dict:
         "uncovered_files": uncovered,
         "verdict": VERDICT_DRIFT if dangling else VERDICT_OK,
     }
+
+
+def analyze(code_root: str | Path, design_doc: str | Path) -> dict:
+    """逐条证据锚解析活性（M17：本函数退化为**一层薄编排**）。
+
+    `== analyze_prepared(prepare(code_root, design_doc))`——**签名与输出与 M8 逐字节不变**，
+    故 M8 既有断言、CLI `drift` 子命令、`sync.snapshot` 一律不受影响。
+    """
+    return analyze_prepared(prepare(code_root, design_doc))
 
 
 def render_text(doc: dict) -> str:
