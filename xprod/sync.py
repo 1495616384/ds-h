@@ -28,9 +28,13 @@ from pathlib import Path
 
 from . import drift, textio
 
-STATUS_ACTIVE = "active"
-STATUS_DANGLING = "dangling"
-STATUS_UNANCHORED = "unanchored"
+# 证据锚三态：与 M8 **同源**——三态字面量只允许有一个源头（`drift`），此处一律别名引用。
+# 为什么不自己重写：同一状态名在多处各写一份，将来「改名 / 加态」必然只改到其中几处，
+# 剩下的那份就悄悄分叉（本仓库已因同类问题吃过亏）；且 `_EVIDENCE_STATUSES` 若自持字面量，
+# 校验集合会与真实取值来源脱钩——别名组合则不可能脱钩。
+STATUS_ACTIVE = drift.STATUS_ACTIVE
+STATUS_DANGLING = drift.STATUS_DANGLING
+STATUS_UNANCHORED = drift.STATUS_UNANCHORED
 _EVIDENCE_STATUSES = (STATUS_ACTIVE, STATUS_DANGLING, STATUS_UNANCHORED)
 
 VERDICT_UNCHANGED = "unchanged"

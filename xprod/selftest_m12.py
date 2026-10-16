@@ -30,7 +30,8 @@
     ⑨ CLI：`flow`（JSON / `--text`）stdout 与库输出逐字节一致、无 `\\r\\n` 翻译、退出码 0；
     ⑩ 非法输入：坏 diff / 坏流程文档 / 代码根非目录 → 1；参数不足 / `--diff` 缺值 → 2；
     ⑪ 去重结构断言：锚**规则**只剩共享实现 `parser.anchor_of`、锚**活性判定**只剩共享实现
-       `drift.anchor_state`（产品源码中不再有 `def _anchor_of` / `def _status(` 本地复刻）。
+       `drift.anchor_state`（产品源码中不再有 `def _anchor_of` / `def _status(` 本地复刻）、
+       三态字面量只剩一个源头 `drift.py`（flow / viewer / sync 一律别名引用，不得自持字面量）。
 
 沿用 M0–M11 约定：不用 `subprocess` 管道，改临时文件重定向（本机沙箱禁建管道）。
 """
@@ -38,12 +39,13 @@
 from __future__ import annotations
 
 import hashlib
+import re
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
-from . import drift, flow, parser
+from . import drift, flow, parser, sync, viewer
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -357,8 +359,8 @@ def test_cli_rejects_bad_inputs() -> None:
 
 
 def test_anchor_rule_single_source() -> None:
-    """去重结构断言：锚**规则**收口为 `parser.anchor_of`、锚**活性判定**收口为 `drift.anchor_state`，
-    全仓各只留一份实现——M3 / M8 / M12 不再各持本地复刻。"""
+    """去重结构断言：锚**规则**收口为 `parser.anchor_of`、锚**活性判定**收口为 `drift.anchor_state`、
+    三态**字面量**收口为 `drift.py`——全仓各只留一份实现，M3 / M8 / M10 / M12 不再各持本地复刻。"""
     probes = ("src/app/core.py", "docs/", "just-a-token", "src/app/x.py 附带说明", "a/b", "", "   ")
     expected = ["src/app/core.py", "docs/", None, "src/app/x.py", "a/b", None, None]
     assert [parser.anchor_of(e) for e in probes] == expected, "共享锚规则结果不符预期"
@@ -395,12 +397,12 @@ def test_anchor_rule_single_source() -> None:
         "reason": drift.REASON_PATH_MISSING,
     }, states[4]
 
-    # 三态公开名只能有一个源头：flow / viewer 一律别名自 drift，且 flow 不再自持判定实现。
-    assert (flow.STATUS_ACTIVE, flow.STATUS_DANGLING, flow.STATUS_UNANCHORED) == (
-        drift.STATUS_ACTIVE,
-        drift.STATUS_DANGLING,
-        drift.STATUS_UNANCHORED,
-    ), "flow 三态应与 drift 同源"
+    # 三态公开名只能有一个源头：flow / viewer / sync 一律别名自 drift，且 flow 不再自持判定实现。
+    expected_triple = (drift.STATUS_ACTIVE, drift.STATUS_DANGLING, drift.STATUS_UNANCHORED)
+    for mod in (flow, viewer, sync):
+        assert (mod.STATUS_ACTIVE, mod.STATUS_DANGLING, mod.STATUS_UNANCHORED) == expected_triple, (
+            f"{mod.__name__} 三态应与 drift 同源"
+        )
     assert not hasattr(flow, "_status"), "flow 仍在自持锚活性判定实现（应委托 drift.anchor_state）"
 
     offenders = []
@@ -411,6 +413,29 @@ def test_anchor_rule_single_source() -> None:
         if "def _anchor_of" in src or "def _status(" in src:
             offenders.append(py.relative_to(PKG_DIR).as_posix())
     assert not offenders, f"锚规则 / 锚活性判定仍存在本地复刻（应收口到共享实现）：{offenders}"
+
+    # 三态字面量唯一源头：除 `drift.py` 外，产品源码不得再出现 `STATUS_X = "active"` 这类三态字面量赋值。
+    # 用**源码扫描**而非逐个模块列举，是因为「第四份复刻」常出现在预料之外的模块里
+    # （例如本断言加入前 `sync.py` 就自持了一份）；列举式断言只能覆盖已想到的位置。
+    # 正则**锚定行首标识符赋值**（`^ name =`）：否则会误伤 HTML 属性式写法（`viewer.py` 的
+    # `id="dangling"` 里同样含 `="dangling"`，但那不是状态定义，是页面锚点）。
+    literal_offenders = []
+    status_literal = re.compile(r"^\s*[A-Za-z_][A-Za-z0-9_]*\s*=\s*[\"'](?:active|dangling|unanchored)[\"']")
+    # 护栏自身可判定：正则必须抓得住真冒犯、且不误伤 HTML 属性写法（否则护栏会静默失效）。
+    assert status_literal.search('STATUS_ACTIVE = "active"'), "扫描正则抓不住真冒犯，护栏失效"
+    assert status_literal.search('    STATUS_DANGLING = "dangling"'), "缩进的字面量赋值应被抓出"
+    assert not status_literal.search('<section id="dangling">'), "扫描正则误伤 HTML 属性写法"
+    assert not status_literal.search("STATUS_ACTIVE = drift.STATUS_ACTIVE"), "改名后的别名引用不应误报"
+    for py in PKG_DIR.rglob("*.py"):
+        if py.name.startswith("selftest") or py.name == "drift.py":
+            continue
+        for lineno, line in enumerate(py.read_text(encoding="utf-8").splitlines(), 1):
+            if status_literal.search(line):
+                literal_offenders.append(f"{py.relative_to(PKG_DIR).as_posix()}:{lineno}")
+    assert not literal_offenders, (
+        "三态字面量只允许在 drift.py 出现；以下位置自持字面量（应收口为 drift.STATUS_* 别名）："
+        f"{literal_offenders}"
+    )
 
 
 def main() -> int:
