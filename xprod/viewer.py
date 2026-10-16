@@ -18,6 +18,12 @@
     * 把「呈现」与「判定」严格分开：可视面若自己造判定，就会与 `drift` 的口径悄悄分叉，
       正是本仓库反复强调的「同一事实两处口径」隐患。
 
+M13 扩展：把 M12 的流程影响面接入可视面——可选 `flow_doc` / `diff_file`；给了流程文档就在
+「同步增量」之后追加流程段（结构、三态、影响清单**一律取自** `flow.analyze`，本模块**不重算**）。
+**`_CSS` 一行不改**：`_CSS` 在每个页面的同一个 `<style>` 里，任何新增 CSS 行都会**泄漏到所有页面**，
+「未给流程文档时页面一字节未变」这条不变量就会失效；故流程段的判定配色复用既有类名
+（`clear` → `ok`、`impacted` → `drift`）。
+
 隔离约定：本模块**不写死**任何冻结链路径；代码根 / 设计文档一律由调用方传入
 （由 M0 自测第三条校验本包源码不含冻结链目录名）。仅依赖 Python 标准库。
 """
@@ -26,7 +32,7 @@ from __future__ import annotations
 
 import html
 
-from . import drift, graph_builder, parser, sync
+from . import drift, flow, graph_builder, parser, sync
 
 # 证据在可视面上的三种状态（口径与 `drift` 一致，此处只是取给标签用）
 STATUS_ACTIVE = "active"
@@ -79,12 +85,20 @@ def _status_index(drift_doc: dict) -> dict[tuple[str, str], tuple[str, dict | No
     return index
 
 
-def analyze(code_root: str, design_doc: str, baseline: dict | None = None) -> dict:
-    """汇总条目 / 锚活性 / 盲区 / 依赖图（+ 可选同步增量），返回键序固定、可逐字节复现的文档。
+def analyze(
+    code_root: str,
+    design_doc: str,
+    baseline: dict | None = None,
+    flow_doc: str | None = None,
+    diff_file: str | None = None,
+) -> dict:
+    """汇总条目 / 锚活性 / 盲区 / 依赖图（+ 可选同步增量、可选流程影响面），返回键序固定、可逐字节复现的文档。
 
     对同一批次数据只取一次：`drift` 负责锚活性与盲区，`graph_builder` 负责依赖图，
     本函数只做**汇合**，不改写任何一方的取值。给了 `baseline` 时，增量段经
     `sync.snapshot_from_drift` 由**同一份** `drift` 结果构造，不再重复采集。
+    给了 `flow_doc` 时，流程段经 `flow.analyze`**只跑一次**得到，其返回文档**原样**放入
+    `doc["flow"]`（不裁剪、不改写、不重算）——这样呈现段就没有第二份判定实现的可能。
     """
     drift_doc = drift.analyze(code_root, design_doc)
     design = parser.parse_file(design_doc)
@@ -113,6 +127,9 @@ def analyze(code_root: str, design_doc: str, baseline: dict | None = None) -> di
         sync.compare_snapshots(baseline, sync.snapshot_from_drift(drift_doc))
         if baseline is not None
         else None
+    )
+    doc["flow"] = (
+        flow.analyze(flow_doc, code_root, diff_file) if flow_doc is not None else None
     )
     return doc
 
@@ -215,6 +232,68 @@ def _render_sync(syncdoc: dict) -> list[str]:
     return lines
 
 
+def _render_flow(flowdoc: dict) -> list[str]:
+    """流程影响段：结构与判定**一律取自** `flow.analyze` 的返回文档，此处只做呈现。
+
+    本段**不**重算任何「锚是否存在」的判断（`status` 直接读 `flow` 已算好的值），
+    避免在 M12 之外再添第三份活性判定实现；也**不**二次排序（沿用 `flow` 的确定性顺序）。
+    """
+    lines = [
+        '<section id="flow">',
+        f"<h2>业务流影响面（流程 {flowdoc['flow_count']} / 步骤 {flowdoc['step_count']} / 边 {flowdoc['edge_count']}）</h2>",
+    ]
+    impact = flowdoc["impact"]
+    if impact is None:
+        lines.append('<p class="kv muted">未提供 diff（仅呈现流程结构与锚活性）</p>')
+    else:
+        # 判定配色复用既有类名：clear → ok、impacted → drift（不新增 CSS，见模块 docstring）
+        cls = "ok" if impact["verdict"] == "clear" else "drift"
+        lines.append(f'<p class="verdict {cls}">判定：{_ev(impact["verdict"])}</p>')
+
+    for flow_rec in flowdoc["flows"]:
+        fid = flow_rec["flow_id"]
+        dangling_n = sum(1 for s in flow_rec["steps"] if s["status"] == STATUS_DANGLING)
+        meta = f"（{len(flow_rec['steps'])} 步 / {len(flow_rec['edges'])} 边"
+        meta += f"，失联 {dangling_n}）" if dangling_n else "）"
+        lines.append(f'<details class="flow" id="flow-{_ev(fid)}">')
+        lines.append(
+            f'<summary><span class="cid">{_ev(fid)}</span> {_ev(flow_rec["title"])} '
+            f'<span class="muted">{meta}</span></summary>'
+        )
+        lines.append("<ul>")
+        for s in flow_rec["steps"]:
+            ev = s["evidence"] if s["evidence"] is not None else "（无证据）"
+            lines.append(
+                f'<li><code>{_ev(s["step_id"])}</code> {_ev(s["label"])}{_badge(s["status"])} '
+                f'<span class="muted">{_ev(ev)}</span></li>'
+            )
+        for e in flow_rec["edges"]:
+            lines.append(f'<li class="kv"><code>{_ev(e["from"])}</code> → <code>{_ev(e["to"])}</code></li>')
+        lines.extend(["</ul>", "</details>"])
+
+    if impact is not None:
+        groups = (
+            ("changed files", list(impact["changed_files"])),
+            ("direct steps", [f'{d["flow_id"]}/{d["step_id"]}' for d in impact["direct_steps"]]),
+            ("affected steps", [f'{a["flow_id"]}/{a["step_id"]}' for a in impact["affected_steps"]]),
+            ("dangling steps", [f'{d["flow_id"]}/{d["step_id"]}' for d in impact["dangling_steps"]]),
+        )
+        lines.append("<h3>影响清单</h3>")
+        lines.append("<ul>")
+        for title, items in groups:
+            lines.append(f"<li>{title}：{len(items)}</li>")
+        lines.append("</ul>")
+        for title, items in groups:
+            lines.append(f"<details><summary>{title}（{len(items)}）</summary>")
+            lines.append("<ul>")
+            for item in items:
+                lines.append(f'<li class="kv">{_ev(item)}</li>')
+            lines.extend(["</ul>", "</details>"])
+
+    lines.append("</section>")
+    return lines
+
+
 def render_html(doc: dict) -> str:
     """把合成文档渲染为单个自包含 HTML（末尾单换行；逐字节可断言）。"""
     index = _status_index(
@@ -255,6 +334,8 @@ def render_html(doc: dict) -> str:
     ]
     if doc.get("sync") is not None:
         lines.extend(_render_sync(doc["sync"]))
+    if doc.get("flow") is not None:
+        lines.extend(_render_flow(doc["flow"]))
     lines.append('<section id="entries">')
     lines.append("<h2>条目与锚</h2>")
     for entry in doc["entries"]:

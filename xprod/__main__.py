@@ -13,6 +13,7 @@ M11 扩展 `view`——可选 `--baseline <snap.json>`：给了基线就在可�
 增量快照经 `sync.snapshot_from_drift` 由**同一次** `drift` 采集构造（不重复采集、不与 `sync` 分叉）。
 M12 追加 `flow`——业务流 / 数据流影响图：给定流程文档与代码根，报出步骤锚活性、直接命中与沿下游闭包
 扩散的步骤；给了 `--diff` 再算一次流程级影响判定（`--text` 给人类可读版本）。
+M13 扩展 `view`——可选 `--flow <flow-doc.md>`（配合可选 `--diff`）：流程影响面与既有段汇成同一张页面。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -32,7 +33,7 @@ USAGE = (
     "       python -m xprod guard push [--repo <dir>] [--git <path>] [--remote <name>] [--branch <name>] [--text]\n"
     "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--text]\n"
     "       python -m xprod drift <code-root> <design-doc> [--text]\n"
-    "       python -m xprod view <code-root> <design-doc> [--baseline <snap.json>]\n"
+    "       python -m xprod view <code-root> <design-doc> [--baseline <snap.json>] [--flow <flow-doc.md>] [--diff <diff-file>]\n"
     "       python -m xprod sync <code-root> <design-doc> [--save <snap.json>|--compare <snap.json>] [--text]\n"
     "       python -m xprod flow <flow-doc.md> <code-root> [--diff <diff-file>] [--text]"
 )
@@ -233,26 +234,39 @@ def main(argv: list[str] | None = None) -> int:
         _write_bytes(text)
         return 0
     if args and args[0] == "view":
-        from . import drift, graph_builder, parser, sync, viewer
+        from . import drift, flow, graph_builder, impact_analyzer, parser, sync, viewer
 
         rest = args[1:]
-        baseline_path = None
-        if "--baseline" in rest:
-            i = rest.index("--baseline")
+        missing = False
+
+        def take(flag: str) -> str | None:
+            """取出 `--flag value` 并从 rest 中删除；不存在返回 None，缺值置 `missing`。"""
+            nonlocal rest, missing
+            if flag not in rest:
+                return None
+            i = rest.index(flag)
             if i + 1 >= len(rest):
-                print(USAGE, file=sys.stderr)
-                return 2
-            baseline_path = rest[i + 1]
+                missing = True
+                return None
+            value = rest[i + 1]
             del rest[i : i + 2]
-        if len(rest) != 2:
+            return value
+
+        baseline_path = take("--baseline")
+        flow_path = take("--flow")
+        diff_path = take("--diff")
+        # `--diff` 依附于 `--flow`：给了 `--diff` 却没给 `--flow` 属用法错误，不静默丢弃
+        if len(rest) != 2 or missing or (diff_path is not None and flow_path is None):
             print(USAGE, file=sys.stderr)
             return 2
         try:
             baseline = sync.load_snapshot(baseline_path) if baseline_path is not None else None
-            doc = viewer.analyze(rest[0], rest[1], baseline)
+            doc = viewer.analyze(rest[0], rest[1], baseline, flow_path, diff_path)
         except (
             drift.DriftError,
+            flow.FlowError,
             graph_builder.GraphError,
+            impact_analyzer.ImpactError,
             parser.ParseError,
             sync.SyncError,
             OSError,
