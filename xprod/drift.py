@@ -7,8 +7,8 @@
 
 设计口径（对齐 `X产品化路线图-v1.md` §十二 M8 行与「判定口径（写死）」）：
     ① 输入 = **代码根** + **设计文档**（与 M1/M2 同参；**不需要 diff**——漂移与某次改动无关）；
-    ② 锚规则**与 M3 一致**：取每条证据串的首个空白分隔 token；不含 `/` 者记为 `unanchored`
-       （显式列出，**不参与**活性判定）；
+    ② 锚规则**与 M3 一致**（实现已收口到 `parser.anchor_of`，全仓唯一）：取每条证据串的首个空白分隔
+       token；不含 `/` 者记为 `unanchored`（显式列出，**不参与**活性判定）；
     ③ 锚**活性**定义在**文件系统存在性**（不是「是否为依赖图节点」）：
          精确锚（不以 `/` 结尾）：活性 = 路径存在（文件或目录）；命中集合 = 文件本身，目录则列其下全部文件；
          前缀锚（以 `/` 结尾）  ：活性 = 存在以该前缀起头的文件；命中文件**全部列出**；
@@ -52,20 +52,12 @@ class DriftError(ValueError):
     """代码根不可用（不是目录）时抛出；设计文档不合格式由 M1 `ParseError` 直接上抛。"""
 
 
-def _anchor_of(evidence: str) -> str | None:
-    """与 M3 同口径（写死）：取首个空白分隔 token 作锚；不含 `/` 返回 None（unanchored）。
+def scan_tree(root: Path) -> tuple[list[str], set[str], set[str]]:
+    """枚举代码根下全部文件与目录（相对 POSIX 路径），返回（files 已排序, dirs, files 集合）。
 
-    刻意**不** import M3 的私有函数：跨模块取私有名会让两处实现互相牵制；改为本地复刻，
-    并由自测断言「两者在探针集上判定一致」，把这份重复**显式钉住**而非默默漂移。
+    公开成函数供 M12 `flow` 复用**同一份**文件枚举口径（与 M8 同源），
+    避免「扫描」逻辑各写一份后悄悄漂移。
     """
-    parts = evidence.split()
-    if not parts:
-        return None
-    return parts[0] if "/" in parts[0] else None
-
-
-def _scan(root: Path) -> tuple[list[str], set[str], set[str]]:
-    """枚举代码根下全部文件与目录（相对 POSIX 路径），返回（files 已排序, dirs, files 集合）。"""
     files: list[str] = []
     dirs: set[str] = set()
     for p in root.rglob("*"):
@@ -88,7 +80,7 @@ def analyze(code_root: str | Path, design_doc: str | Path) -> dict:
     root = Path(code_root)
     if not root.is_dir():
         raise DriftError(f"代码根不是目录：{root}")
-    files, dirs, file_set = _scan(root)
+    files, dirs, file_set = scan_tree(root)
     design = parser.parse_file(design_doc)
 
     active: list[dict] = []
@@ -99,7 +91,7 @@ def analyze(code_root: str | Path, design_doc: str | Path) -> dict:
     for entry in design["entries"]:
         cid = entry["constraint_id"]
         for evidence in entry["required_evidence"]:
-            anchor = _anchor_of(evidence)
+            anchor = parser.anchor_of(evidence)
             if anchor is None:
                 unanchored.append({"constraint_id": cid, "evidence": evidence})
                 continue

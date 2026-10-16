@@ -13,6 +13,9 @@
     severity / required_evidence / action_policy；
 另加 `title`——「条目」的可读名（RISK-REGISTRY 为纯约束登记，无此列）。
 
+另导出**共享锚规则** `anchor_of(evidence)`：全仓唯一的锚判定实现，供 M3 / M8 / M12 共同引用
+（避免同一规则多处复刻造成口径漂移）。
+
 仅依赖 Python 标准库（M1 边界：不引入未安装依赖）。
 """
 
@@ -104,6 +107,25 @@ def _to_entry(cur: dict) -> Entry:
         required_evidence=tuple(cur["evidence"]),
         action_policy=cur["fields"]["action_policy"],
     )
+
+
+def anchor_of(evidence: str) -> str | None:
+    """锚判定规则（写死；**全仓唯一实现**）：取证据串的**首个空白分隔 token** 作锚；
+    首 token 不含 `/` → 返回 None（记为 unanchored）。
+
+    目录前缀锚（以 `/` 结尾）与精确路径锚的区分，由调用方按「返回的锚是否以 `/` 结尾」判断——
+    本函数只回答「**有没有锚、锚是什么**」，不回答「命中什么」（各模块的匹配口径本就不同，
+    强行合并才会制造新的口径混淆）。
+
+    收口历史：M3（`impact_analyzer`）与 M8（`drift`）曾各持一份本地复刻，用「探针集判定一致」
+    的自测互相钉住；M12（`flow`）成为**第三个**消费方后，再复刻会放大「同一规则三处口径」的
+    漂移风险，故收口到本模块——`required_evidence` 的格式本就由 M1 定义，锚规则是其**解析配套**，
+    放在**源头模块**最中立。
+    """
+    parts = evidence.split()
+    if not parts:
+        return None
+    return parts[0] if "/" in parts[0] else None
 
 
 def parse_design_doc(text: str) -> list[Entry]:

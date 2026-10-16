@@ -18,7 +18,7 @@
     * 图外变更文件（如 `docs/*.md`，不在 M2 依赖图中）单独列出、不参与传播：
       图里没有它，任何传播都只能靠猜；显式列出比静默丢弃可核验。
 
-证据锚规则（写死；与 M1 `required_evidence` 的写法配套）：
+证据锚规则（写死；与 M1 `required_evidence` 的写法配套，实现已收口到 `parser.anchor_of`）：
     取每条证据串的**首个空白分隔 token**作锚；
     锚以 `/` 结尾 → **目录前缀**匹配（`tests/` 命中 `tests/x.py`）；
     否则 → **精确路径**匹配；
@@ -117,14 +117,6 @@ def parse_unified_diff(text: str) -> list[str]:
     return sorted(set(changed))
 
 
-def _anchor_of(evidence: str) -> str | None:
-    """取证据串的首个空白分隔 token 作锚；不含 `/` 时返回 None 表示 unanchored。"""
-    parts = evidence.split()
-    if not parts:
-        return None
-    return parts[0] if "/" in parts[0] else None
-
-
 def _match_anchor(anchor: str, changed: set[str]) -> tuple[str, str] | None:
     """在**直接变更文件**集合里匹配锚，返回（命中文件, 匹配方式）或 None。"""
     if anchor.endswith("/"):
@@ -178,7 +170,7 @@ def analyze(diff_text: str, code_root: str | Path, design_doc: str | Path) -> di
     for entry in design["entries"]:
         matched: list[dict] = []
         for evidence in entry["required_evidence"]:
-            anchor = _anchor_of(evidence)
+            anchor = parser.anchor_of(evidence)
             if anchor is None:
                 unanchored.append({"constraint_id": entry["constraint_id"], "evidence": evidence})
                 continue

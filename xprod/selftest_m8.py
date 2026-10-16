@@ -25,8 +25,9 @@
     ⑨ CLI `drift` JSON stdout 与库输出逐字节一致（含无 `\\r\\n` 翻译）、退出码 0；
     ⑩ CLI `drift --text` 同理，且文本末尾判定为 `ok`；
     ⑪ 非法输入：代码根非目录 / 设计文档不合格式 → 退出码 1；参数不足 → 退出码 2；
-    ⑫ 锚规则与 M3 同口径：在探针集上 `drift._anchor_of` 与 `impact_analyzer._anchor_of` 判定一致
-       （drift 刻意本地复刻而非 import M3 私有名，此处把这份重复**显式钉住**）。
+    ⑫ 锚规则**唯一实现**（结构性断言）：锚规则已收口到 `parser.anchor_of`，
+       M3（`impact_analyzer`）与 M8（`drift`）**不再**各持本地复刻（源码中不存在 `def _anchor_of`），
+       且共享函数在探针集上判定符合预期。
 
 沿用 M0–M7 约定：不用 `subprocess` 管道，改临时文件重定向（本机沙箱禁建管道）。
 """
@@ -39,7 +40,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import drift, impact_analyzer
+from . import drift, parser
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -289,7 +290,8 @@ def test_cli_rejects_bad_inputs() -> None:
         assert err.strip() and not out, "用法错误应仅向 stderr 报错"
 
 
-def test_anchor_rule_matches_m3() -> None:
+def test_anchor_rule_single_source() -> None:
+    """锚规则收口为 `parser.anchor_of` 唯一实现：M3 / M8 不再各持一份本地复刻。"""
     probes = (
         "src/app/core.py",
         "docs/",
@@ -299,9 +301,17 @@ def test_anchor_rule_matches_m3() -> None:
         "",
         "   ",
     )
-    got = [drift._anchor_of(e) for e in probes]
-    want = [impact_analyzer._anchor_of(e) for e in probes]
-    assert got == want, f"锚规则与 M3 出现漂移：drift={got} m3={want}"
+    expected = ["src/app/core.py", "docs/", None, "src/app/x.py", "a/b", None, None]
+    assert [parser.anchor_of(e) for e in probes] == expected, "共享锚规则结果不符预期"
+
+    # 结构性断言：产品源码中不应再有 `def _anchor_of` 本地复刻（全仓唯一实现只在 parser）
+    offenders = []
+    for py in PKG_DIR.rglob("*.py"):
+        if py.name.startswith("selftest"):
+            continue  # 自测里的断言文本不计入产品代码
+        if "def _anchor_of" in py.read_text(encoding="utf-8"):
+            offenders.append(py.relative_to(PKG_DIR).as_posix())
+    assert not offenders, f"锚规则仍存在本地复刻（应收口到 parser.anchor_of）：{offenders}"
 
 
 def main() -> int:
@@ -317,7 +327,7 @@ def main() -> int:
         test_cli_json_bytes,
         test_cli_text_bytes,
         test_cli_rejects_bad_inputs,
-        test_anchor_rule_matches_m3,
+        test_anchor_rule_single_source,
     )
     failed = 0
     for t in tests:
