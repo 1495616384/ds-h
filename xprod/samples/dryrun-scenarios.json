@@ -1,0 +1,79 @@
+{
+  "policy": {
+    "max_uncertainty_rate": 0.15,
+    "min_traceability": 0.9,
+    "budget_default": 5
+  },
+  "scenarios": [
+    {
+      "task_id": "S-ENFORCED-CONVERGE",
+      "mode": "enforced",
+      "budget": 5,
+      "observations": [
+        {"unresolved_constraints": 1, "failing_tests": 3, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 1, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 0, "failing_tests": 0, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1}
+      ]
+    },
+    {
+      "task_id": "S-CONSULTATIVE-PLATEAU",
+      "mode": "consultative",
+      "budget": 5,
+      "observations": [
+        {"unresolved_constraints": 1, "failing_tests": 3, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 3, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 3, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 3, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 3, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1}
+      ]
+    },
+    {
+      "task_id": "S-VETO-HIGH-RISK",
+      "mode": "enforced",
+      "budget": 5,
+      "observations": [
+        {"unresolved_constraints": 0, "failing_tests": 1, "unapproved_changes": 1, "regressions": 0, "high_risk_unapproved": true, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 0, "failing_tests": 0, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1}
+      ]
+    },
+    {
+      "task_id": "S-VETO-SUPERVISION-AVOIDANCE",
+      "mode": "consultative",
+      "budget": 5,
+      "observations": [
+        {"unresolved_constraints": 1, "failing_tests": 0, "unapproved_changes": 0, "regressions": 0, "unknown_judgements": 3, "total_judgements": 4, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 0, "unapproved_changes": 0, "regressions": 0, "unknown_judgements": 3, "total_judgements": 4, "feedback_traceable": 1, "feedback_total": 1}
+      ]
+    },
+    {
+      "task_id": "S-VETO-METRIC-TAMPER",
+      "mode": "enforced",
+      "budget": 5,
+      "observations": [
+        {"unresolved_constraints": 1, "failing_tests": 2, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 0, "failing_tests": 0, "unapproved_changes": 0, "regressions": 0, "tamper_detected": true, "feedback_traceable": 1, "feedback_total": 1}
+      ]
+    },
+    {
+      "task_id": "S-BUDGET-EXCEEDED",
+      "mode": "consultative",
+      "budget": 3,
+      "observations": [
+        {"unresolved_constraints": 1, "failing_tests": 4, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 3, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 2, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 1, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1},
+        {"unresolved_constraints": 1, "failing_tests": 0, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 1, "feedback_total": 1}
+      ]
+    },
+    {
+      "task_id": "S-LOW-TRACEABILITY",
+      "mode": "enforced",
+      "budget": 5,
+      "observations": [
+        {"unresolved_constraints": 1, "failing_tests": 2, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 0, "feedback_total": 2},
+        {"unresolved_constraints": 0, "failing_tests": 0, "unapproved_changes": 0, "regressions": 0, "feedback_traceable": 0, "feedback_total": 1}
+      ]
+    }
+  ]
+}

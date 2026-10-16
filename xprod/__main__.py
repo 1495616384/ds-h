@@ -2,7 +2,8 @@
 
 M0 实现 `--version`；M1 追加 `parse`——把设计文档译为「条目—约束—证据」JSON；
 M2 追加 `graph`——从只读代码副本构建模块依赖图，并可下钻单文件符号；
-M3 追加 `impact`——给定模拟 diff，输出受影响条目 / 文件清单（`--text` 给人类可读版本）。
+M3 追加 `impact`——给定模拟 diff，输出受影响条目 / 文件清单（`--text` 给人类可读版本）；
+M5 追加 `dryrun`——按剧本回放 M4 设计的干跑骨架，输出收敛与否决判定（`--text` 给人类可读版本）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -16,7 +17,8 @@ USAGE = (
     "usage: python -m xprod --version\n"
     "       python -m xprod parse <design-doc.md>\n"
     "       python -m xprod graph <code-root> [--tree <node-id>]\n"
-    "       python -m xprod impact <diff-file> <code-root> <design-doc> [--text]"
+    "       python -m xprod impact <diff-file> <code-root> <design-doc> [--text]\n"
+    "       python -m xprod dryrun <scenarios.json> [--text]"
 )
 
 
@@ -92,6 +94,24 @@ def main(argv: list[str] | None = None) -> int:
             print(f"impact error: {exc}", file=sys.stderr)
             return 1
         text = impact_analyzer.render_text(doc) if as_text else impact_analyzer.to_json(doc)
+        _write_bytes(text)
+        return 0
+    if args and args[0] == "dryrun":
+        from . import dryrun
+
+        rest = args[1:]
+        as_text = "--text" in rest
+        if as_text:
+            del rest[rest.index("--text")]
+        if len(rest) != 1:
+            print(USAGE, file=sys.stderr)
+            return 2
+        try:
+            doc = dryrun.run_scenarios(rest[0])
+        except (dryrun.DryRunError, OSError) as exc:
+            print(f"dryrun error: {exc}", file=sys.stderr)
+            return 1
+        text = dryrun.render_text(doc) if as_text else dryrun.to_json(doc)
         _write_bytes(text)
         return 0
     print(USAGE, file=sys.stderr)
