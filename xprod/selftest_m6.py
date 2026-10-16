@@ -197,8 +197,26 @@ def test_cli_rejects_bad_inputs() -> None:
     assert err.strip() and not out, "用法错误应仅向 stderr 报错"
 
 
+def test_saved_snapshot_is_byte_exact() -> None:
+    """落档快照必须与 `to_json` 输出**逐字节**一致（Windows 换行翻译属缺陷类）。
+
+    本断言即 M6 轮此前缺失的护栏：彼时 save_snapshot 用文本模式写盘，字节被悄悄改动，
+    却因 load_snapshot 走 JSON 解析（容忍换行）而**无从暴露**。
+    """
+    with tempfile.TemporaryDirectory() as td:
+        stub = _write_stub(Path(td) / "stub.py", b"payload\n", 3)
+        dest = Path(td) / "snap.json"
+        snap = guard.run_freeze_check(stub)
+        guard.save_snapshot(dest, snap)
+        saved = dest.read_bytes()
+    expected = guard.to_json(snap.to_dict()).encode("utf-8")
+    assert saved == expected, "落档快照与 to_json 输出非逐字节一致"
+    assert b"\r\n" not in saved, "落档快照出现回车换行（CR），说明未走字节写（textio）"
+
+
 def main() -> int:
     tests = (
+        test_saved_snapshot_is_byte_exact,
         test_exit_classification,
         test_snapshot_records_exit3_as_intact,
         test_pre_post_identical_is_stable,

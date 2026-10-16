@@ -287,6 +287,7 @@ def test_cli_save_writes_snapshot() -> None:
     assert code == 0, f"退出码应为 0，实际 {code}；stderr={err!r}"
     assert out == expected, "stdout 应为快照 JSON"
     assert saved == expected, "落盘快照与库输出不一致"
+    assert b"\r\n" not in saved, "落盘快照出现回车换行（CR），说明未走字节写（textio）"
 
 
 def test_cli_rejects_bad_inputs() -> None:

@@ -26,7 +26,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import drift
+from . import drift, textio
 
 STATUS_ACTIVE = "active"
 STATUS_DANGLING = "dangling"
@@ -83,10 +83,10 @@ def snapshot(code_root: str | Path, design_doc: str | Path) -> dict:
 def save_snapshot(path: str | Path, snap: dict) -> None:
     """把快照写成 UTF-8 稳定 JSON（缩进 2、末尾单换行）。
 
-    必须走**字节写**：Windows 下 `write_text` 会把 `\\n` 翻译成 `\\r\\n`，
-    使落盘字节与 `to_json()` 输出不一致，破坏快照的逐字节可复现性。
+    走 `textio.save_text`（字节写）：Windows 文本模式会把换行符翻译成回车加换行，
+    使落盘字节与 `to_json` 输出不一致，破坏快照的逐字节可复现性。
     """
-    Path(path).write_bytes(to_json(snap).encode("utf-8"))
+    textio.save_text(path, to_json(snap))
 
 
 def load_snapshot(path: str | Path) -> dict:

@@ -36,6 +36,8 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
+from . import textio
+
 # 冻结核验退出码语义分组（固定；改动须与核验程序同步并留下理由）
 FREEZE_INTACT = (0, 3)      # 指纹未被破坏（0=门槛就绪；3=门槛未就绪，属预期态）
 FREEZE_BROKEN = (2, 4)      # 指纹不一致（2） / 越权引用（4）
@@ -208,8 +210,12 @@ def probe_push_state(repo: str | Path, remote: str = "origin", branch: str = "ma
 
 
 def save_snapshot(path: str | Path, snapshot: FreezeSnapshot) -> None:
-    """把一份快照写入 JSON 文件（作为「改动前」基线留档）。"""
-    Path(path).write_text(to_json(snapshot.to_dict()), encoding="utf-8")
+    """把一份快照写入 JSON 文件（作为「改动前」基线留档）。
+
+    走 `textio.save_text`（字节写）：Windows 文本模式会把换行符翻译成回车加换行，
+    使这份基线产物的落盘字节与 `to_json` 输出不一致（本模块此前即有此隐患）。
+    """
+    textio.save_text(path, to_json(snapshot.to_dict()))
 
 
 def load_snapshot(path: str | Path) -> FreezeSnapshot:

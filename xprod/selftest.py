@@ -54,8 +54,28 @@ def test_isolation_no_freeze_paths() -> None:
     assert not offenders, f"隔离性被破坏，以下产品文件引用了冻结链目录名：{offenders}"
 
 
+def test_no_direct_write_text_in_product() -> None:
+    """字节稳定写盘口径（静态强制）：产品模块不得直接用 `write_text`。
+
+    Windows 文本模式会把换行符翻译成回车加换行，破坏「产物逐字节可复现」。
+    确定性文本产物一律经 `textio.save_text`；自测文件用 write_text 造夹具，属正当用法。
+    """
+    offenders = []
+    for py in PKG_DIR.rglob("*.py"):
+        if py.name.startswith("selftest"):
+            continue  # 自测文件是夹具构造，不在产品代码口径内
+        if ".write_text(" in py.read_text(encoding="utf-8"):
+            offenders.append(py.relative_to(PKG_DIR).as_posix())
+    assert not offenders, f"以下产品模块绕过了 textio 直接用 write_text：{offenders}"
+
+
 def main() -> int:
-    tests = (test_version_nonempty, test_cli_version, test_isolation_no_freeze_paths)
+    tests = (
+        test_version_nonempty,
+        test_cli_version,
+        test_isolation_no_freeze_paths,
+        test_no_direct_write_text_in_product,
+    )
     failed = 0
     for t in tests:
         try:

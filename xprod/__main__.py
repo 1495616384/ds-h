@@ -55,7 +55,7 @@ def main(argv: list[str] | None = None) -> int:
         except (parser.ParseError, OSError) as exc:
             print(f"parse error: {exc}", file=sys.stderr)
             return 1
-        sys.stdout.write(parser.to_json(doc))
+        _write_bytes(parser.to_json(doc))
         return 0
     if args and args[0] == "graph":
         from . import graph_builder
