@@ -64,6 +64,13 @@ REASON_PATH_MISSING = "路径不存在"
 
 _DRIFT_NOTE = "note: ok 仅表示本次口径下锚全部活性，不表示设计完整或正确"
 
+# M18：本模块采集体**必需键的唯一字面量源**，键序与 `prepare` 返回**逐字同序**（由 M18 自测 ③ 强制）。
+# 为什么公开、为什么放在模块层：它是 `analyze_prepared` 入口校验的**真值源**——实现与测试都引用
+# 同一处，才不会出现「常量说一套、实现做一套」的漂移（M18 设计稿 §四.1）。
+# 与 `impact_analyzer` 的清单**只共享 `design`**：这正是「同名可互传」错觉的温床——两者的 `prepare`
+# 签名一字不差（`(code_root, design_doc)`）且都返回含 `design` 的字典，故误传只在取第一键时才崩。
+PREPARED_REQUIRED_KEYS = ("files", "dirs", "file_set", "design")
+
 
 class DriftError(ValueError):
     """代码根不可用（不是目录）时抛出；设计文档不合格式由 M1 `ParseError` 直接上抛。"""
@@ -162,7 +169,18 @@ def analyze_prepared(prepared: dict) -> dict:
     """按模型构造：逐条证据锚解析活性，返回键序固定、可逐字节复现的结果文档（与 M8 同）。
 
     **只读**传入的 `prepared`——不得就地修改，否则多次复用会互相污染（由自测强断言）。
+
+    M18：取任何键**之前**先做**入口必需键校验**（见模块顶部 `PREPARED_REQUIRED_KEYS` 注释）。
+    `impact_analyzer.prepare` 的产物在**肉眼上**完全可能是本入口的合法输入（两者 `prepare` 签名
+    逐字相同、都含 `design`），此前只会抛 `KeyError: 'files'`；现在报出缺了哪些键、应由谁产出。
+    校验只读、只判必需键**子集**；对合法采集体**恒真**，不产生任何分支差异。
     """
+    missing = [k for k in PREPARED_REQUIRED_KEYS if k not in prepared]
+    if missing:
+        raise DriftError(
+            f"analyze_prepared 收到非 drift 采集体：缺少必需键 {missing}；应由 drift.prepare 产出"
+        )
+
     files = prepared["files"]
     dirs = prepared["dirs"]
     file_set = prepared["file_set"]

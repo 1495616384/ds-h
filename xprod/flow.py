@@ -52,6 +52,12 @@ STATUS_UNANCHORED = drift.STATUS_UNANCHORED
 VERDICT_CLEAR = "clear"
 VERDICT_IMPACTED = "impacted"
 
+# M18：本模块采集体**必需键的唯一字面量源**，键序与 `prepare` 返回**逐字同序**（由 M18 自测 ③ 强制）。
+# 为什么公开、为什么放在模块层：它是 `analyze_prepared` 入口校验的**真值源**——实现与测试都引用
+# 同一处，才不会出现「常量说一套、实现做一套」的漂移；也正因为它是**跨模块同名可互传**治理的判据，
+# 三个模块的这份清单必须各持一份、彼此不同（由 M18 自测 ⑦ 固化，M18 设计稿 §四.1）。
+PREPARED_REQUIRED_KEYS = ("flow_count", "step_count", "edge_count", "flows")
+
 _HEADING = re.compile(r"^##\s+(?P<id>FL-\d{3,})\s+—\s+(?P<title>.+?)\s*$")
 _SECTION = re.compile(r"^-\s+(?P<key>step|edge)\s*:\s*$")
 _ITEM = re.compile(r"^[ \t]+-\s+(?P<value>.+?)\s*$")
@@ -284,7 +290,19 @@ def analyze_prepared(prepared: dict, diff_file: str | Path | None = None) -> dic
     任意多份 diff 复用——复用次数与污染风险**写在调用点**，可读、可断言、可推理。
     返回键序与 `analyze` **逐字一致**（`flow_count, step_count, edge_count, flows, impact`）；
     无 `diff_file` 时 `impact` 为 `None`。
+
+    M18：取任何键**之前**先做**入口必需键校验**。为什么放在**消费端入口**而不是采集端：
+    `flow` / `impact_analyzer` / `drift` 三个模块的 `prepare` **同名而形状不兼容**（本模块 4 键、
+    另两个 2 / 4 键），中间体在模块间流动时**不携带身份信息**，误传时此前只会抛一句无诊断性的
+    `KeyError`。此处用**本模块既有错误类型**报出「缺了哪些键 + 应由谁产出」，把误传变成一眼可懂。
+    校验只读、只判必需键**子集**（多出的键不报错）；对合法采集体**恒真**，不产生任何分支差异。
     """
+    missing = [k for k in PREPARED_REQUIRED_KEYS if k not in prepared]
+    if missing:
+        raise FlowError(
+            f"analyze_prepared 收到非 flow 采集体：缺少必需键 {missing}；应由 flow.prepare 产出"
+        )
+
     impact = None
     if diff_file is not None:
         changed = impact_analyzer.parse_unified_diff(Path(diff_file).read_text(encoding="utf-8"))

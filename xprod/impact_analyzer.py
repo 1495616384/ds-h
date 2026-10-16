@@ -50,6 +50,14 @@ _DEV_NULL = "/dev/null"
 MATCH_EXACT = "exact"
 MATCH_PREFIX = "prefix"
 
+# M18：本模块采集体**必需键的唯一字面量源**，键序与 `prepare` 返回**逐字同序**（由 M18 自测 ③ 强制）。
+# 为什么公开、为什么放在模块层：它是 `analyze_prepared` 入口校验的**真值源**——实现与测试都引用
+# 同一处，才不会出现「常量说一套、实现做一套」的漂移（M18 设计稿 §四.1）。
+# 注意：本模块与 `drift` 的清单**只共享 `design`** 一个键——正是这一处「部分同名」制造了
+# 「可以互传」的错觉（`drift.analyze_prepared(impact_analyzer.prepare(...))` 在肉眼上完全合理），
+# M18 的入口校验正是要把它变成「一眼能看懂为什么错」。
+PREPARED_REQUIRED_KEYS = ("graph", "design")
+
 
 class ImpactError(ValueError):
     """diff 文本不合法、扫描根不可用或设计文档不合格式时抛出。"""
@@ -193,7 +201,18 @@ def analyze_prepared(prepared: dict, diff_text: str) -> dict:
     **只读**传入的 `prepared`：既不修改它，也不注册任何全局状态，故同一 `prepared` 可安全供给
     任意多份 diff 复用；复用次数与污染风险**写在调用点**，可读、可断言。
     返回键序与 `analyze` **逐字一致**。
+
+    M18：取任何键**之前**先做**入口必需键校验**（见模块顶部 `PREPARED_REQUIRED_KEYS` 注释）。
+    校验发生在**入口**：故「坏采集体 + 非法 diff 文本」同时成立时，**现在**先报采集体诊断
+    （此前会先抛 `parse_unified_diff` 的 diff 错误）——仍是错误路径，错误类型仍是 `ImpactError`。
     """
+    missing = [k for k in PREPARED_REQUIRED_KEYS if k not in prepared]
+    if missing:
+        raise ImpactError(
+            f"analyze_prepared 收到非 impact_analyzer 采集体：缺少必需键 {missing}；"
+            f"应由 impact_analyzer.prepare 产出"
+        )
+
     changed = parse_unified_diff(diff_text)
     graph = prepared["graph"]
     design = prepared["design"]
