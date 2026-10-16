@@ -9,6 +9,10 @@
     ③ 条目命中 = **仅直接变更文件**参与证据锚匹配；传递受影响的文件只进文件清单，
        不升级为条目命中（否则影响面会被二次放大，失去可判定性）；
     ④ 输出 = 默认稳定 JSON，`--text` 给人类可读清单。
+    ⑤ M16 采集 / 构造分离：`prepare`（与 diff 无关：建图 + 解析设计文档）、`read_diff`（全仓唯一的
+       「读 diff 文件」实现）与 `analyze_prepared`（按 diff 构造）各有**唯一实现**；`analyze` /
+       `analyze_files` 退化为**薄编排**；复用由调用方**显式持有**中间体，**不**引入隐式缓存
+       （两者的签名与输出**逐字节不变**）。
 
 为什么这样定：
     * 反向传播而非正向：改一个被依赖的底层模块，风险在于**它的消费者**，
@@ -153,12 +157,47 @@ def _reverse_closure(nodes: list[dict], edges: list[dict], seeds: list[str]) -> 
     return depth
 
 
-def analyze(diff_text: str, code_root: str | Path, design_doc: str | Path) -> dict:
-    """分析一次 diff 的影响面，返回键序固定、可逐字节复现的结果文档。"""
+def prepare(code_root: str | Path, design_doc: str | Path) -> dict:
+    """采集一次：**与 diff 无关**的部分——依赖图构建 + 设计文档解析。
+
+    为什么拆出这一层（M16）：M7 路径里同一对 `(代码根, 设计文档)` 要供 N 份改动复用，而此前
+    `analyze` 每次都在这两件事上重做一遍——`build_graph` 要遍历整棵树并逐文件解析模块名与导入，
+    `parse_file` 要重解析整份设计文档，两者都**不随 diff 变化**。此处抽成**显式传参**的中间体，
+    由调用方**自己持有**以实现复用；**不**引入隐式缓存 / 全局状态——以什么为键都有漏洞
+    （以路径为键则代码改了还命中旧图；以内容哈希为键则要遍历全树算哈希，成本回到原点），
+    而且「哪些改动共享了同一张图」将不可见，正是隐性漂移的来源。
+
+    **只放原始事实**：不预计算节点 id 集合 / 反向邻接 / 证据索引——派生属「构造」，塞进采集体
+    等于把**消费方的方向假设**写进采集层（M11 教训：采集与构造耦合会让消费方重复实现同一口径）。
+    返回键序固定为 `graph, design`。
+    """
+    return {
+        "graph": graph_builder.build_graph(code_root),
+        "design": parser.parse_file(design_doc),
+    }
+
+
+def read_diff(diff_path: str | Path) -> str:
+    """全仓唯一的「读 diff 文件」实现，编码**沿用现状 `utf-8-sig`**。
+
+    为什么收口：此前该读取内联在 `analyze_files` 里。一旦复用方各自去读，就会产生第二份编码口径，
+    带 BOM 的 diff 在一处被剥离、在另一处没有，结果静默分叉。此处的编码口径与重构前**一字不改**
+    （编码一改，「与重构前逐字节一致」就当场失效）。
+    """
+    return Path(diff_path).read_text(encoding="utf-8-sig")
+
+
+def analyze_prepared(prepared: dict, diff_text: str) -> dict:
+    """按 diff 构造：**与 diff 有关**的部分——解析 diff、条目命中、反向闭包传播。
+
+    **只读**传入的 `prepared`：既不修改它，也不注册任何全局状态，故同一 `prepared` 可安全供给
+    任意多份 diff 复用；复用次数与污染风险**写在调用点**，可读、可断言。
+    返回键序与 `analyze` **逐字一致**。
+    """
     changed = parse_unified_diff(diff_text)
-    graph = graph_builder.build_graph(code_root)
+    graph = prepared["graph"]
+    design = prepared["design"]
     node_ids = {node["id"] for node in graph["nodes"]}
-    design = parser.parse_file(design_doc)
 
     changed_set = set(changed)
     in_graph = sorted(f for f in changed if f in node_ids)
@@ -215,11 +254,23 @@ def analyze(diff_text: str, code_root: str | Path, design_doc: str | Path) -> di
     }
 
 
+def analyze(diff_text: str, code_root: str | Path, design_doc: str | Path) -> dict:
+    """分析一次 diff 的影响面，返回键序固定、可逐字节复现的结果文档。
+
+    M16：本函数退化为**一层薄编排**——采集（`prepare`）与按 diff 构造（`analyze_prepared`）
+    各有唯一实现，此处只顺次调用，采集逻辑**不**在编排层被再写一遍。
+    """
+    return analyze_prepared(prepare(code_root, design_doc), diff_text)
+
+
 def analyze_files(
     diff_path: str | Path, code_root: str | Path, design_doc: str | Path
 ) -> dict:
-    """读取 UTF-8 统一 diff 文件后分析。"""
-    return analyze(Path(diff_path).read_text(encoding="utf-8-sig"), code_root, design_doc)
+    """读取 UTF-8 统一 diff 文件后分析；签名与输出与重构前**逐字节不变**（M16：薄编排）。
+
+    读口径**唯一收口**在 `read_diff`（含 `utf-8-sig` 编码），本函数内部不再自行读取。
+    """
+    return analyze_prepared(prepare(code_root, design_doc), read_diff(diff_path))
 
 
 def render_text(doc: dict) -> str:

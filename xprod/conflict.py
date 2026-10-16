@@ -34,6 +34,12 @@ M14 扩展（流程层并发冲突检测；对齐路线图 §十八 M14 行与�
        `flow_conflict.verdict`——把「波及同一流程」这种弱证据并进强判定会造成影响面二次放大
        （与 M3 排除反向闭包传播同理由）。
 
+M16 扩展（条目层采集复用；对齐路线图 §二十 M16 行与设计稿 `X产品化-M16设计稿-v1.md` §四）：
+    ⑪ 条目层同 M15 口径：`impact_analyzer.prepare`（建图 + 解析设计文档，两者**与 diff 无关**）
+       **只做一次**，再对每份 diff 各做一次 `impact_analyzer.analyze_prepared`；**零新解析**。
+       diff 读口径**唯一收口**在 `impact_analyzer.read_diff`；复用**写在调用点**，不引入隐式缓存。
+       M7 / M14 输出**逐字节不变**。
+
 为什么这样定：
     * 冲突对按 (left, right) 字典序输出、共享集合排序，保证同输入**逐字节可复现**；
     * 分工计划里的改动按 id 升序规范化，使输出的**键序与分组不依赖输入书写顺序**；
@@ -240,12 +246,22 @@ def analyze_plan(
     `flow_conflict`）；**未给时输出与 M7 逐字节一致**（流程层键**不出现**，而不是出现并置 `null`）——
     这样既有断言与既有页面对照一律不受影响。流程层判定**不并入**顶层 `verdict`：把「波及同一流程」
     这种弱证据并进文件/条目层的强判定，会造成影响面二次放大（与 M3 排除反向闭包传播同理由）。
+
+    M16：条目层改用「采集一次 + 逐改动构造」——同一对 `(代码根, 设计文档)` 供 N 份改动复用，
+    `impact_analyzer.prepare` **只做一次**（建图 + 解析设计文档，两者**与 diff 无关**），
+    再对每份改动各做一次 `impact_analyzer.analyze_prepared`（读该 diff 文件、命中条目、反向闭包）。
+    复用**写在调用点**（本函数显式持有 `impact_prepared`），不引入任何隐式缓存；
+    diff 读口径**唯一收口**在 `impact_analyzer.read_diff`。M7 / M14 输出**逐字节不变**。
+    中间体变量名用 `impact_prepared`，与 `_flow_layer` 内的 `prepared`（流程面）区分，避免混淆。
     """
     plan = load_plan(plan_path)
 
+    impact_prepared = impact_analyzer.prepare(code_root, design_doc)
     summaries: list[dict] = []
     for change in plan["changesets"]:
-        doc = impact_analyzer.analyze_files(change["diff"], code_root, design_doc)
+        doc = impact_analyzer.analyze_prepared(
+            impact_prepared, impact_analyzer.read_diff(change["diff"])
+        )
         summaries.append(
             {
                 "id": change["id"],
