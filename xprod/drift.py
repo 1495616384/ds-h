@@ -9,7 +9,8 @@
     ① 输入 = **代码根** + **设计文档**（与 M1/M2 同参；**不需要 diff**——漂移与某次改动无关）；
     ② 锚规则**与 M3 一致**（实现已收口到 `parser.anchor_of`，全仓唯一）：取每条证据串的首个空白分隔
        token；不含 `/` 者记为 `unanchored`（显式列出，**不参与**活性判定）；
-    ③ 锚**活性**定义在**文件系统存在性**（不是「是否为依赖图节点」）：
+    ③ 锚**活性**定义在**文件系统存在性**（不是「是否为依赖图节点」）
+       （实现已收口到 `anchor_state`，全仓唯一，M12 流程层复用同一份）：
          精确锚（不以 `/` 结尾）：活性 = 路径存在（文件或目录）；命中集合 = 文件本身，目录则列其下全部文件；
          前缀锚（以 `/` 结尾）  ：活性 = 存在以该前缀起头的文件；命中文件**全部列出**；
        不满足 → 记 `dangling`（失联锚）；
@@ -38,6 +39,10 @@ from . import parser
 
 ANCHOR_EXACT = "exact"
 ANCHOR_PREFIX = "prefix"
+
+STATUS_ACTIVE = "active"
+STATUS_DANGLING = "dangling"
+STATUS_UNANCHORED = "unanchored"
 
 VERDICT_OK = "ok"
 VERDICT_DRIFT = "drift"
@@ -70,6 +75,43 @@ def scan_tree(root: Path) -> tuple[list[str], set[str], set[str]]:
     return files, dirs, set(files)
 
 
+def anchor_state(
+    anchor: str | None,
+    files: list[str],
+    dirs: set[str],
+    file_set: set[str],
+) -> dict:
+    """锚活性判定（写死口径；**全仓唯一实现**，M8 / M12 一律经此，不得各自复刻）。
+
+    为什么收口成一个函数：活性判定曾按「大体相同的规则」在 drift 与 flow 各写一遍，
+    一旦某处补了分支（如「精确锚命中目录」）另一处没补，同一份证据锚就会在两处给出
+    相反的三态，而两边各自的输出看上去都「正常」——这类**隐性漂移**只能靠结构上
+    只留一份实现来堵死（由 `selftest_m12` 的结构断言强制）。
+
+    规则（与 M8 判定口径逐字对齐）：
+        `anchor is None`                → `unanchored`（不参与活性判定）
+        以 `/` 结尾（前缀锚）           → 存在以该前缀起头的文件即 `active`（命中文件全部列出），
+                                          否则 `dangling`（前缀下无文件）
+        其余（精确锚）                  → 命中文件本身即 `active`；锚是**目录**则命中其下全部文件；
+                                          都不成立 → `dangling`（路径不存在）
+    返回 `{"status", "match_kind"[, "matched_files"][, "reason"]}`——`matched_files` 仅活性时有，
+    `reason` 仅失联时有，以便 M8 的文本清单能逐字节复现原输出。
+    """
+    if anchor is None:
+        return {"status": STATUS_UNANCHORED}
+    if anchor.endswith("/"):
+        matched = [f for f in files if f.startswith(anchor)]
+        if matched:
+            return {"status": STATUS_ACTIVE, "match_kind": ANCHOR_PREFIX, "matched_files": matched}
+        return {"status": STATUS_DANGLING, "match_kind": ANCHOR_PREFIX, "reason": REASON_PREFIX_EMPTY}
+    if anchor in file_set:
+        return {"status": STATUS_ACTIVE, "match_kind": ANCHOR_EXACT, "matched_files": [anchor]}
+    if anchor in dirs:
+        matched = [f for f in files if f.startswith(anchor + "/")]
+        return {"status": STATUS_ACTIVE, "match_kind": ANCHOR_EXACT, "matched_files": matched}
+    return {"status": STATUS_DANGLING, "match_kind": ANCHOR_EXACT, "reason": REASON_PATH_MISSING}
+
+
 def _by_entry(record: dict) -> tuple[str, str]:
     """活性 / 失联 / 无锚记录的稳定排序键：先条目 id，再证据原文。"""
     return (record["constraint_id"], record["evidence"])
@@ -100,24 +142,13 @@ def analyze(code_root: str | Path, design_doc: str | Path) -> dict:
                 "evidence": evidence,
                 "anchor": anchor,
             }
-            if anchor.endswith("/"):
-                matched = [f for f in files if f.startswith(anchor)]
-                record["match_kind"] = ANCHOR_PREFIX
-                if not matched:
-                    record["reason"] = REASON_PREFIX_EMPTY
-                    dangling.append(record)
-                    continue
-            elif anchor in file_set:
-                matched = [anchor]
-                record["match_kind"] = ANCHOR_EXACT
-            elif anchor in dirs:
-                matched = [f for f in files if f.startswith(anchor + "/")]
-                record["match_kind"] = ANCHOR_EXACT
-            else:
-                record["match_kind"] = ANCHOR_EXACT
-                record["reason"] = REASON_PATH_MISSING
+            state = anchor_state(anchor, files, dirs, file_set)
+            record["match_kind"] = state["match_kind"]
+            if state["status"] == STATUS_DANGLING:
+                record["reason"] = state["reason"]
                 dangling.append(record)
                 continue
+            matched = state["matched_files"]
             covered.update(matched)
             record["matched_files"] = matched
             active.append(record)

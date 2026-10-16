@@ -11,7 +11,8 @@
     ③ `direct_steps` = 锚命中「直接变更文件」的步骤（`unanchored` 步骤**不参与**命中）；
     ④ `affected_steps` = `direct_steps` ∪ 沿边**正向（下游）闭包**（改动向**下游**扩散；
        与 M3 的反向「谁依赖我」是**两个不同问题**，故不套用 M3 传播方向）；
-    ⑤ `dangling_steps` = 锚在代码根**失联**的步骤（**断链**），**单列**、**不**并入 `verdict`；
+    ⑤ `dangling_steps` = 锚在代码根**失联**的步骤（**断链**），**单列**、**不**并入 `verdict`
+       （步骤锚三态一律取自 `drift.anchor_state`——全仓唯一实现，与 M8 逐字同口径）；
     ⑥ `verdict` ∈ `clear` / `impacted`（`affected_steps` 非空即 `impacted`）；
     ⑦ 无 `--diff` 时 `impact` 为 `null`，只输出流程结构与步骤锚活性；
     ⑧ 确定性（排序、无时间戳，同输入两次**逐字节一致**）、只读。
@@ -39,9 +40,11 @@ from pathlib import Path
 
 from . import drift, impact_analyzer, parser
 
-STATUS_ACTIVE = "active"
-STATUS_DANGLING = "dangling"
-STATUS_UNANCHORED = "unanchored"
+# 步骤锚三态：与 M8 **同源**——明细判定收口在 `drift.anchor_state`（全仓唯一），
+# 此处只保留公开名，供调用方 / 自测引用，不再各持一份字面量或一份判定实现。
+STATUS_ACTIVE = drift.STATUS_ACTIVE
+STATUS_DANGLING = drift.STATUS_DANGLING
+STATUS_UNANCHORED = drift.STATUS_UNANCHORED
 
 VERDICT_CLEAR = "clear"
 VERDICT_IMPACTED = "impacted"
@@ -166,15 +169,6 @@ def parse_flow_doc(text: str) -> list[dict]:
     return flows
 
 
-def _status(anchor: str | None, files: list[str], file_set: set[str]) -> str:
-    """步骤锚活性（口径与 M8 一致：文件系统存在性）。"""
-    if anchor is None:
-        return STATUS_UNANCHORED
-    if anchor.endswith("/"):
-        return STATUS_ACTIVE if any(f.startswith(anchor) for f in files) else STATUS_DANGLING
-    return STATUS_ACTIVE if anchor in file_set else STATUS_DANGLING
-
-
 def _impact(flows: list[dict], changed: list[str]) -> dict:
     """按「直接命中 ∪ 正向下游闭包」计算受影响步骤；断链单独列出。"""
     changed_set = set(changed)
@@ -245,7 +239,7 @@ def analyze(
     if not root.is_dir():
         raise FlowError(f"代码根不是目录：{root}")
     parsed = parse_flow_doc(Path(flow_doc).read_text(encoding="utf-8"))
-    files, _dirs, file_set = drift.scan_tree(root)
+    files, dirs, file_set = drift.scan_tree(root)
 
     flows: list[dict] = []
     for flow in parsed:
@@ -258,7 +252,7 @@ def analyze(
                     "label": s["label"],
                     "evidence": s["evidence"],
                     "anchor": anchor,
-                    "status": _status(anchor, files, file_set),
+                    "status": drift.anchor_state(anchor, files, dirs, file_set)["status"],
                 }
             )
         flows.append(

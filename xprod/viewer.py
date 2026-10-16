@@ -34,10 +34,11 @@ import html
 
 from . import drift, flow, graph_builder, parser, sync
 
-# 证据在可视面上的三种状态（口径与 `drift` 一致，此处只是取给标签用）
-STATUS_ACTIVE = "active"
-STATUS_DANGLING = "dangling"
-STATUS_UNANCHORED = "unanchored"
+# 证据在可视面上的三种状态：与 `drift` **同源**（直接取 `drift.STATUS_*`），此处只作标签用途，
+# 不再各持一份字面量——可视面是「呈现层」，三态口径只能有一个源头。
+STATUS_ACTIVE = drift.STATUS_ACTIVE
+STATUS_DANGLING = drift.STATUS_DANGLING
+STATUS_UNANCHORED = drift.STATUS_UNANCHORED
 
 _STATUS_LABEL = {
     STATUS_ACTIVE: "活性",

@@ -29,7 +29,8 @@
     ⑧ 只读：`analyze` 前后夹具复合摘要不变；
     ⑨ CLI：`flow`（JSON / `--text`）stdout 与库输出逐字节一致、无 `\\r\\n` 翻译、退出码 0；
     ⑩ 非法输入：坏 diff / 坏流程文档 / 代码根非目录 → 1；参数不足 / `--diff` 缺值 → 2；
-    ⑪ 去重结构断言：产品源码中 `def _anchor_of` 复刻只剩共享公开函数一份（`parser.anchor_of`）。
+    ⑪ 去重结构断言：锚**规则**只剩共享实现 `parser.anchor_of`、锚**活性判定**只剩共享实现
+       `drift.anchor_state`（产品源码中不再有 `def _anchor_of` / `def _status(` 本地复刻）。
 
 沿用 M0–M11 约定：不用 `subprocess` 管道，改临时文件重定向（本机沙箱禁建管道）。
 """
@@ -42,7 +43,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import flow, parser
+from . import drift, flow, parser
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -356,18 +357,60 @@ def test_cli_rejects_bad_inputs() -> None:
 
 
 def test_anchor_rule_single_source() -> None:
-    """锚规则收口为 `parser.anchor_of` 唯一实现：M3 / M8 / M12 不再各持一份本地复刻。"""
+    """去重结构断言：锚**规则**收口为 `parser.anchor_of`、锚**活性判定**收口为 `drift.anchor_state`，
+    全仓各只留一份实现——M3 / M8 / M12 不再各持本地复刻。"""
     probes = ("src/app/core.py", "docs/", "just-a-token", "src/app/x.py 附带说明", "a/b", "", "   ")
     expected = ["src/app/core.py", "docs/", None, "src/app/x.py", "a/b", None, None]
     assert [parser.anchor_of(e) for e in probes] == expected, "共享锚规则结果不符预期"
+
+    files = ["docs/guide.md", "docs/spec.md", "src/app/core.py"]
+    dirs = {"docs", "src", "src/app"}
+    file_set = set(files)
+    states = [
+        drift.anchor_state(None, files, dirs, file_set),
+        drift.anchor_state("docs/", files, dirs, file_set),
+        drift.anchor_state("src/app", files, dirs, file_set),
+        drift.anchor_state("docs/none/", files, dirs, file_set),
+        drift.anchor_state("src/app/archive.py", files, dirs, file_set),
+    ]
+    assert states[0] == {"status": drift.STATUS_UNANCHORED}, states[0]
+    assert states[1] == {
+        "status": drift.STATUS_ACTIVE,
+        "match_kind": drift.ANCHOR_PREFIX,
+        "matched_files": ["docs/guide.md", "docs/spec.md"],
+    }, states[1]
+    assert states[2] == {
+        "status": drift.STATUS_ACTIVE,
+        "match_kind": drift.ANCHOR_EXACT,
+        "matched_files": ["src/app/core.py"],
+    }, "精确锚命中目录时应列其下全部文件（M12 曾遗漏该分支）: %r" % (states[2],)
+    assert states[3] == {
+        "status": drift.STATUS_DANGLING,
+        "match_kind": drift.ANCHOR_PREFIX,
+        "reason": drift.REASON_PREFIX_EMPTY,
+    }, states[3]
+    assert states[4] == {
+        "status": drift.STATUS_DANGLING,
+        "match_kind": drift.ANCHOR_EXACT,
+        "reason": drift.REASON_PATH_MISSING,
+    }, states[4]
+
+    # 三态公开名只能有一个源头：flow / viewer 一律别名自 drift，且 flow 不再自持判定实现。
+    assert (flow.STATUS_ACTIVE, flow.STATUS_DANGLING, flow.STATUS_UNANCHORED) == (
+        drift.STATUS_ACTIVE,
+        drift.STATUS_DANGLING,
+        drift.STATUS_UNANCHORED,
+    ), "flow 三态应与 drift 同源"
+    assert not hasattr(flow, "_status"), "flow 仍在自持锚活性判定实现（应委托 drift.anchor_state）"
 
     offenders = []
     for py in PKG_DIR.rglob("*.py"):
         if py.name.startswith("selftest"):
             continue  # 自测里的断言文本不计入产品代码
-        if "def _anchor_of" in py.read_text(encoding="utf-8"):
+        src = py.read_text(encoding="utf-8")
+        if "def _anchor_of" in src or "def _status(" in src:
             offenders.append(py.relative_to(PKG_DIR).as_posix())
-    assert not offenders, f"锚规则仍存在本地复刻（应收口到 parser.anchor_of）：{offenders}"
+    assert not offenders, f"锚规则 / 锚活性判定仍存在本地复刻（应收口到共享实现）：{offenders}"
 
 
 def main() -> int:
