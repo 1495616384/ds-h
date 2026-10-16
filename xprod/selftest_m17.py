@@ -47,12 +47,11 @@ from __future__ import annotations
 import hashlib
 import inspect
 import json
-import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
 from . import drift, graph_builder, parser, viewer
+from .selftest_kit import cli as _cli, run_module as _run_module, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -128,14 +127,6 @@ def _fixture(td: Path) -> tuple[Path, Path]:
     return root, design
 
 
-def _dir_digest(d: Path) -> str:
-    """目录下全部文件的复合摘要：逐文件 SHA-256 按相对路径排序后汇总（只读证据）。"""
-    rows = []
-    for p in sorted(q for q in d.rglob("*") if q.is_file()):
-        rows.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(d).as_posix()}")
-    return hashlib.sha256("\n".join(rows).encode("utf-8")).hexdigest()
-
-
 def _prepared_digest(prepared: dict) -> str:
     """采集中间体的复合摘要。
 
@@ -186,34 +177,6 @@ def _legacy_viewer_doc(root: Path, design_path: Path) -> dict:
     doc["sync"] = None
     doc["flow"] = None
     return doc
-
-
-def _cli(*args: str) -> tuple[int, bytes, str]:
-    """以临时文件重定向方式跑一次 CLI，返回（退出码, stdout 字节, stderr 文本）。"""
-    with tempfile.TemporaryDirectory() as td:
-        out_p, err_p = Path(td) / "out.bin", Path(td) / "err.txt"
-        with open(out_p, "wb") as fo, open(err_p, "w", encoding="utf-8") as fe:
-            proc = subprocess.run(
-                [sys.executable, "-m", "xprod", *args],
-                cwd=str(PKG_DIR.parent),
-                stdout=fo,
-                stderr=fe,
-            )
-        return proc.returncode, out_p.read_bytes(), err_p.read_text(encoding="utf-8")
-
-
-def _run_module(mod: str) -> tuple[int, bytes, str]:
-    """跑一个自测模块（`python -m xprod.<mod>`），返回（退出码, stdout 字节, stderr 文本）。"""
-    with tempfile.TemporaryDirectory() as td:
-        out_p, err_p = Path(td) / "out.bin", Path(td) / "err.txt"
-        with open(out_p, "wb") as fo, open(err_p, "w", encoding="utf-8") as fe:
-            proc = subprocess.run(
-                [sys.executable, "-m", f"xprod.{mod}"],
-                cwd=str(PKG_DIR.parent),
-                stdout=fo,
-                stderr=fe,
-            )
-        return proc.returncode, out_p.read_bytes(), err_p.read_text(encoding="utf-8")
 
 
 class _Probe:

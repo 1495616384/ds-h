@@ -9,12 +9,10 @@
 
 from __future__ import annotations
 
-import subprocess
-import sys
-import tempfile
 from pathlib import Path
 
 from . import __version__, scanscope
+from .selftest_kit import cli as _cli
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -27,19 +25,10 @@ def test_version_nonempty() -> None:
 
 
 def test_cli_version() -> None:
-    with tempfile.TemporaryDirectory() as td:
-        out_p = Path(td) / "out.txt"
-        err_p = Path(td) / "err.txt"
-        with open(out_p, "w", encoding="utf-8") as fo, open(err_p, "w", encoding="utf-8") as fe:
-            proc = subprocess.run(
-                [sys.executable, "-m", "xprod", "--version"],
-                cwd=str(PKG_DIR.parent),
-                stdout=fo,
-                stderr=fe,
-            )
-        out = out_p.read_text(encoding="utf-8")
-        err = err_p.read_text(encoding="utf-8")
-    assert proc.returncode == 0, f"退出码应为 0，实际 {proc.returncode}；stderr={err!r}"
+    # 脚手架（临时文件重定向跑 CLI）由 `selftest_kit` 唯一提供（M24）；此处只调用，不再内联
+    rc, out_b, err = _cli("--version")
+    out = out_b.decode("utf-8", "replace")
+    assert rc == 0, f"退出码应为 0，实际 {rc}；stderr={err!r}"
     assert __version__ in out, f"stdout 应含版本 {__version__!r}；实际 stdout={out!r}"
 
 

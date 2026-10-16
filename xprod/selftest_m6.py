@@ -22,12 +22,11 @@
 from __future__ import annotations
 
 import os
-import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
 from . import guard
+from .selftest_kit import cli as _cli
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -40,20 +39,6 @@ def _write_stub(path: Path, payload: bytes, code: int) -> Path:
     source = "import sys\nsys.stdout.buffer.write(%r)\nraise SystemExit(%d)\n" % (payload, code)
     path.write_text(source, encoding="utf-8")
     return path
-
-
-def _cli(*args: str) -> tuple[int, bytes, str]:
-    """以临时文件重定向方式跑一次 CLI，返回（退出码, stdout 字节, stderr 文本）。"""
-    with tempfile.TemporaryDirectory() as td:
-        out_p, err_p = Path(td) / "out.bin", Path(td) / "err.txt"
-        with open(out_p, "wb") as fo, open(err_p, "w", encoding="utf-8") as fe:
-            proc = subprocess.run(
-                [sys.executable, "-m", "xprod", *args],
-                cwd=str(PKG_DIR.parent),
-                stdout=fo,
-                stderr=fe,
-            )
-        return proc.returncode, out_p.read_bytes(), err_p.read_text(encoding="utf-8")
 
 
 def test_exit_classification() -> None:

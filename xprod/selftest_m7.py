@@ -32,14 +32,12 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
-import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
 from . import conflict
+from .selftest_kit import cli as _cli, dir_digest as _tree_digest
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -128,28 +126,6 @@ def _plan(td: Path, name: str, changesets: list[dict]) -> Path:
         encoding="utf-8",
     )
     return p
-
-
-def _cli(*args: str) -> tuple[int, bytes, str]:
-    """以临时文件重定向方式跑一次 CLI，返回（退出码, stdout 字节, stderr 文本）。"""
-    with tempfile.TemporaryDirectory() as td:
-        out_p, err_p = Path(td) / "out.bin", Path(td) / "err.txt"
-        with open(out_p, "wb") as fo, open(err_p, "w", encoding="utf-8") as fe:
-            proc = subprocess.run(
-                [sys.executable, "-m", "xprod", *args],
-                cwd=str(PKG_DIR.parent),
-                stdout=fo,
-                stderr=fe,
-            )
-        return proc.returncode, out_p.read_bytes(), err_p.read_text(encoding="utf-8")
-
-
-def _tree_digest(root: Path) -> str:
-    """根下全部文件的复合摘要：逐文件 SHA-256 按相对路径排序后汇总。"""
-    rows = []
-    for p in sorted(q for q in root.rglob("*") if q.is_file()):
-        rows.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(root).as_posix()}")
-    return hashlib.sha256("\n".join(rows).encode("utf-8")).hexdigest()
 
 
 _THREE_WAY = [

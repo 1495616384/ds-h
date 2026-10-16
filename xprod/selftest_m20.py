@@ -36,16 +36,14 @@
 
 from __future__ import annotations
 
-import hashlib
 import inspect
 import json
 import re
-import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
 from . import conflict, contract, drift, flow, impact_analyzer, scanscope, viewer
+from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
 
@@ -180,14 +178,6 @@ def _plan(td: Path, cids: tuple[str, ...], diffs: dict[str, Path]) -> Path:
     return plan
 
 
-def _dir_digest(d: Path) -> str:
-    """目录下全部文件的复合摘要：逐文件 SHA-256 按相对路径排序后汇总（只读证据）。"""
-    rows = []
-    for p in sorted(q for q in d.rglob("*") if q.is_file()):
-        rows.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(d).as_posix()}")
-    return hashlib.sha256("\n".join(rows).encode("utf-8")).hexdigest()
-
-
 def _capture(fn, *args: object, **kwargs: object) -> BaseException | None:
     """调用 `fn` 并捕获任何异常，返回异常实例；未抛异常返回 None（供按类型断言用）。"""
     try:
@@ -195,39 +185,6 @@ def _capture(fn, *args: object, **kwargs: object) -> BaseException | None:
     except BaseException as exc:  # 自测要按**类型**断言，故此处广捕
         return exc
     return None
-
-
-def _cli(*args: str) -> tuple[int, bytes, str]:
-    """以临时文件重定向方式跑一次 CLI，返回（退出码, stdout 字节, stderr 文本）。"""
-    with tempfile.TemporaryDirectory() as td:
-        out_p, err_p = Path(td) / "out.bin", Path(td) / "err.txt"
-        with open(out_p, "wb") as fo, open(err_p, "w", encoding="utf-8") as fe:
-            proc = subprocess.run(
-                [sys.executable, "-m", "xprod", *args],
-                cwd=str(PKG_DIR.parent),
-                stdout=fo,
-                stderr=fe,
-            )
-        return proc.returncode, out_p.read_bytes(), err_p.read_text(encoding="utf-8")
-
-
-def _run_module(mod: str) -> tuple[int, bytes, str]:
-    """跑一个自测模块（`python -m xprod.<mod>`），返回（退出码, stdout 字节, stderr 文本）。"""
-    with tempfile.TemporaryDirectory() as td:
-        out_p, err_p = Path(td) / "out.bin", Path(td) / "err.txt"
-        with open(out_p, "wb") as fo, open(err_p, "w", encoding="utf-8") as fe:
-            proc = subprocess.run(
-                [sys.executable, "-m", f"xprod.{mod}"],
-                cwd=str(PKG_DIR.parent),
-                stdout=fo,
-                stderr=fe,
-            )
-        return proc.returncode, out_p.read_bytes(), err_p.read_text(encoding="utf-8")
-
-
-def _last_line(out: bytes) -> str:
-    text = out.decode("utf-8", "replace").strip()
-    return text.splitlines()[-1] if text else ""
 
 
 def _all_passed(tail: str) -> bool:
