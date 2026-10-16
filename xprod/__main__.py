@@ -14,6 +14,8 @@ M11 扩展 `view`——可选 `--baseline <snap.json>`：给了基线就在可�
 M12 追加 `flow`——业务流 / 数据流影响图：给定流程文档与代码根，报出步骤锚活性、直接命中与沿下游闭包
 扩散的步骤；给了 `--diff` 再算一次流程级影响判定（`--text` 给人类可读版本）。
 M13 扩展 `view`——可选 `--flow <flow-doc.md>`（配合可选 `--diff`）：流程影响面与既有段汇成同一张页面。
+M14 扩展 `conflict`——可选 `--flow <flow-doc.md>`：在文件 / 条目层之上追加**流程层**冲突
+（流程面逐改动取自 `flow.analyze`；流程层判定**不并入**顶层 `verdict`）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -31,7 +33,7 @@ USAGE = (
     "       python -m xprod dryrun <scenarios.json> [--text]\n"
     "       python -m xprod guard freeze --checker <freeze-checker.py> [--root <dir>] [--save <snap.json>|--compare <snap.json>] [--text]\n"
     "       python -m xprod guard push [--repo <dir>] [--git <path>] [--remote <name>] [--branch <name>] [--text]\n"
-    "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--text]\n"
+    "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--flow <flow-doc.md>] [--text]\n"
     "       python -m xprod drift <code-root> <design-doc> [--text]\n"
     "       python -m xprod view <code-root> <design-doc> [--baseline <snap.json>] [--flow <flow-doc.md>] [--diff <diff-file>]\n"
     "       python -m xprod sync <code-root> <design-doc> [--save <snap.json>|--compare <snap.json>] [--text]\n"
@@ -192,19 +194,32 @@ def main(argv: list[str] | None = None) -> int:
         _write_bytes(text)
         return 0
     if args and args[0] == "conflict":
-        from . import conflict, graph_builder, impact_analyzer, parser
+        from . import conflict, flow, graph_builder, impact_analyzer, parser
 
         rest = args[1:]
         as_text = "--text" in rest
         if as_text:
             del rest[rest.index("--text")]
-        if len(rest) != 3:
+        # M14：`--flow` 可选；缺值属用法错误（退出码 2），不静默丢弃
+        missing = False
+        if "--flow" in rest:
+            i = rest.index("--flow")
+            if i + 1 >= len(rest):
+                missing = True
+                flow_doc = None
+            else:
+                flow_doc = rest[i + 1]
+                del rest[i : i + 2]
+        else:
+            flow_doc = None
+        if len(rest) != 3 or missing:
             print(USAGE, file=sys.stderr)
             return 2
         try:
-            doc = conflict.analyze_plan(rest[0], rest[1], rest[2])
+            doc = conflict.analyze_plan(rest[0], rest[1], rest[2], flow_doc)
         except (
             conflict.ConflictError,
+            flow.FlowError,
             graph_builder.GraphError,
             impact_analyzer.ImpactError,
             parser.ParseError,

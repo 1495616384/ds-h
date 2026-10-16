@@ -19,6 +19,20 @@
        无冲突」，**不表示**「合并安全」；
     ⑥ 输出默认稳定 JSON，`--text` 给人类可读清单。
 
+M14 扩展（流程层并发冲突检测；对齐路线图 §十八 M14 行与设计稿 `X产品化-M14设计稿-v1.md` §四）：
+    ⑦ **可选**流程文档：给了才计算流程层，并在输出末尾**追加** `flow_of_changesets` / `flow_conflict`
+       两个键；**未给时输出与 M7 逐字节一致**（流程层键**不出现**，而非出现并置 `null`）；
+    ⑧ 流程面**一律**取自 M12 `flow.analyze`（逐改动各跑一次，取其 `direct_steps` / `affected_steps`），
+       **零新解析**——本模块只做「两层结果相交」，不持有第二份流程判定实现；
+    ⑨ 流程层冲突只有两类：`step` = 两份改动 `direct_steps` 交集非空（强）；`flow` = 两份改动
+       `affected_steps` 所属流程 id 交集非空（弱）。`unanchored` 步骤**不参与**（无锚即无「命中」
+       可言，由 M12 ③ 排除）；**「断链」这一事实本身也不是判据**——`dangling_steps` 不进入任何比较
+       （⚠ 一个失联步骤若其锚路径恰在变更文件集合里，仍会按 M12 ③ 计入 `direct_steps`，
+       那是「谁改了它」的事实，不是「锚失联」的事实）；
+    ⑩ 两层判定**并列、不合并**：顶层 `verdict` 语义**一字不改**，流程层判定**另置**于
+       `flow_conflict.verdict`——把「波及同一流程」这种弱证据并进强判定会造成影响面二次放大
+       （与 M3 排除反向闭包传播同理由）。
+
 为什么这样定：
     * 冲突对按 (left, right) 字典序输出、共享集合排序，保证同输入**逐字节可复现**；
     * 分工计划里的改动按 id 升序规范化，使输出的**键序与分组不依赖输入书写顺序**；
@@ -36,12 +50,18 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import impact_analyzer
+from . import flow, impact_analyzer
 
 FILE_KIND = "file"
 ENTRY_KIND = "entry"
 # 冲突类别在输出中的固定顺序：先文件、后条目，保证「两类同时命中」时 kinds 稳定
 KIND_ORDER = (FILE_KIND, ENTRY_KIND)
+
+# M14 流程层冲突类别：与文件 / 条目层**并列**，单独输出、不并入顶层 verdict
+STEP_KIND = "step"
+FLOW_KIND = "flow"
+# 流程层类别顺序同样写死：先 step（强：同时直接改同一步骤）、后 flow（弱：同时波及同一流程）
+FLOW_KIND_ORDER = (STEP_KIND, FLOW_KIND)
 
 VERDICT_CONFLICT = "conflict"
 VERDICT_CLEAR = "clear"
@@ -137,10 +157,84 @@ def _pairwise_conflicts(summaries: list[dict]) -> list[dict]:
     return conflicts
 
 
-def analyze_plan(plan_path: str | Path, code_root: str | Path, design_doc: str | Path) -> dict:
+def _flow_layer(plan: dict, code_root: str | Path, flow_doc: str | Path) -> list[dict]:
+    """逐改动取流程面：**一律**调 `flow.analyze` 取 `direct_steps` / `affected_steps`，不重算、不另造。
+
+    为什么逐改动各跑一次 `flow.analyze` 而不是自己拼：流程解析与「直接命中 ∪ 正向下游闭包」
+    的判定口径只能有一个源头（M12）。此处若自己复刻，就会重演「同一规则两处实现 → 隐性漂移」。
+    `affected_steps` 与 `direct_steps` 在 `flow` 内已排序，此处原样透传以保确定性。
+    """
+    rows: list[dict] = []
+    for change in plan["changesets"]:
+        doc = flow.analyze(flow_doc, code_root, change["diff"])
+        impact = doc["impact"]
+        affected = list(impact["affected_steps"])
+        rows.append(
+            {
+                "id": change["id"],
+                "direct_steps": list(impact["direct_steps"]),
+                "affected_steps": affected,
+                "flow_ids": sorted({a["flow_id"] for a in affected}),
+            }
+        )
+    return rows
+
+
+def _flow_conflicts(rows: list[dict]) -> list[dict]:
+    """对（已按 id 升序的）流程面做两两比较，返回流程层冲突对列表。
+
+    `step` = `direct_steps` 交集非空（两个任务同时**直接改**同一流程步骤）；
+    `flow` = `affected_steps` 所属流程 id 交集非空（两个任务同时**波及**同一流程）。
+    本函数**只看** `direct_steps` / `affected_steps` 两项：`unanchored` 步骤由 M12 ③ 排除、
+    天然不在其中；`dangling_steps` 是「锚失联」的事实，**不**进入本函数的任何输入，
+    故「断链」不构成冲突判据（但失联步骤若其锚路径恰在变更文件里，仍会按 M12 ③ 计入 `direct_steps`）。
+    """
+    steps = {r["id"]: {(d["flow_id"], d["step_id"]) for d in r["direct_steps"]} for r in rows}
+    flows = {r["id"]: set(r["flow_ids"]) for r in rows}
+    ids = [r["id"] for r in rows]
+
+    conflicts: list[dict] = []
+    for a in range(len(ids)):
+        for b in range(a + 1, len(ids)):
+            left, right = ids[a], ids[b]  # ids 已升序，故 left < right
+            shared_steps = sorted(steps[left] & steps[right])
+            shared_flows = sorted(flows[left] & flows[right])
+            if not shared_steps and not shared_flows:
+                continue
+            kinds = [
+                kind
+                for kind in FLOW_KIND_ORDER
+                if (kind == STEP_KIND and shared_steps) or (kind == FLOW_KIND and shared_flows)
+            ]
+            conflicts.append(
+                {
+                    "left": left,
+                    "right": right,
+                    "kinds": kinds,
+                    "shared_steps": [{"flow_id": f, "step_id": s} for (f, s) in shared_steps],
+                    "shared_flows": shared_flows,
+                }
+            )
+    return conflicts
+
+
+_FLOW_CLEAR_NOTE = "note: clear 仅表示本次分工计划内部流程层无冲突，不表示合并安全"
+
+
+def analyze_plan(
+    plan_path: str | Path,
+    code_root: str | Path,
+    design_doc: str | Path,
+    flow_doc: str | Path | None = None,
+) -> dict:
     """分析一份分工计划，返回键序固定、可逐字节复现的结果文档。
 
     每份改动都经 M3 影响分析器解析：直接变更文件来自 diff，命中条目来自「证据锚 ∩ 直接变更文件」。
+
+    M14：给了 `flow_doc` 才计算**流程层**并在输出末尾追加两个键（`flow_of_changesets` /
+    `flow_conflict`）；**未给时输出与 M7 逐字节一致**（流程层键**不出现**，而不是出现并置 `null`）——
+    这样既有断言与既有页面对照一律不受影响。流程层判定**不并入**顶层 `verdict`：把「波及同一流程」
+    这种弱证据并进文件/条目层的强判定，会造成影响面二次放大（与 M3 排除反向闭包传播同理由）。
     """
     plan = load_plan(plan_path)
 
@@ -158,7 +252,7 @@ def analyze_plan(plan_path: str | Path, code_root: str | Path, design_doc: str |
         )
 
     conflicts = _pairwise_conflicts(summaries)
-    return {
+    result = {
         "plan_id": plan["plan_id"],
         "changeset_count": len(summaries),
         "changesets": summaries,
@@ -166,6 +260,17 @@ def analyze_plan(plan_path: str | Path, code_root: str | Path, design_doc: str |
         "conflicts": conflicts,
         "verdict": VERDICT_CONFLICT if conflicts else VERDICT_CLEAR,
     }
+    if flow_doc is not None:
+        rows = _flow_layer(plan, code_root, flow_doc)
+        flow_conflicts = _flow_conflicts(rows)
+        result["flow_of_changesets"] = rows
+        result["flow_conflict"] = {
+            "conflict_count": len(flow_conflicts),
+            "conflicts": flow_conflicts,
+            "verdict": VERDICT_CONFLICT if flow_conflicts else VERDICT_CLEAR,
+            "note": _FLOW_CLEAR_NOTE,
+        }
+    return result
 
 
 _CLEAR_NOTE = "note: clear 仅表示本次分工计划内部无冲突，不表示合并安全"
@@ -175,6 +280,8 @@ def render_text(doc: dict) -> str:
     """把结果文档渲染为确定性 ASCII 清单（人类可读；逐字节可断言）。
 
     各段固定打印计数（空段也打印），每份改动的文件/条目、每个冲突对的共享集合均排序。
+    M14：仅当文档含流程层键时，才在 M7 原有各行**之后**追加流程层两段——原有各行**逐行不变**，
+    故「未给 `--flow`」时本函数输出与 M7 逐字节一致。
     """
     lines = [f"changesets ({doc['changeset_count']}):"]
     for s in doc["changesets"]:
@@ -190,6 +297,23 @@ def render_text(doc: dict) -> str:
         lines.extend(f"        shared entry {cid}" for cid in c["shared_entries"])
     lines.append(f"verdict: {doc['verdict']}")
     lines.append(_CLEAR_NOTE)
+
+    if "flow_conflict" in doc:
+        lines.append(f"flow layer per changeset ({len(doc['flow_of_changesets'])}):")
+        for r in doc["flow_of_changesets"]:
+            lines.append(
+                f"    {r['id']}  direct {len(r['direct_steps'])}, affected {len(r['affected_steps'])}"
+            )
+            lines.extend(f"        direct   {d['flow_id']}/{d['step_id']}" for d in r["direct_steps"])
+            lines.extend(f"        affected {d['flow_id']}/{d['step_id']}" for d in r["affected_steps"])
+        flow_conflict = doc["flow_conflict"]
+        lines.append(f"flow conflicts ({flow_conflict['conflict_count']}):")
+        for c in flow_conflict["conflicts"]:
+            lines.append(f"    {c['left']} <> {c['right']}  kinds {','.join(c['kinds'])}")
+            lines.extend(f"        shared step  {s['flow_id']}/{s['step_id']}" for s in c["shared_steps"])
+            lines.extend(f"        shared flow  {fid}" for fid in c["shared_flows"])
+        lines.append(f"flow verdict: {flow_conflict['verdict']}")
+        lines.append(flow_conflict["note"])
     return "\n".join(lines) + "\n"
 
 
