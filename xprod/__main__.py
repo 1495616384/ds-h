@@ -7,7 +7,8 @@ M5 追加 `dryrun`——按剧本回放 M4 设计的干跑骨架，输出收敛�
 M6 追加 `guard`——流程护栏：冻结快照「改动前 / 改动后」比对 + 推送三态判定（`--text` 给人类可读版本）；
 M7 追加 `conflict`——并发改动冲突检测：给定分工计划（多份并发改动），报出相互冲突的改动对（`--text` 给人类可读版本）；
 M8 追加 `drift`——一致性漂移校验：给定代码根与设计文档，逐条证据锚解析活性，报出失联锚与设计盲区（`--text` 给人类可读版本）；
-M9 追加 `view`——逻辑控制面可视面：把条目、锚活性、设计盲区与依赖图汇成单个自包含 HTML（写到 stdout）。
+M9 追加 `view`——逻辑控制面可视面：把条目、锚活性、设计盲区与依赖图汇成单个自包含 HTML（写到 stdout）；
+M10 追加 `sync`——同步基线比对：把锚活性存成基线，之后比对报出新增失联 / 恢复 / 证据增删 / 盲区变化（`--text` 给人类可读版本）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -27,7 +28,8 @@ USAGE = (
     "       python -m xprod guard push [--repo <dir>] [--git <path>] [--remote <name>] [--branch <name>] [--text]\n"
     "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--text]\n"
     "       python -m xprod drift <code-root> <design-doc> [--text]\n"
-    "       python -m xprod view <code-root> <design-doc>"
+    "       python -m xprod view <code-root> <design-doc>\n"
+    "       python -m xprod sync <code-root> <design-doc> [--save <snap.json>|--compare <snap.json>] [--text]"
 )
 
 
@@ -238,6 +240,44 @@ def main(argv: list[str] | None = None) -> int:
             print(f"view error: {exc}", file=sys.stderr)
             return 1
         _write_bytes(viewer.render_html(doc))
+        return 0
+    if args and args[0] == "sync":
+        from . import drift, parser, sync
+
+        rest = args[1:]
+        as_text = "--text" in rest
+        if as_text:
+            del rest[rest.index("--text")]
+
+        def take(flag: str) -> str | None:
+            """取出 `--flag value` 并从 rest 中删除；不存在返回 None，缺值抛 SyncError。"""
+            if flag not in rest:
+                return None
+            i = rest.index(flag)
+            if i + 1 >= len(rest):
+                raise sync.SyncError(f"{flag} 缺少取值")
+            value = rest[i + 1]
+            del rest[i : i + 2]
+            return value
+
+        try:
+            save = take("--save")
+            compare = take("--compare")
+            if len(rest) != 2 or (save and compare):
+                print(USAGE, file=sys.stderr)
+                return 2
+            current = sync.snapshot(rest[0], rest[1])
+            if save:
+                sync.save_snapshot(save, current)
+            if compare:
+                doc = sync.compare_snapshots(sync.load_snapshot(compare), current)
+            else:
+                doc = current
+        except (drift.DriftError, parser.ParseError, sync.SyncError, OSError) as exc:
+            print(f"sync error: {exc}", file=sys.stderr)
+            return 1
+        text = sync.render_text(doc) if as_text else sync.to_json(doc)
+        _write_bytes(text)
         return 0
     print(USAGE, file=sys.stderr)
     return 2
