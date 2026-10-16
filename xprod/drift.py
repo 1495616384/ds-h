@@ -131,8 +131,13 @@ def anchor_state(
 
 
 def _by_entry(record: dict) -> tuple[str, str]:
-    """活性 / 失联 / 无锚记录的稳定排序键：先条目 id，再证据原文。"""
-    return (record["constraint_id"], record["evidence"])
+    """活性 / 失联 / 无锚记录的稳定排序键：先条目 id，再证据原文。
+
+    M22：身份键口径由 `parser.evidence_key` **唯一提供**，本函数只委派（保留名与签名，
+    调用点一字不改）。若写成 `from .parser import evidence_key`，行为不变但
+    `selftest_m22` 的结构断言与受控注入都指向不了「共享实现」，故**必须**写模块限定名。
+    """
+    return parser.evidence_key(record)
 
 
 def prepare(code_root: str | Path, design_doc: str | Path) -> dict:

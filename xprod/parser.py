@@ -13,8 +13,12 @@
     severity / required_evidence / action_policy；
 另加 `title`——「条目」的可读名（RISK-REGISTRY 为纯约束登记，无此列）。
 
-另导出**共享锚规则** `anchor_of(evidence)`：全仓唯一的锚判定实现，供 M3 / M8 / M12 共同引用
-（避免同一规则多处复刻造成口径漂移）。
+另导出两条**共享证据规则**，均放**源头模块**（证据模型由本模块定义，规则放此处最中立）：
+    ① `anchor_of(evidence)`——全仓唯一的锚判定实现，供 M3 / M8 / M12 共同引用（M12 收口）；
+    ② `evidence_key(record)`——全仓唯一的**证据记录身份键**实现，供 `drift` / `impact_analyzer` / `sync` /
+       `viewer` 共同引用（M22 收口）。同一规则此前在四处各写一遍，某处若改成「只按 id 判身份」，
+       两个模块就会对**同一份证据**给出相反结论，而两边输出都「正常」——这类隐性漂移只能靠
+       「结构上只留一份实现」堵死（由 `selftest_m22` 的结构断言强制）。
 
 仅依赖 Python 标准库（M1 边界：不引入未安装依赖）。
 """
@@ -127,6 +131,23 @@ def anchor_of(evidence: str) -> str | None:
     if not parts:
         return None
     return parts[0] if "/" in parts[0] else None
+
+
+def evidence_key(record: dict) -> tuple[str, str]:
+    """证据记录的身份键：`(条目 id, 证据原文)`——**全仓唯一实现**（M22 收口）。
+
+    为什么收口成一个函数：这条规则曾按「一字不差的写法」在 `drift._by_entry` /
+    `impact_analyzer` 的内联 lambda / `sync._anchor_key` / `viewer._status_index`（含 218–221）
+    共四处各写一遍，只是变量名不同。**排序、比对、查表**三种用途共用同一份身份判定，
+    一旦某处改成「只按 id 判身份」，两处就会对**同一份证据**给出相反结论（一个判「同一条」、
+    一个判「两条」），而两边输出看上去都「正常」——这类**隐性漂移**只能靠结构上只留一份实现堵死
+    （由 `selftest_m22` 的结构断言强制）。
+
+    本函数只回答「**这条记录的身份是什么**」，不附加任何语义：排序 / 比对 / 查表由调用方自定；
+    返回**二元组**、顺序固定为（id, 证据），**不做**裁剪 / 归一 / 去重（空串也原样返回）——
+    与收口前四处的行为**逐字等价**，故对合法输入的输出逐字节不变。
+    """
+    return (record["constraint_id"], record["evidence"])
 
 
 def parse_design_doc(text: str) -> list[Entry]:

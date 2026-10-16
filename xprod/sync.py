@@ -26,7 +26,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import drift, textio
+from . import drift, parser, textio
 
 # 证据锚三态：与 M8 **同源**——三态字面量只允许有一个源头（`drift`），此处一律别名引用。
 # 为什么不自己重写：同一状态名在多处各写一份，将来「改名 / 加态」必然只改到其中几处，
@@ -57,8 +57,12 @@ class SyncError(ValueError):
 
 
 def _anchor_key(record: dict) -> tuple[str, str]:
-    """证据锚的比对键；同一键在两侧各只保留一条。"""
-    return (record["constraint_id"], record["evidence"])
+    """证据锚的比对键；同一键在两侧各只保留一条。
+
+    M22：身份键口径由 `parser.evidence_key` **唯一提供**，本函数只委派（保留名与签名，
+    调用点一字不改）。**必须**写模块限定名，结构断言与受控注入才能指向「共享实现」。
+    """
+    return parser.evidence_key(record)
 
 
 def snapshot_from_drift(d: dict) -> dict:
@@ -134,10 +138,6 @@ def load_snapshot(path: str | Path) -> dict:
 def _as_map(snap: dict) -> dict[tuple[str, str], str]:
     """把快照的 anchors 拉平成 {键: 状态}；同键重复时后者覆盖前者（写入前已排序，行为确定）。"""
     return {_anchor_key(a): a["status"] for a in snap["anchors"]}
-
-
-def _pair(record: dict) -> dict:
-    return {"constraint_id": record["constraint_id"], "evidence": record["evidence"]}
 
 
 def compare_snapshots(base: dict, cur: dict) -> dict:

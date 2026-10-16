@@ -253,7 +253,7 @@ def analyze_prepared(prepared: dict, diff_text: str) -> dict:
                 }
             )
     affected_entries.sort(key=lambda e: e["constraint_id"])
-    unanchored.sort(key=lambda u: (u["constraint_id"], u["evidence"]))
+    unanchored.sort(key=parser.evidence_key)
 
     affected_files = [
         {"id": node, "depth": level}

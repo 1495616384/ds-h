@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import html
 
-from . import drift, flow, graph_builder, sync
+from . import drift, flow, graph_builder, parser, sync
 
 # 证据在可视面上的三种状态：与 `drift` **同源**（直接取 `drift.STATUS_*`），此处只作标签用途，
 # 不再各持一份字面量——可视面是「呈现层」，三态口径只能有一个源头。
@@ -75,14 +75,18 @@ footer { margin-top: 26px; padding-top: 10px; border-top: 1px solid #21262d;
 
 
 def _status_index(drift_doc: dict) -> dict[tuple[str, str], tuple[str, dict | None]]:
-    """把 `drift` 的三类结果拉平成 {(条目id, 证据原文): (状态, 记录)}，供逐条渲染查表。"""
+    """把 `drift` 的三类结果拉平成 {(条目id, 证据原文): (状态, 记录)}，供逐条渲染查表。
+
+    M22：键口径由 `parser.evidence_key` **唯一提供**（与 `drift` / `sync` 同源），
+    可视面不再自持一份身份判定——否则呈现层会与判定层悄悄分叉。
+    """
     index: dict[tuple[str, str], tuple[str, dict | None]] = {}
     for r in drift_doc["active_anchors"]:
-        index[(r["constraint_id"], r["evidence"])] = (STATUS_ACTIVE, r)
+        index[parser.evidence_key(r)] = (STATUS_ACTIVE, r)
     for r in drift_doc["dangling_anchors"]:
-        index[(r["constraint_id"], r["evidence"])] = (STATUS_DANGLING, r)
+        index[parser.evidence_key(r)] = (STATUS_DANGLING, r)
     for r in drift_doc["unanchored_evidence"]:
-        index[(r["constraint_id"], r["evidence"])] = (STATUS_UNANCHORED, None)
+        index[parser.evidence_key(r)] = (STATUS_UNANCHORED, None)
     return index
 
 
@@ -215,10 +219,10 @@ def _render_sync(syncdoc: dict) -> list[str]:
         "</ul>",
     ]
     groups = (
-        ("新增失联", [(r["constraint_id"], r["evidence"]) for r in syncdoc["newly_dangling"]]),
-        ("恢复", [(r["constraint_id"], r["evidence"]) for r in syncdoc["recovered"]]),
-        ("新增证据", [(r["constraint_id"], r["evidence"]) for r in syncdoc["added_evidence"]]),
-        ("移除证据", [(r["constraint_id"], r["evidence"]) for r in syncdoc["removed_evidence"]]),
+        ("新增失联", [parser.evidence_key(r) for r in syncdoc["newly_dangling"]]),
+        ("恢复", [parser.evidence_key(r) for r in syncdoc["recovered"]]),
+        ("新增证据", [parser.evidence_key(r) for r in syncdoc["added_evidence"]]),
+        ("移除证据", [parser.evidence_key(r) for r in syncdoc["removed_evidence"]]),
         ("盲区新增", [(p, "") for p in syncdoc["uncovered_added"]]),
         ("盲区移除", [(p, "") for p in syncdoc["uncovered_removed"]]),
     )
