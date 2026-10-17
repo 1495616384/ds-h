@@ -47,9 +47,8 @@ from . import (
     sync,
     textio,
 )
-from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
-PKG_DIR = Path(__file__).resolve().parent
 SAMPLES = PKG_DIR / "samples"
 
 # 九个曾各自复刻 `to_json` 的模块：名字与对象成对，使失败信息可读（诊断里出现模块名，而非 `<module …>`）

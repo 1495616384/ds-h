@@ -30,9 +30,8 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
-PKG_DIR = Path(__file__).resolve().parent
 
 # 边界表达式：`startswith(` 紧跟**具名常量** `SELFTEST_PREFIX` 或**字面量** `"selftest"`。
 # 分段拼接构造：避免本文件自身成为「第二个实现」的假命中（防御性写法；本文件属自测，本不在实现模块集内）

@@ -9,12 +9,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 
 from . import __version__, scanscope
-from .selftest_kit import cli as _cli
+from .selftest_kit import PKG_DIR, cli as _cli
 
-PKG_DIR = Path(__file__).resolve().parent
 
 # 冻结链目录名特征：拼接构造，避免本文件自身被第 ③ 条检查误伤
 _FREEZE_MARKER = "_" + "xexp"

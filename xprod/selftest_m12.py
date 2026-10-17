@@ -43,9 +43,8 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, parser, scanscope, sync, viewer
-from .selftest_kit import cli as _cli, dir_digest as _tree_digest
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest
 
-PKG_DIR = Path(__file__).resolve().parent
 
 _FLOW_DOC = (
     "# 流程夹具（M12 自测专用）\n"

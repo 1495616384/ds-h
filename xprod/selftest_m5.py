@@ -24,9 +24,8 @@ import tempfile
 from pathlib import Path
 
 from . import dryrun
-from .selftest_kit import cli as _cli
+from .selftest_kit import PKG_DIR, cli as _cli
 
-PKG_DIR = Path(__file__).resolve().parent
 SAMPLE = PKG_DIR / "samples" / "dryrun-scenarios.json"
 
 EXPECTED_COUNTS = {"CONVERGED": 1, "NOT_CONVERGED": 3, "VETOED": 3}

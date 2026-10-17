@@ -50,9 +50,8 @@ import tempfile
 from pathlib import Path
 
 from . import conflict, graph_builder, impact_analyzer, parser, selftest_kit
-from .selftest_kit import cli as _cli, run_module as _run_module, dir_digest as _dir_digest
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, dir_digest as _dir_digest
 
-PKG_DIR = Path(__file__).resolve().parent
 
 _DESIGN = (
     "# 夹具设计文档（M16 自测专用）\n"

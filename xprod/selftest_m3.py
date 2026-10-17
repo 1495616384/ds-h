@@ -26,9 +26,8 @@ import tempfile
 from pathlib import Path
 
 from . import impact_analyzer
-from .selftest_kit import cli as _cli, dir_digest as _tree_digest
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest
 
-PKG_DIR = Path(__file__).resolve().parent
 SAMPLE_DIFF = PKG_DIR / "samples" / "simulated.diff"
 SAMPLE_DESIGN = PKG_DIR / "samples" / "design-sample.md"
 

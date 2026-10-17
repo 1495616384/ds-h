@@ -25,9 +25,8 @@ import tempfile
 from pathlib import Path
 
 from . import drift, viewer
-from .selftest_kit import cli as _cli, dir_digest as _tree_digest
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest
 
-PKG_DIR = Path(__file__).resolve().parent
 
 _DESIGN_OK = (
     "# 夹具设计文档（M9 自测专用）\n"

@@ -52,9 +52,8 @@ import tempfile
 from pathlib import Path
 
 from . import conflict, drift, flow, impact_analyzer, parser, selftest_kit, viewer
-from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
-PKG_DIR = Path(__file__).resolve().parent
 
 _DESIGN = (
     "# 夹具设计文档（M18 自测专用）\n"

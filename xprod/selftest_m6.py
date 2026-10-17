@@ -26,9 +26,8 @@ import tempfile
 from pathlib import Path
 
 from . import guard
-from .selftest_kit import cli as _cli
+from .selftest_kit import PKG_DIR, cli as _cli
 
-PKG_DIR = Path(__file__).resolve().parent
 
 
 def _write_stub(path: Path, payload: bytes, code: int) -> Path:

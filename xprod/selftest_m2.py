@@ -25,9 +25,8 @@ import sys
 from pathlib import Path
 
 from .graph_builder import build_graph, render_node_tree, to_json
-from .selftest_kit import cli as _cli, dir_digest as _tree_digest
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest
 
-PKG_DIR = Path(__file__).resolve().parent
 EXPECTED_GRAPH = PKG_DIR / "samples" / "expected-graph.json"
 EXPECTED_TREE = PKG_DIR / "samples" / "expected-tree-eval-types.txt"
 DRILL_NODE = "src/eval/types.py"

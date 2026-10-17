@@ -11,12 +11,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 from . import parser
-from .selftest_kit import cli as _cli
+from .selftest_kit import PKG_DIR, cli as _cli
 
-PKG_DIR = Path(__file__).resolve().parent
 SAMPLE = PKG_DIR / "samples" / "design-sample.md"
 EXPECTED = PKG_DIR / "samples" / "expected-entries.json"
 
