@@ -1919,3 +1919,68 @@ M25 / M28 / M29 已裁定的**真分歧变体**）**保留不收口**；**无**�
 
 **授权归属**：M35 与 M0–M34 同属 §五 **B 类**（可自主启动）；**A 类事项**
 （正式案例预登记 / 人工签署 / 正式 H3 运行 / 生成 `Manifest v8`）**未**执行、**待用户逐项明示授权**。
+
+---
+
+## 四十、附录：M36 定义（可视面 `--plan` 汇合路径的「采集一次 / 复用多次」；2026-10-18 追加）
+
+> 本节为**追加**内容，**不改写**本文件上述任何原文。
+> **状态**：设计稿已提交（`X产品化-M36设计稿-v1.md`）；**待用户裁定**后进入实现阶段
+> （本仓既有节奏：笔二可按推荐口径在 **B 类**范围内推进、笔三回写实测裁定）。
+
+**为什么加这一行**：这是 **M35 的直接后果**（**非**新猜测、**亦非**已登记遗留项，而是本仓**自身规则的一致性缺口**）。
+M35 把 `conflict.analyze_plan` 接进了 `viewer.analyze`（**同一进程**）——在此之前可视面与冲突路径**各自独立**、
+**互不同进程**，同一份事实被采集两遍**不会**同时发生；接进来之后，同一份 `(代码根, 设计文档, 流程文档)`
+在同一进程里被**两侧各采一遍**。治理先例原话：`X产品化-M16设计稿-v1.md` §七 第 3 条
+「**不**动 `viewer`：其「`drift.analyze` 内部解析一次设计文档 + `viewer` 再解析一次」是**同类但另一模块对**的重复，
+本轮**显式排除**，留作后续候选」；同条先例在 `X产品化-M15设计稿-v1.md` §七 第 3 条。
+M15 / M16 / M17 已**三次**确立统一规则——**采集一次 / 复用多次 + 显式中间体**（不引入隐式缓存）；
+M36 就是把这条**既有**规则应用到 M35 **新造出来的汇合路径**上。
+
+**实测证据**（本轮只读，当轮工作树）：
+
+- `xprod/viewer.py` 第 **120–123** 行：`drift.prepare(code_root, design_doc)`（内含 `parser.parse_file`）、
+  `graph_builder.build_graph(code_root)`；第 **149–156** 行：`flow.analyze(flow_doc, code_root, diff_file)`
+  （内含 `flow.prepare` → `flow.parse_flow_doc`），给了 `plan_file` 再调
+  `conflict.analyze_plan(plan_file, code_root, design_doc, flow_doc)`；
+- `xprod/conflict.py` 第 **257–259** 行：`impact_analyzer.prepare(code_root, design_doc)`
+  （内含 `graph_builder.build_graph` + `parser.parse_file`）；第 **178** 行（`_flow_layer`）：
+  `flow.prepare(flow_doc, code_root)`（内含 `flow.parse_flow_doc`）；
+- ⇒ **同进程重复**：`view … --flow … --plan …` 下**设计文档解析 2 次、依赖图构建 2 次、流程文档解析 2 次**；
+  仅 `--flow`（**无** `--plan`）时三者各 **1** 次、**无**重复。上列计数为**静态调用证据**推出的**预期值**，
+  笔二以**实测为准**。
+
+**根因**：M35 之前两条采集路径**互不同进程**；M35 使它们**同进程并存**，而**没有**把已采到手的中间体交出去。
+治根因 ＝ **显式复用**（不是加缓存、也不是在可视面重造采集）。
+
+| 里程碑 | 核心目标 | 可交付物 | 验收标准 | 依赖 | 边界 |
+|---|---|---|---|---|---|
+| **M36 可视面 `--plan` 汇合路径的采集唯一化** | 给 `impact_analyzer` 补 `prepare_from_parts(graph, design)`、给 `conflict` 补 `analyze_plan_prepared(plan, impact_prepared, flow_prepared=None)`，`analyze_plan` 退化**薄编排**；可视面把**已采集**的 `graph` / `design` / 流程采集体**复用**给冲突路径（`flow_prepared` 同一份供 `--flow` 段与 `--plan` 段）；`analyze_plan` / `analyze` **输出逐字节不变** | `xprod/selftest_m36.py`（①–⑩）+ `impact_analyzer.prepare_from_parts` + `conflict.analyze_plan_prepared` + `_flow_layer` 形参收敛 + `viewer` 显式复用 + `__init__.py` → `0.36.0-m36` + `selftest_m30.py` / `selftest_m31.py` / `selftest_m34.py` 的结构常数随新模块更新 | 计数探针实测 `parser.parse_file` / `graph_builder.build_graph` / `flow.parse_flow_doc` 在 `view --flow --plan` 下**各 == 1**（对照 **2**）；薄编排与 `*_prepared` **逐字节等价**；**5 种** CLI 组合输出与 M35 基线**逐字节一致**；中间体只读；零隐式缓存 | M35（汇合路径的**成因**）、M15 / M16 / M17（`flow` / `impact_analyzer` / `drift` 三次验证过的「采集入口 + 构造入口分列、原 `analyze` 退化薄编排、调用方显式持有中间体」形态）、M19（采集体键序契约与产出不变量自证）、M30 / M31 / M34（结构常数随新模块同步的真值更新） | **不**新增任何判定口径；**不**给采集加缓存；**不**改任何既有公开入口签名（除私有 `_flow_layer` 形参）；**不**改任何既有输出；**不**改 `_CSS` 与 CLI 参数面；**不**把 `graph` 与 `scan_tree` 合并；**不**触碰冻结链、**不**接真实 AI、**不**运行正式 H3、**不**生成 Manifest v8、**不**把退出码 3 改写为 0 |
+
+**判定口径（写死）**：详见设计稿 `X产品化-M36设计稿-v1.md` §四 / §九；要点：
+
+1. **显式中间体**：可视面**持有**三件中间体，`conflict` / `flow` **不**持有、**不**采集；复用**写在调用点**，
+   **零** `functools.lru_cache` / **零**模块级可变全局 / **零**落盘中间体；
+2. **采集次数**：`view --flow --plan` → `parser.parse_file` **1**、`graph_builder.build_graph` **1**、
+   `flow.parse_flow_doc` **1**（当前各 **2**）；`--plan` 缺席时**不**为「将来可能用到」多采一次；
+3. **等价性**：`conflict.analyze_plan(p, r, d, f)` ≡ `analyze_plan_prepared(load_plan(p), impact_analyzer.prepare(r, d),
+   flow.prepare(f, r))` **逐字节一致**；`impact_analyzer.prepare_from_parts(build_graph(r), parse_file(d))` ≡
+   `impact_analyzer.prepare(r, d)` **深比较相等且键序相同**；
+4. **只读**：中间体在全部复用调用前后**复合摘要不变**（多次复用不互相污染）；
+5. **既有断言零语义修订**：`selftest_m30.py` 的 `_REGISTERED` ②/③ 与 `_MAIN_TOTAL`、`selftest_m31.py` 的
+   `_CONSUMERS_2` / `_CONSUMERS_3` / `_SPELLING_3`、`selftest_m34.py` 的 `_KEPT_BOTH` 仅按「新增 `selftest_m36.py`
+   模块」这一**新真值**更新（**真值更新，非放宽**）；**并须逐条扫描**以**产物结构（输出键集）**或**调用形态**
+   为真值的既有断言（M35 教训：`m17` ⑩ 的对照基线因新键而失败，只有跑全域回归才暴露）；
+6. **`__init__.py` 版本**升为 `0.36.0-m36`；里程碑级源上界 `regress.py` 改为 `range(1, 37)`。
+
+**已知边界**：本项**不**新增判定能力、**不**改变任何结果强度，**只**消除**同一进程内的重复采集**；
+「采集次数下降」**不**表示判定口径变化。「同进程重复」被消除 **不**表示产品域已无改进空间。
+
+**性质声明**：自测通过**只**证明「同一份事实在 `view --plan` 这条汇合路径上**只被采集一次**、
+且**对外产物逐字节未变**」——**不**证明任何关于真实编码 AI 或 H3 的结论；
+**不**把自测通过表述为 H3 通过；**不**把退出码 3 改写为 0。
+
+**授权归属**：M36 与 M0–M35 同属 §五 **B 类**（可自主启动）；**A 类事项**
+（正式案例预登记 / 人工签署 / 正式 H3 运行 / 生成 `Manifest v8`）**未**执行、**待用户逐项明示授权**。
+**待确认**：方案是否采纳、`prepare_from_parts` 落在采集层（`impact_analyzer`）而非呈现层是否认可、
+`selftest_m30.py` / `selftest_m31.py` / `selftest_m34.py` 结构常数更新是否允许（详见设计稿 §十）。
