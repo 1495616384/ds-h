@@ -48,6 +48,7 @@ from .selftest_kit import (
     diff_one_file as _diff,
     dir_digest as _dir_digest,
     last_line as _last_line,
+    make_fixture as _fixture,
     make_min_root as _make_root,
     run_module as _run_module,
 )
@@ -218,25 +219,10 @@ _CHANGES = (
 )
 
 
-def _fixture(td: Path) -> tuple[Path, Path, Path, dict[str, Path]]:
-    """建全套夹具，返回（代码根, 设计文档, 流程文档, id→diff 路径）。"""
-    root = _make_root(td)
-    design = td / "design.md"
-    design.write_text(_DESIGN, encoding="utf-8")
-    flow_doc = td / "flow.md"
-    flow_doc.write_text(_FLOW, encoding="utf-8")
-    diffs: dict[str, Path] = {}
-    for cid, path, new in _CHANGES:
-        dp = td / f"{cid}.diff"
-        dp.write_text(_diff(path, "old\n", new), encoding="utf-8")
-        diffs[cid] = dp
-    return root, design, flow_doc, diffs
-
-
 def test_cli_and_exit_codes() -> None:
     """⑤ CLI 与退出码回归：stdout 与库输出逐字节一致、无 `\\r\\n`；错误 1；用法 2。"""
     with tempfile.TemporaryDirectory() as td:
-        root, design, flow_doc, diffs = _fixture(Path(td))
+        root, design, flow_doc, diffs = _fixture(Path(td), design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
 
         cases = (
             (("drift", str(root), str(design)), drift.to_json(drift.analyze(root, design))),
@@ -264,7 +250,7 @@ def test_read_only_and_determinism() -> None:
     """⑥ 只读 + 确定性：scanscope 两次相同；同输入两次 CLI 逐字节一致；夹具复合摘要不变。"""
     with tempfile.TemporaryDirectory() as td:
         td_p = Path(td)
-        root, design, _flow_doc, _diffs = _fixture(td_p)
+        root, design, _flow_doc, _diffs = _fixture(td_p, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         before = _dir_digest(td_p)
 
         assert scanscope.all_modules() == scanscope.all_modules(), "all_modules 两次调用应相同"

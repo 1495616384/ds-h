@@ -36,7 +36,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, impact_analyzer, parser, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture
 
 
 # 身份键公式片段（结构扫描用）：拆成两段拼接，避免本文件自身成为「第二个实现」的假命中
@@ -164,21 +164,6 @@ def _marker_hits(path: Path) -> list[int]:
     return out
 
 
-def _fixture(td: Path) -> tuple[Path, Path, Path, dict[str, Path]]:
-    """建全套夹具，返回（代码根, 设计文档, 流程文档, id→diff 路径）。"""
-    root = _make_root(td)
-    design = td / "design.md"
-    design.write_text(_DESIGN, encoding="utf-8")
-    flow_doc = td / "flow.md"
-    flow_doc.write_text(_FLOW, encoding="utf-8")
-    diffs: dict[str, Path] = {}
-    for cid, path, new in _CHANGES:
-        dp = td / f"{cid}.diff"
-        dp.write_text(_diff(path, "old\n", new), encoding="utf-8")
-        diffs[cid] = dp
-    return root, design, flow_doc, diffs
-
-
 def _checker(td: Path) -> Path:
     """造一个核验程序桩：打印固定文本、退出码 0（供 ⑤ 的 CLI 用法断言用）。"""
     path = td / "checker.py"
@@ -222,7 +207,7 @@ def test_legal_path_byte_identical() -> None:
 
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
 
         d = drift.analyze(root, design)
         for grp in ("active_anchors", "dangling_anchors", "unanchored_evidence"):
@@ -278,7 +263,7 @@ def test_delegation_effective() -> None:
 
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         base = sync.snapshot(root, design)
         try:
             parser.evidence_key = spy  # type: ignore[assignment]
@@ -313,7 +298,7 @@ def test_cli_and_exit_codes() -> None:
     """⑤ CLI 与退出码回归：五条子命令逐字节一致、无 CRLF、退出码 0；错误 1；用法 2。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         checker = _checker(td)
 
         code, out, _err = _cli("drift", str(root), str(design))
@@ -365,7 +350,7 @@ def test_read_only_and_determinism() -> None:
     """⑥ 只读 + 确定性：夹具目录复合摘要不变；同输入两次逐字节一致。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         before = _dir_digest(td)
 
         for mod, rebuild in (

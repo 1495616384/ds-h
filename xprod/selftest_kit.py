@@ -214,3 +214,42 @@ def make_min_root(td: Path) -> Path:
     (root / "docs" / "guide.md").write_text("# 指南\n", encoding="utf-8")
     (root / "docs" / "spec.md").write_text("# 规格\n", encoding="utf-8")
     return root
+
+
+# --- M29：自测「建全套夹具」的唯一实现（动作过程搬入、夹具数据显式参数化）------------------------
+# 「建全套夹具」＝ 先造最小代码根（`make_min_root`，M28 已收口），再把本模块的**三份夹具数据**
+# 写进临时目录（设计文档 `_DESIGN`、流程文档 `_FLOW`、改动清单 `_CHANGES`，每项生成一份 `.diff`），
+# 最后返回 `（代码根, 设计文档, 流程文档, id→diff 路径）`。这个**动作过程**此前被 **10 个自测文件
+# 各自复刻**（`m18`–`m24`、`m26`、`m27`、`m28`，本地名 `_fixture`，原始源段**逐字节相同**，含签名
+# 与文档串），**没有任何一处是定义源**。
+#
+# M29 把这一份**原样搬入本模块**（动作过程逐字不变：只换位置、不改步骤），但**夹具数据不从文件搬走**
+# ——改为**显式参数化**：消费点传 `from .selftest_kit import make_fixture as _fixture` 的**同名绑定**，
+# 并在**调用点**显式把本模块的三份数据传进去（`design_text=… / flow_text=… / changes=…`）。这样
+# **每一处调用点都显式声明它用的是哪三份数据**，且**产物逐字节不变**（数据仍来自各模块自己的常量）。
+#
+# 为什么不把三份数据也搬进来（做默认值）：默认值会把「数据归属」藏起来，读者看不出某模块用的是哪一份，
+# 且形式上将各模块的**真数据差异**（实测 `_DESIGN` 去首行后 4 种、`_FLOW` 去首行后 2 种）合并成一份——
+# 违背「数据不动」的边界。故只收「动作过程」这一半。
+#
+# 公共名不叫 `_fixture` 也不叫 `make_full_fixture`：它**不是** `m14`（返回分工计划）/ `m15`（多一条
+# 悬空锚）/ `m16`（根构造为本地变体、逐字差 1 空行）/ `m17`（只返回两元组）这 4 处**真分歧变体**的替身，
+# 故不会产生「同名两义」的误读；`make_fixture` 一名与「建全套夹具」这一约定一一对应。
+#
+# 结构断言（`selftest_m29.py`）按**全签名**计数证明「唯一实现恰 1 处且在本文件」，并按**显式名单**
+# 证明「那 4 处真分歧变体原样保留」，同时断言「10 个消费点的每个调用点都显式传了三份数据」。
+
+
+def make_fixture(td: Path, *, design_text: str, flow_text: str, changes: tuple[tuple[str, str, str], ...]) -> tuple[Path, Path, Path, dict[str, Path]]:
+    """建全套夹具，返回（代码根, 设计文档, 流程文档, id→diff 路径）。"""
+    root = make_min_root(td)          # 复用 M28 的唯一代码根构造（不新增第二份）
+    design = td / "design.md"
+    design.write_text(design_text, encoding="utf-8")
+    flow_doc = td / "flow.md"
+    flow_doc.write_text(flow_text, encoding="utf-8")
+    diffs: dict[str, Path] = {}
+    for cid, path, new in changes:
+        dp = td / f"{cid}.diff"
+        dp.write_text(diff_one_file(path, "old\n", new), encoding="utf-8")
+        diffs[cid] = dp
+    return root, design, flow_doc, diffs

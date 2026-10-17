@@ -52,7 +52,7 @@ import tempfile
 from pathlib import Path
 
 from . import conflict, drift, flow, impact_analyzer, parser, selftest_kit, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, capture_raises as _capture, make_min_root as _make_root
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, capture_raises as _capture, make_min_root as _make_root, make_fixture as _fixture
 
 
 _DESIGN = (
@@ -129,21 +129,6 @@ _CHANGES = (
 _ALL_PASSED = re.compile(r"^(?P<ok>\d+)/(?P<total>\d+) passed$")
 
 
-def _fixture(td: Path) -> tuple[Path, Path, Path, dict[str, Path]]:
-    """建全套夹具，返回（代码根, 设计文档, 流程文档, id→diff 路径）。"""
-    root = _make_root(td)
-    design = td / "design.md"
-    design.write_text(_DESIGN, encoding="utf-8")
-    flow_doc = td / "flow.md"
-    flow_doc.write_text(_FLOW, encoding="utf-8")
-    diffs: dict[str, Path] = {}
-    for cid, path, new in _CHANGES:
-        dp = td / f"{cid}.diff"
-        dp.write_text(_diff(path, "old\n", new), encoding="utf-8")
-        diffs[cid] = dp
-    return root, design, flow_doc, diffs
-
-
 def _plan(td: Path, cids: tuple[str, ...], diffs: dict[str, Path]) -> Path:
     """造一份分工计划（`diff` 用文件名，相对计划文件所在目录解析）；id 升序以满足 `load_plan` 规范化。"""
     changesets = [{"id": cid, "diff": diffs[cid].name} for cid in sorted(cids)]
@@ -189,7 +174,7 @@ def test_cross_feed_diagnosis() -> None:
     """
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
 
         flow_prepared = flow.prepare(flow_doc, root)
         impact_prepared = impact_analyzer.prepare(root, design)
@@ -238,7 +223,7 @@ def test_legal_path_byte_identical() -> None:
     """② 合法路径逐字节不变：等价旧路径（`analyze`）与新拆分路径（`analyze_prepared(prepare(...))`）一致。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
 
         legacy_f = flow.analyze(flow_doc, root, diffs["A"])
         split_f = flow.analyze_prepared(flow.prepare(flow_doc, root), diffs["A"])
@@ -262,7 +247,7 @@ def test_constant_matches_prepare() -> None:
     """③ 常量与实现同源：`prepare` 的键序逐字等于 `PREPARED_REQUIRED_KEYS`；合法体 missing 为空。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, _diffs = _fixture(td)
+        root, design, flow_doc, _diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
 
         flow_prepared = flow.prepare(flow_doc, root)
         impact_prepared = impact_analyzer.prepare(root, design)
@@ -357,7 +342,7 @@ def test_read_only_and_determinism() -> None:
     """⑧ 只读 + 确定性：校验通过后复用其复合摘要不变；同输入两次逐字节一致；夹具目录摘要不变。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         before = _dir_digest(td)
 
         flow_prepared = flow.prepare(flow_doc, root)
@@ -392,7 +377,7 @@ def test_cli_and_exit_codes() -> None:
     """⑨ CLI 与退出码回归：正常路径逐字节一致、无 CRLF、退出码 0；错误路径仍 1；用法错误仍 2。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         plan = _plan(td, ("A", "B"), diffs)
 
         # 正常路径：stdout 与库输出逐字节一致、退出码 0、无 \r\n

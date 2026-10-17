@@ -30,7 +30,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture
 
 
 # 边界表达式：`startswith(` 紧跟**具名常量** `SELFTEST_PREFIX` 或**字面量** `"selftest"`。
@@ -163,21 +163,6 @@ def _ref_all_modules() -> list[Path]:
     )
 
 
-def _fixture(td: Path) -> tuple[Path, Path, Path, dict[str, Path]]:
-    """建全套夹具，返回（代码根, 设计文档, 流程文档, id→diff 路径）。"""
-    root = _make_root(td)
-    design = td / "design.md"
-    design.write_text(_DESIGN, encoding="utf-8")
-    flow_doc = td / "flow.md"
-    flow_doc.write_text(_FLOW, encoding="utf-8")
-    diffs: dict[str, Path] = {}
-    for cid, path, new in _CHANGES:
-        dp = td / f"{cid}.diff"
-        dp.write_text(_diff(path, "old\n", new), encoding="utf-8")
-        diffs[cid] = dp
-    return root, design, flow_doc, diffs
-
-
 def _assert_regression(expected: dict[str, str]) -> None:
     """断言给定模块集合各按**实测**条数全绿（诊断含模块名与实际尾行，便于定位）。"""
     for mod, want in expected.items():
@@ -253,7 +238,7 @@ def test_consumers_no_local_replication() -> None:
 def test_cli_and_exit_codes() -> None:
     """⑤ CLI 与退出码回归：stdout 与库输出逐字节一致、无 `\\r\\n`；错误 1；用法 2。"""
     with tempfile.TemporaryDirectory() as td:
-        root, design, flow_doc, diffs = _fixture(Path(td))
+        root, design, flow_doc, diffs = _fixture(Path(td), design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
 
         cases = (
             (("drift", str(root), str(design)), drift.to_json(drift.analyze(root, design))),
@@ -286,7 +271,7 @@ def test_read_only_and_determinism() -> None:
     assert scanscope.selftest_modules() == scanscope.selftest_modules(), "selftest_modules 两次调用应相同"
 
     with tempfile.TemporaryDirectory() as td:
-        root, design, _flow_doc, diffs = _fixture(Path(td))
+        root, design, _flow_doc, diffs = _fixture(Path(td), design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         before = _dir_digest(Path(td))
 
         for mod, rebuild in (

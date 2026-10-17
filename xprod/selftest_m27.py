@@ -47,7 +47,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, add_core_file as _with_core, capture_raises as _capture, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, last_line as _last_line, records_identity_keys as _keys, run_module as _run_module, write_text_at as _write, make_min_root as _make_root
+from .selftest_kit import PKG_DIR, add_core_file as _with_core, capture_raises as _capture, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, last_line as _last_line, records_identity_keys as _keys, run_module as _run_module, write_text_at as _write, make_min_root as _make_root, make_fixture as _fixture
 
 # 宿主文件名（唯一实现所在）
 _KIT = "selftest_kit.py"
@@ -222,7 +222,7 @@ def test_fixture_products_identical() -> None:
     """④ 夹具产物逐字不变：diff 夹具逐字节同值且解析同等；抽样产物与参照同值。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, _flow_doc, diffs = _fixture(td)
+        root, design, _flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         assert root.is_dir() and design.is_file(), "夹具应可用"
 
         ref_path = _ref_write(td, "ref.diff", _ref_diff("src/app/api.py", "old\n", _CHANGES[0][2]))
@@ -276,25 +276,10 @@ _CHANGES = (
 )
 
 
-def _fixture(td: Path) -> tuple[Path, Path, Path, dict[str, Path]]:
-    """建全套夹具，返回（代码根, 设计文档, 流程文档, id→diff 路径）。"""
-    root = _make_root(td)
-    design = td / "design.md"
-    design.write_text(_DESIGN, encoding="utf-8")
-    flow_doc = td / "flow.md"
-    flow_doc.write_text(_FLOW, encoding="utf-8")
-    diffs: dict[str, Path] = {}
-    for cid, path, new in _CHANGES:
-        dp = td / f"{cid}.diff"
-        dp.write_text(_diff(path, "old\n", new), encoding="utf-8")
-        diffs[cid] = dp
-    return root, design, flow_doc, diffs
-
-
 def test_cli_and_exit_codes() -> None:
     """⑤ CLI 与退出码回归：stdout 与库输出逐字节一致、无 `\\r\\n`；错误 1；用法 2。"""
     with tempfile.TemporaryDirectory() as td:
-        root, design, flow_doc, diffs = _fixture(Path(td))
+        root, design, flow_doc, diffs = _fixture(Path(td), design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
 
         cases = (
             (("drift", str(root), str(design)), drift.to_json(drift.analyze(root, design))),
@@ -322,7 +307,7 @@ def test_read_only_and_determinism() -> None:
     """⑥ 只读 + 确定性：scanscope 两次相同；同输入两次 CLI 逐字节一致；夹具复合摘要不变。"""
     with tempfile.TemporaryDirectory() as td:
         td_p = Path(td)
-        root, design, _flow_doc, _diffs = _fixture(td_p)
+        root, design, _flow_doc, _diffs = _fixture(td_p, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         before = _dir_digest(td_p)
 
         assert scanscope.all_modules() == scanscope.all_modules(), "all_modules 两次调用应相同"

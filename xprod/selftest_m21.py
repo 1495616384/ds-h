@@ -47,7 +47,7 @@ from . import (
     sync,
     textio,
 )
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture
 
 SAMPLES = PKG_DIR / "samples"
 
@@ -161,21 +161,6 @@ def _formula(doc: dict) -> str:
     return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
 
 
-def _fixture(td: Path) -> tuple[Path, Path, Path, dict[str, Path]]:
-    """建全套夹具，返回（代码根, 设计文档, 流程文档, id→diff 路径）。"""
-    root = _make_root(td)
-    design = td / "design.md"
-    design.write_text(_DESIGN, encoding="utf-8")
-    flow_doc = td / "flow.md"
-    flow_doc.write_text(_FLOW, encoding="utf-8")
-    diffs: dict[str, Path] = {}
-    for cid, path, new in _CHANGES:
-        dp = td / f"{cid}.diff"
-        dp.write_text(_diff(path, "old\n", new), encoding="utf-8")
-        diffs[cid] = dp
-    return root, design, flow_doc, diffs
-
-
 def _plan(td: Path, cids: tuple[str, ...], diffs: dict[str, Path]) -> Path:
     """造一份分工计划（`diff` 用文件名，相对计划文件所在目录解析）；id 升序以满足 `load_plan` 规范化。"""
     changesets = [{"id": cid, "diff": diffs[cid].name} for cid in sorted(cids)]
@@ -261,7 +246,7 @@ def test_cli_and_exit_codes() -> None:
     """⑤ CLI 与退出码回归：九个 JSON 子命令逐字节一致、无 CRLF、退出码 0；错误 1；用法 2。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         plan = _plan(td, ("A", "B"), diffs)
         checker = _checker(td)
 
@@ -341,7 +326,7 @@ def test_read_only_and_determinism() -> None:
     """⑥ 只读 + 确定性：夹具目录复合摘要不变；同输入两次逐字节一致。"""
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
-        root, design, flow_doc, diffs = _fixture(td)
+        root, design, flow_doc, diffs = _fixture(td, design_text=_DESIGN, flow_text=_FLOW, changes=_CHANGES)
         before = _dir_digest(td)
 
         for name, mod, doc in (
