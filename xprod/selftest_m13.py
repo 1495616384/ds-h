@@ -41,7 +41,7 @@ import tempfile
 from pathlib import Path
 
 from . import flow, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest, write_text_at as _write
 
 
 FLOW_SECTION = '<section id="flow">'
@@ -117,12 +117,6 @@ def _make_root(td: Path) -> Path:
     (root / "docs" / "guide.md").write_text("# 指南\n", encoding="utf-8")
     (root / "docs" / "spec.md").write_text("# 规格\n", encoding="utf-8")
     return root
-
-
-def _write(td: Path, name: str, text: str) -> Path:
-    p = td / name
-    p.write_text(text, encoding="utf-8")
-    return p
 
 
 def _flow_body(page: str) -> str:

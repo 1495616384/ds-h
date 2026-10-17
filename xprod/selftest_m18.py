@@ -52,7 +52,7 @@ import tempfile
 from pathlib import Path
 
 from . import conflict, drift, flow, impact_analyzer, parser, selftest_kit, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, capture_raises as _capture
 
 
 _DESIGN = (
@@ -129,18 +129,6 @@ _CHANGES = (
 _ALL_PASSED = re.compile(r"^(?P<ok>\d+)/(?P<total>\d+) passed$")
 
 
-def _diff(path: str, old: str, new: str) -> str:
-    """造一份只改一个文件的统一 diff（与 M3 解析口径一致）。"""
-    return (
-        f"diff --git a/{path} b/{path}\n"
-        f"--- a/{path}\n"
-        f"+++ b/{path}\n"
-        "@@ -1 +1 @@\n"
-        f"-{old}\n"
-        f"+{new}\n"
-    )
-
-
 def _make_root(td: Path) -> Path:
     """建最小代码根（层层 `__init__.py`，使依赖图有模块名可解析、有节点可用）。"""
     root = td / "root"
@@ -201,15 +189,6 @@ def _prepared_digest(prepared: dict) -> str:
     return hashlib.sha256(
         json.dumps(_canon(prepared), ensure_ascii=False).encode("utf-8")
     ).hexdigest()
-
-
-def _capture(fn, *args: object, **kwargs: object) -> BaseException | None:
-    """调用 `fn` 并捕获任何异常，返回异常实例；未抛异常返回 None（供按类型断言用）。"""
-    try:
-        fn(*args, **kwargs)
-    except BaseException as exc:  # 自测要按**类型**断言，故此处广捕
-        return exc
-    return None
 
 
 def _all_passed(tail: str) -> bool:

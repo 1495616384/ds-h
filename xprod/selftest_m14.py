@@ -46,7 +46,7 @@ import tempfile
 from pathlib import Path
 
 from . import conflict, flow
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest, diff_one_file as _diff
 
 
 _DESIGN = (
@@ -129,18 +129,6 @@ _FLOW_NO_DANGLING = (
     "  - S2 -> S3\n"
     "  - S3 -> S4\n"
 )
-
-
-def _diff(path: str, old: str, new: str) -> str:
-    """造一份只改一个文件的统一 diff（与 M3 解析口径一致）。"""
-    return (
-        f"diff --git a/{path} b/{path}\n"
-        f"--- a/{path}\n"
-        f"+++ b/{path}\n"
-        "@@ -1 +1 @@\n"
-        f"-{old}\n"
-        f"+{new}\n"
-    )
 
 
 # id → (变更文件, 该文件新内容)

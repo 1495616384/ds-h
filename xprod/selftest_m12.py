@@ -43,7 +43,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, parser, scanscope, sync, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest, write_text_at as _write
 
 
 _FLOW_DOC = (
@@ -113,12 +113,6 @@ def _make_root(td: Path) -> Path:
     (root / "src" / "app" / "other.py").write_text("Z = 3\n", encoding="utf-8")
     (root / "docs" / "guide.md").write_text("# 指南\n", encoding="utf-8")
     return root
-
-
-def _write(td: Path, name: str, text: str) -> Path:
-    p = td / name
-    p.write_text(text, encoding="utf-8")
-    return p
 
 
 def _flow_of(doc: dict, fid: str) -> dict:

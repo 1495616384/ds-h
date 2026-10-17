@@ -33,7 +33,7 @@ import tempfile
 from pathlib import Path
 
 from . import sync
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest, write_text_at as _write, add_core_file as _with_core, records_identity_keys as _keys
 
 
 _HEAD = (
@@ -85,20 +85,6 @@ def _make_root(td: Path) -> Path:
     (root / "docs" / "guide.md").write_text("# 指南\n", encoding="utf-8")
     (root / "docs" / "spec.md").write_text("# 规格\n", encoding="utf-8")
     return root
-
-
-def _with_core(root: Path) -> None:
-    (root / "src" / "app" / "core.py").write_text("X = 1\n", encoding="utf-8")
-
-
-def _write(td: Path, name: str, text: str) -> Path:
-    p = td / name
-    p.write_text(text, encoding="utf-8")
-    return p
-
-
-def _keys(records: list[dict]) -> list[tuple[str, str]]:
-    return [(r["constraint_id"], r["evidence"]) for r in records]
 
 
 def test_snapshot_stable_and_readonly() -> None:

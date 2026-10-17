@@ -50,7 +50,7 @@ import tempfile
 from pathlib import Path
 
 from . import conflict, graph_builder, impact_analyzer, parser, selftest_kit
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, dir_digest as _dir_digest
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, dir_digest as _dir_digest, diff_one_file as _diff
 
 
 _DESIGN = (
@@ -113,18 +113,6 @@ _CHANGES = (
     ("D", "src/app/other.py", "Z = 4\n"),
     ("E", "src/app/core.py", "X = 3\n"),
 )
-
-
-def _diff(path: str, old: str, new: str) -> str:
-    """造一份只改一个文件的统一 diff（与 M3 解析口径一致）。"""
-    return (
-        f"diff --git a/{path} b/{path}\n"
-        f"--- a/{path}\n"
-        f"+++ b/{path}\n"
-        "@@ -1 +1 @@\n"
-        f"-{old}\n"
-        f"+{new}\n"
-    )
 
 
 def _make_root(td: Path) -> Path:

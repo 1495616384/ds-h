@@ -136,3 +136,49 @@ def dir_digest(root: Path) -> str:
     for p in sorted(q for q in root.rglob("*") if q.is_file()):
         rows.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(root).as_posix()}")
     return hashlib.sha256("\n".join(rows).encode("utf-8")).hexdigest()
+
+
+# --- M27：自测「样板函数」的唯一实现 ------------------------------------------------------------
+# 五件与产品逻辑无关的小事（造 diff / 写文件 / 捕异常 / 补一个文件到夹具根 / 把记录投影成身份键）
+# 此前被 **17 个自测文件各自复刻**（共 24 处，本地名 `_diff`/`_write`/`_capture`/`_with_core`/`_keys`），
+# 没有任何一处是定义源。M27 把它们收归本模块**唯一实现**（实现**原样搬入**）：消费点改为
+# `from .selftest_kit import <公共名> as _<本地名>` 的**同名绑定**，故**全部调用点一字不改**。
+# 结构断言（`selftest_m27.py`）按**全签名**计数证明「这 5 个公共名在全部模块各恰 1 处、且均在本文件」。
+
+
+def diff_one_file(path: str, old: str, new: str) -> str:
+    """造一份只改一个文件的统一 diff（与 M3 解析口径一致）。"""
+    return (
+        f"diff --git a/{path} b/{path}\n"
+        f"--- a/{path}\n"
+        f"+++ b/{path}\n"
+        "@@ -1 +1 @@\n"
+        f"-{old}\n"
+        f"+{new}\n"
+    )
+
+
+def write_text_at(td: Path, name: str, text: str) -> Path:
+    """在临时目录 `td` 下写 `name`（UTF-8）并返回该路径——收口前各文件的 `_write`。"""
+    p = td / name
+    p.write_text(text, encoding="utf-8")
+    return p
+
+
+def capture_raises(fn, *args: object, **kwargs: object) -> BaseException | None:
+    """调用 `fn` 并捕获任何异常，返回异常实例；未抛异常返回 None（供按类型断言用）。"""
+    try:
+        fn(*args, **kwargs)
+    except BaseException as exc:  # 自测要按**类型**断言，故此处广捕
+        return exc
+    return None
+
+
+def add_core_file(root: Path) -> None:
+    """把夹具根 `root` 的 `src/app/core.py` 补写成 `X = 1`（收口前各文件的 `_with_core`）。"""
+    (root / "src" / "app" / "core.py").write_text("X = 1\n", encoding="utf-8")
+
+
+def records_identity_keys(records: list[dict]) -> list[tuple[str, str]]:
+    """把记录列表按参照公式投影为身份键列表（收口前各文件的 `_keys`）。"""
+    return [(r["constraint_id"], r["evidence"]) for r in records]

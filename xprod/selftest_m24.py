@@ -43,7 +43,7 @@ from pathlib import Path
 
 from . import __version__, drift, flow, impact_analyzer, scanscope, sync, viewer
 from . import selftest_kit
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module, diff_one_file as _diff
 
 
 # 共享宿主文件名（唯一实现所在）
@@ -201,18 +201,6 @@ _CHANGES = (
     ("A", "src/app/api.py", "from app.core import X\nA = 1\n"),
     ("B", "src/app/core.py", "X = 2\n"),
 )
-
-
-def _diff(path: str, old: str, new: str) -> str:
-    """造一份只改一个文件的统一 diff（与 M3 解析口径一致）。"""
-    return (
-        f"diff --git a/{path} b/{path}\n"
-        f"--- a/{path}\n"
-        f"+++ b/{path}\n"
-        "@@ -1 +1 @@\n"
-        f"-{old}\n"
-        f"+{new}\n"
-    )
 
 
 def _make_root(td: Path) -> Path:

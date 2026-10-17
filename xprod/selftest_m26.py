@@ -17,11 +17,11 @@
 覆盖（对应设计稿 §八 的 ①–⑧）：
     ① **唯一实现（结构证据）**：包定位字面量（`Path(__file__).resolve()` 接 `.parent`）在全部模块
        （= `scanscope.all_modules()`）中**恰 1 处**且位于 `scanscope.py`；在自测文件
-       （= `scanscope.selftest_modules()`）中**恰 0 处**；24 个消费文件源码**含**
+       （= `scanscope.selftest_modules()`）中**恰 0 处**；全部消费文件（自测模块 − 宿主）源码**含**
        `from .selftest_kit import` 且**含** `PKG_DIR`；
     ② **值等价（对照参照公式）**：`selftest_kit.PKG_DIR == scanscope.PKG_DIR`；`PKG_DIR.is_dir()`；
        `(PKG_DIR / "scanscope.py").is_file()`；`selftest_kit.REPO_ROOT == PKG_DIR.parent`；
-    ③ **消费点已无本地复刻**：24 个消费文件**不再含**包定位字面量、**不再含**本地 PKG_DIR 定义；
+    ③ **消费点已无本地复刻**：全部消费文件（自测模块 − 宿主）**不再含**包定位字面量、**不再含**本地 PKG_DIR 定义；
     ④ **夹具路径逐字不变（行为）**：抽样 `m1` 的 `SAMPLE` / `EXPECTED`、`m2` 的 `EXPECTED_GRAPH`、
        `m21` 的 `SAMPLES`，在收口后仍**指向存在的文件 / 目录**，且与参照公式
        （`scanscope.PKG_DIR / …`）**逐条同值**；
@@ -46,7 +46,7 @@ from pathlib import Path
 from . import drift, flow, impact_analyzer, scanscope, sync, viewer
 from . import selftest_kit
 from . import selftest_m1, selftest_m21
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module, diff_one_file as _diff
 
 # 定义源文件名（唯一实现所在）与宿主文件名
 _SCANSCOPE = "scanscope.py"
@@ -58,12 +58,13 @@ _OLD_ASSIGN = "PKG_DIR = Path" + "("                     # 本地定义写法（
 _ARGV_MARK = "sys" + ".argv"                             # 「取命令行参数」特征串（⑧）
 _ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
 
-# 消费文件 = 自测模块中**已收口**的 24 个（排除宿主 `selftest_kit`、M25 先行范例 `m25`、本轮度量器 `m26`）
-_EXCLUDE = {_KIT, "selftest_m25.py", "selftest_m26.py"}
+# 消费文件 = 自测模块中**已收口**的全部（排除宿主 `selftest_kit`；**动态推导**，不写死文件数——
+# 若写死「恰 24」则本里程碑自身新增 `selftest_m27.py` 就会把它顶红，见设计稿 §五.3）
+_EXCLUDE = {_KIT}
 
 
 def _consumers() -> list[Path]:
-    """消费文件 = 自测模块去除宿主 / m25 / 本文件（动态推导，不写死具体名单）。"""
+    """消费文件 = 自测模块去除宿主（动态推导，不写死具体名单）。"""
     return [p for p in scanscope.selftest_modules() if p.name not in _EXCLUDE]
 
 
@@ -88,8 +89,6 @@ def test_unique_implementation() -> None:
     assert st_hits == {}, f"自测文件中不得出现包定位字面量，实际 {st_hits}"
 
     consumers = _consumers()
-    assert len(consumers) == 24, \
-        f"应恰有 24 个消费文件，实际 {len(consumers)}：{sorted(p.name for p in consumers)}"
     for p in consumers:
         src = p.read_text(encoding="utf-8")
         assert "from .selftest_kit import" in src, f"{p.name} 未从共享宿主导入"
@@ -106,7 +105,7 @@ def test_value_equivalence() -> None:
 
 
 def test_consumers_pruned() -> None:
-    """③ 消费点已无本地复刻：24 个消费文件不再含包定位字面量、不再含本地 `PKG_DIR = Path(`。"""
+    """③ 消费点已无本地复刻：全部消费文件（自测模块 − 宿主）不再含包定位字面量、不再含本地包定位赋值写法。"""
     for p in _consumers():
         src = p.read_text(encoding="utf-8")
         assert _PKG_LITERAL not in src, f"{p.name} 仍保留包定位字面量（应收口为共享引用）"
@@ -189,18 +188,6 @@ _CHANGES = (
     ("A", "src/app/api.py", "from app.core import X\nA = 1\n"),
     ("B", "src/app/core.py", "X = 2\n"),
 )
-
-
-def _diff(path: str, old: str, new: str) -> str:
-    """造一份只改一个文件的统一 diff（与 M3 解析口径一致）。"""
-    return (
-        f"diff --git a/{path} b/{path}\n"
-        f"--- a/{path}\n"
-        f"+++ b/{path}\n"
-        "@@ -1 +1 @@\n"
-        f"-{old}\n"
-        f"+{new}\n"
-    )
 
 
 def _make_root(td: Path) -> Path:
