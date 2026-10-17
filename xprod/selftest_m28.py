@@ -51,6 +51,7 @@ from .selftest_kit import (
     make_fixture as _fixture,
     make_min_root as _make_root,
     number_independence_regression,
+    tree_files as _tree_files,
     ARG_EXEMPT as _ARG_EXEMPT,
     ARGV_MARK as _ARGV_MARK,
     KIT_NAME as _KIT,
@@ -103,14 +104,6 @@ def _ref_make_root(td: Path) -> Path:
     for rel, text in _REF_FILES:
         (root / rel).write_text(text, encoding="utf-8")
     return root
-
-
-def _tree_files(root: Path) -> list[tuple[str, str]]:
-    """把目录树摊成 `(相对路径, 内容)` 列表（只读、按路径排序）——逐字节比对用。"""
-    return [
-        (p.relative_to(root).as_posix(), p.read_bytes().decode("utf-8"))
-        for p in sorted(q for q in root.rglob("*") if q.is_file())
-    ]
 
 
 # --- ① / ② / ③ 断言 ---------------------------------------------------------------

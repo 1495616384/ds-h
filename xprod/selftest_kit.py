@@ -370,3 +370,14 @@ ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")    # 允许（且仅允许）�
 # （`_KIT` ×8 + `_KIT_NAME` ×1；`_D` ×5 + `_DEF_PREFIX` ×1），无唯一归属。
 KIT_NAME = "selftest_kit.py"     # 自测脚手架宿主文件名（唯一实现所在）
 DEF_PREFIX = "def "              # 「顶层函数定义」在源码里的起始字面量（待查特征串的前缀）
+
+
+# ===== M34：「自测目录树摊平」的唯一实现（2026-10-18 追加） =====
+# 背景见《X产品化-M34设计稿-v1.md》§一：该只读对照工具此前被 m28 / m29 各自复刻一份
+# （逐字节同构、无唯一归属），M34 收归此处——只换位置、不改内容（含签名与文档串）。
+def tree_files(root: Path) -> list[tuple[str, str]]:
+    """把目录树摊成 `(相对路径, 内容)` 列表（只读、按路径排序）——逐字节比对用。"""
+    return [
+        (p.relative_to(root).as_posix(), p.read_bytes().decode("utf-8"))
+        for p in sorted(q for q in root.rglob("*") if q.is_file())
+    ]

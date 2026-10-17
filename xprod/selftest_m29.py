@@ -52,6 +52,7 @@ from .selftest_kit import (
     make_fixture,
     make_min_root as _make_root,
     number_independence_regression,
+    tree_files as _tree_files,
     ARG_EXEMPT as _ARG_EXEMPT,
     ARGV_MARK as _ARGV_MARK,
     KIT_NAME as _KIT,
@@ -154,14 +155,6 @@ def _ref_fixture(
         dp.write_text(_diff(path, "old\n", new), encoding="utf-8")
         diffs[cid] = dp
     return root, design, flow_doc, diffs
-
-
-def _tree_files(root: Path) -> list[tuple[str, str]]:
-    """把目录树摊成 `(相对路径, 内容)` 列表（只读、按路径排序）——逐字节比对用。"""
-    return [
-        (p.relative_to(root).as_posix(), p.read_bytes().decode("utf-8"))
-        for p in sorted(q for q in root.rglob("*") if q.is_file())
-    ]
 
 
 # --- ① / ② / ③ 断言 ---------------------------------------------------------------
