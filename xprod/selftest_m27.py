@@ -47,7 +47,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, add_core_file as _with_core, capture_raises as _capture, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, last_line as _last_line, records_identity_keys as _keys, run_module as _run_module, write_text_at as _write, make_min_root as _make_root, make_fixture as _fixture
+from .selftest_kit import PKG_DIR, add_core_file as _with_core, assert_regression as _assert_regression, capture_raises as _capture, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression, records_identity_keys as _keys, write_text_at as _write
 
 # 宿主文件名（唯一实现所在）
 _KIT = "selftest_kit.py"
@@ -355,29 +355,14 @@ def test_existing_selftests_regression() -> None:
     """⑦ 既有自测零修订：24 个无需参数的自测各按实测条数全绿（个数与改动前相同；`m26` 仍 8/8）。"""
     if selftest_kit.in_regression():
         return
-    for mod, want in _REGRESSION.items():
-        rc, out, err = _run_module(mod)
-        tail = _last_line(out)
-        assert rc == 0 and tail == f"{want} passed", \
-            f"{mod} 应为 {want} passed，实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"
+    _assert_regression(_REGRESSION)
 
 
 def test_full_regression_and_number_independence() -> None:
     """⑧ 全域回归 + 编号无关性：逆序逐模块跑同一批自测仍全绿（与 ⑦ 逐条一致）；需代码根者恰 m2/m3。"""
     if selftest_kit.in_regression():
         return
-    # 需命令行代码根的自测恰为 `m2` / `m3`，由里程碑级全域回归（regress.py 传基线根）覆盖，此处跳过
-    arg_mods = sorted(
-        p.name for p in scanscope.selftest_modules() if _ARGV_MARK in p.read_text(encoding="utf-8")
-    )
-    assert arg_mods == list(_ARG_EXEMPT), f"需命令行代码根的自测应恰为 m2 / m3，实际 {arg_mods}"
-
-    for mod in reversed(list(_REGRESSION)):
-        rc, out, err = _run_module(mod)
-        want = f"{_REGRESSION[mod]} passed"
-        tail = _last_line(out)
-        assert rc == 0 and tail == want, \
-            f"{mod} 逆序应全绿（{want}，与 ⑦ 正序一致），实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"
+    number_independence_regression(_REGRESSION, _ARGV_MARK, _ARG_EXEMPT)
 
 
 def main() -> int:

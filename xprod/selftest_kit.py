@@ -291,3 +291,67 @@ def assert_regression(expected: dict[str, str]) -> None:
         tail = last_line(out)
         assert rc == 0 and tail == f"{want} passed", \
             f"{mod} 应为 {want} passed，实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"
+
+
+# --- M31：自测「⑧ 全域回归＋编号无关性」与「⑤ 夹具记录渲染」的唯一实现 ---------------------------
+# 两件与产品逻辑无关的过程此前被各自复刻：
+#   * `test_full_regression_and_number_independence`——**5 个自测文件各自复刻**（`m26`–`m30`，
+#     原始源段**逐字节相同**）：先验「需命令行代码根者恰为 `_ARG_EXEMPT`」，再**逆序**遍历
+#     `_REGRESSION` 断言全绿；
+#   * `_entry` + 局部常量 `_HEAD`——**2 个自测文件各自复刻**（`m10`/`m11`，逐字同构）：按既定
+#     版式渲染一条夹具记录。
+# 均**没有任何一处是定义源**；其中 ③ `test_existing_selftests_regression` 更有**两种形态**
+# （`m23`/`m24` 委派 `assert_regression`，`m26`–`m30` **内联同一循环**）——**形态分叉本身即已发生的复刻漂移**。
+#
+# 收口形态**与 M30 完全同族**、**不引入任何新写法**：
+#   * ② —— 把「边界校验 + 逆序遍历」收归本模块唯一实现（公共名 `number_independence_regression`），
+#     消费端**保留本地同名薄包装**（`main()` 按**名字**枚举测试并打印 `t.__name__`，纯别名 / `partial` /
+#     闭包工厂都会改变产物或无法携带**逐模块不同**的 `_REGRESSION`，故不可行）；
+#   * ③ —— 直接改用 M30 已收口的 `assert_regression`（`m26`–`m30` 去掉内联循环），**不新增公共名**；
+#   * ⑤ —— 输入全是**显式参数 / 同值常量**，走 M30 式**同名别名绑定**（`entry as _entry`，零包装）。
+#
+# **守卫**（`if in_regression(): return`）**仍留在各测试本地**——与 M30 一致：宿主**不**自己早退，
+# 早退的判定与位置仍由消费点持有，故 M25 的「守卫恰好覆盖传递可达回归调起的测试」这一**已固化的
+# 结构不变量原样成立**（宿主的输入全是显式参数，无需 read 环境变量）。
+#
+# 为什么 `test_full_regression_extra`（`m21`–`m23`）与 ③ 的骨架**不再进一步收口**：它们的体已是
+# 「守卫 + `assert_regression(本地冻结快照)`」——**规则**（遍历 + 尾行判定）早在 M30 就唯一落在
+# `assert_regression`，残下的 4 行**名字→数据绑定骨架**在 `main()` 按名枚举的约束下**不可再消**；
+# 故只把「3 处骨架逐字同构」固化为 `selftest_m31.py` 的**一致性断言**（把复刻变成**受检查的不变量**）。
+#
+# 结构断言（`selftest_m31.py`）按**全签名**计数证明「新公共名与 `HEAD` 在全部模块各恰 1 处、且均在本文件」，
+# 并按 **M27 式「引用了则必须绑定」** 证明消费点只引用这一份定义。
+HEAD = (
+    "- type: 数据完整性\n"
+    "- invariant: 示例不变量\n"
+    "- change_control: free\n"
+    "- severity: normal\n"
+)
+
+
+def entry(cid: str, title: str, anchors: tuple[str, ...]) -> str:
+    """按既定版式渲染一条夹具记录（⑤ 的唯一实现；与收口前 `m10`/`m11` 的 `_entry` 逐字等价）。"""
+    lines = [f"### {cid} — {title}", HEAD.rstrip("\n"), "- evidence:"]
+    lines.extend(f"  - {a}" for a in anchors)
+    lines.append("- action_policy: 警告")
+    return "\n".join(lines) + "\n"
+
+
+def number_independence_regression(
+    expected: dict[str, str], argv_mark: str, arg_exempt: tuple[str, ...]
+) -> None:
+    """⑧ 的唯一实现：先验「需命令行代码根者恰为 `arg_exempt`」，再**逆序**遍历 `expected` 断言全绿。
+
+    输入全部**显式传入**（`expected` 为各模块自己的冻结快照，`argv_mark` / `arg_exempt` 为该模块的
+    边界数据），故宿主**不**依赖任何模块名查表、也**不**自己读环境变量——早退守卫仍由消费点持有。
+    """
+    arg_mods = sorted(
+        p.name for p in scanscope.selftest_modules() if argv_mark in p.read_text(encoding="utf-8")
+    )
+    assert arg_mods == list(arg_exempt), f"需命令行代码根的自测应恰为 {list(arg_exempt)}，实际 {arg_mods}"
+    for mod in reversed(list(expected)):
+        rc, out, err = run_module(mod)
+        want = f"{expected[mod]} passed"
+        tail = last_line(out)
+        assert rc == 0 and tail == want, \
+            f"{mod} 逆序应全绿（{want}，与 ⑦ 正序一致），实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"

@@ -33,22 +33,7 @@ import tempfile
 from pathlib import Path
 
 from . import sync
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest, write_text_at as _write, add_core_file as _with_core, records_identity_keys as _keys
-
-
-_HEAD = (
-    "- type: 数据完整性\n"
-    "- invariant: 示例不变量\n"
-    "- change_control: free\n"
-    "- severity: normal\n"
-)
-
-
-def _entry(cid: str, title: str, anchors: tuple[str, ...]) -> str:
-    lines = [f"### {cid} — {title}", _HEAD.rstrip("\n"), "- evidence:"]
-    lines.extend(f"  - {a}" for a in anchors)
-    lines.append("- action_policy: 警告")
-    return "\n".join(lines) + "\n"
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _tree_digest, write_text_at as _write, add_core_file as _with_core, records_identity_keys as _keys, entry as _entry
 
 
 _DESIGN_A = (
