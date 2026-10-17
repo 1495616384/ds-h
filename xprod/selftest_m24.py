@@ -43,7 +43,7 @@ from pathlib import Path
 
 from . import __version__, drift, flow, impact_analyzer, scanscope, sync, viewer
 from . import selftest_kit
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture, assert_regression as _assert_regression
 
 
 # 共享宿主文件名（唯一实现所在）
@@ -279,15 +279,6 @@ _REGRESSION = {
     "selftest_m22": "8/8",
     "selftest_m23": "8/8",
 }
-
-
-def _assert_regression(expected: dict[str, str]) -> None:
-    """断言给定模块各按**实测**条数全绿（诊断含模块名与实际尾行，便于定位）。"""
-    for mod, want in expected.items():
-        rc, out, err = _run_module(mod)
-        tail = _last_line(out)
-        assert rc == 0 and tail == f"{want} passed", \
-            f"{mod} 应为 {want} passed，实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"
 
 
 def test_existing_selftests_regression() -> None:

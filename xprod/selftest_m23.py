@@ -30,7 +30,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture
+from .selftest_kit import PKG_DIR, cli as _cli, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture, assert_regression as _assert_regression
 
 
 # 边界表达式：`startswith(` 紧跟**具名常量** `SELFTEST_PREFIX` 或**字面量** `"selftest"`。
@@ -161,15 +161,6 @@ def _ref_all_modules() -> list[Path]:
         (p for p in PKG_DIR.rglob("*.py") if "__pycache__" not in p.parts),
         key=lambda p: p.as_posix(),
     )
-
-
-def _assert_regression(expected: dict[str, str]) -> None:
-    """断言给定模块集合各按**实测**条数全绿（诊断含模块名与实际尾行，便于定位）。"""
-    for mod, want in expected.items():
-        rc, out, err = _run_module(mod)
-        tail = _last_line(out)
-        assert rc == 0 and tail == f"{want} passed", \
-            f"{mod} 应为 {want} passed，实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"
 
 
 def test_unique_implementation() -> None:

@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -253,3 +254,40 @@ def make_fixture(td: Path, *, design_text: str, flow_text: str, changes: tuple[t
         dp.write_text(diff_one_file(path, "old\n", new), encoding="utf-8")
         diffs[cid] = dp
     return root, design, flow_doc, diffs
+
+
+# --- M30：自测「全域回归判定」的唯一实现 ------------------------------------------------------
+# 「判全域回归是否全绿」的三件与产品逻辑无关的小事——正则常量 `ALL_PASSED`、末行判定 `all_passed`、
+# 集合断言 `assert_regression`——此前被 **7 个自测文件各自复刻**（共 **12 处定义**，本地名
+# `_ALL_PASSED` / `_all_passed` / `_assert_regression`），**没有任何一处是定义源**；实测已出现
+# **死代码复刻**：`m19` / `m20` 定义了 `_all_passed` 却从不调用，`m21` / `m22` 定义了 `_ALL_PASSED`
+# 却从不使用——这正是「任一处落单就静默漂移」的**直接实证**，不是推测。
+#
+# M30 把这三件**原样搬入本模块**（实现逐字不变：只换位置、不改内容、不改判定语义），消费点改为
+# `from .selftest_kit import all_passed as _all_passed` / `assert_regression as _assert_regression`
+# 的**同名绑定**，故**全部调用点一字不改**、**行为与产物逐字节不变**。
+#
+# 为什么本轮**无**调用点改动（比 M29 更保守）：三者的**输入全是显式参数或无参常量**——
+# `all_passed(tail)` 的 `tail` 已是参数、`assert_regression(expected)` 的 `expected` 已是参数、
+# `ALL_PASSED` 是无参常量——故同名绑定后调用点字面天然不变，无需像 M29 那样显式传参。
+#
+# `ALL_PASSED` **只**被 `all_passed` 内部使用，故**不**要求任何消费点绑定它：绑定一个从不被引用的
+# 名字会**立刻制造新的死代码**——而「消除死代码复刻」正是本轮的目的。
+#
+# 结构断言（`selftest_m30.py`）按**全签名**计数证明「这 3 个公共名在全部模块各恰 1 处、且均在本文件」，
+# 并按 **M27 式「引用了则必须绑定」** 证明 7 个消费点只引用这一份定义。
+ALL_PASSED = re.compile(r"^(?P<ok>\d+)/(?P<total>\d+) passed$")
+
+
+def all_passed(tail: str) -> bool:
+    m = ALL_PASSED.match(tail)
+    return bool(m) and m.group("ok") == m.group("total")
+
+
+def assert_regression(expected: dict[str, str]) -> None:
+    """断言给定模块集合各按**实测**条数全绿（诊断含模块名与实际尾行，便于定位）。"""
+    for mod, want in expected.items():
+        rc, out, err = run_module(mod)
+        tail = last_line(out)
+        assert rc == 0 and tail == f"{want} passed", \
+            f"{mod} 应为 {want} passed，实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"

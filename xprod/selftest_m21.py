@@ -29,7 +29,6 @@ from __future__ import annotations
 
 import inspect
 import json
-import re
 import tempfile
 from pathlib import Path
 
@@ -47,7 +46,7 @@ from . import (
     sync,
     textio,
 )
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture
+from .selftest_kit import PKG_DIR, cli as _cli, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture, assert_regression as _assert_regression
 
 SAMPLES = PKG_DIR / "samples"
 
@@ -76,8 +75,6 @@ _DOCS: tuple[dict, ...] = (
     {"z": 1, "a": {"b": [1, 2, {"c": True}]}},
     {"列表": [1, "二", False], "空": None},
 )
-
-_ALL_PASSED = re.compile(r"^(?P<ok>\d+)/(?P<total>\d+) passed$")
 
 # ④ 实测条数（改动前/后一致；M19 = 8 条、M20 = 8 条，非 10 条）
 _REGRESSION = {
@@ -177,15 +174,6 @@ def _checker(td: Path) -> Path:
     path = td / "checker.py"
     path.write_text("print('checker stub ok')\nraise SystemExit(0)\n", encoding="utf-8")
     return path
-
-
-def _assert_regression(expected: dict[str, str]) -> None:
-    """断言给定模块集合各按**实测**条数全绿（诊断含模块名与实际尾行，便于定位）。"""
-    for mod, want in expected.items():
-        rc, out, err = _run_module(mod)
-        tail = _last_line(out)
-        assert rc == 0 and tail == f"{want} passed", \
-            f"{mod} 应为 {want} passed，实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"
 
 
 def test_legal_path_byte_identical() -> None:

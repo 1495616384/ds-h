@@ -11,7 +11,9 @@
 覆盖（对应设计稿 §八 ①–⑧）：
     ① 判定唯一实现（结构证据）：`in_regression` 的定义全仓恰 1 处；两个约定环境变量名各恰 1 处字面量；
     ② 守卫形态（结构证据）：9 个非叶子模块中「传递可达回归调起」的测试函数**首个可执行语句**
-       均为早退守卫、且引用 `selftest_kit` 判定（不自行读环境变量）；
+       均为早退守卫、且引用 `selftest_kit` 判定（不自行读环境变量）。
+       「回归调起」的识别标记＝本地直调 `_run_module` / `run_module`（M25 原形态）**∪**
+       共享宿主别名 `_assert_regression` / `assert_regression`（M30 收口后的新形态）——
     ③ 执行重数 = 1（可观测，本轮核心）：env 门控 trace 跑一次顶层 `selftest_m24`，各模块被调起
        ≤ 3 次（⑦ 1 次 + ⑧ 采样 2 次）；
     ④ 总次数 ≤ 实现阶段**实测取整写入**的绝对阈值（29，收口前基线 1062；阈值只降不升）；
@@ -50,8 +52,14 @@ _NONLEAF = (
 
 # 待查特征串**分段拼接**（见模块 docstring 的「自指防护」）：拼出的结果不在本文件源码中字面出现
 _IR_NAME = "in" + "_regression"          # 唯一判定名
-_RUN_ALIAS = "_run" + "_module"          # 消费点别名
+_RUN_ALIAS = "_run" + "_module"          # 消费点别名（M25 原形态）
 _RUN_PUBLIC = "run" + "_module"          # 宿主公开名
+# M30 收口后「回归调起」还可经**共享宿主别名**发生：`assert_regression` 内部即调 `run_module`，
+# 故其（含本地别名 `_assert_regression`）与上面两个直调标记**等价**，须一并识别——
+# 否则守卫测试在模型眼里不再「可达回归调起」，`need` 会塌缩为空而与 `guarded` 失配。
+_ASSERT_ALIAS = "_assert" + "_regression"
+_ASSERT_PUBLIC = "assert" + "_regression"
+_LAUNCH_MARKS = frozenset({_RUN_ALIAS, _RUN_PUBLIC, _ASSERT_ALIAS, _ASSERT_PUBLIC})
 _ARGV_MARK = "sys" + ".argv"             # 「取命令行参数」的特征串
 _ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
 
@@ -235,7 +243,7 @@ def test_guard_shape() -> None:
     for name in _NONLEAF:
         tree = ast.parse((selftest_kit.PKG_DIR / name).read_text(encoding="utf-8"))
         funcs = _funcs(tree)
-        direct = {fn: bool(_bare_calls(node) & {_RUN_ALIAS, _RUN_PUBLIC}) for fn, node in funcs.items()}
+        direct = {fn: bool(_bare_calls(node) & _LAUNCH_MARKS) for fn, node in funcs.items()}
         members = _tests_tuple(tree)
         need = sorted(
             m for m in members if m in funcs and _reaches(m, funcs, direct, frozenset())

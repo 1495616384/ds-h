@@ -38,7 +38,6 @@ from __future__ import annotations
 
 import inspect
 import json
-import re
 import tempfile
 from pathlib import Path
 
@@ -122,8 +121,6 @@ _CHANGES = (
     ("B", "src/app/core.py", "X = 2\n"),
 )
 
-_ALL_PASSED = re.compile(r"^(?P<ok>\d+)/(?P<total>\d+) passed$")
-
 
 def _plan(td: Path, cids: tuple[str, ...], diffs: dict[str, Path]) -> Path:
     """造一份分工计划（`diff` 用文件名，相对计划文件所在目录解析）；id 升序以满足 `load_plan` 规范化。"""
@@ -134,11 +131,6 @@ def _plan(td: Path, cids: tuple[str, ...], diffs: dict[str, Path]) -> Path:
         encoding="utf-8",
     )
     return plan
-
-
-def _all_passed(tail: str) -> bool:
-    m = _ALL_PASSED.match(tail)
-    return bool(m) and m.group("ok") == m.group("total")
 
 
 def _feed_msg(who: str, missing: list) -> str:

@@ -47,12 +47,11 @@ from __future__ import annotations
 import hashlib
 import inspect
 import json
-import re
 import tempfile
 from pathlib import Path
 
 from . import conflict, drift, flow, impact_analyzer, parser, selftest_kit, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, capture_raises as _capture, make_min_root as _make_root, make_fixture as _fixture
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, capture_raises as _capture, make_min_root as _make_root, make_fixture as _fixture, all_passed as _all_passed
 
 
 _DESIGN = (
@@ -126,8 +125,6 @@ _CHANGES = (
     ("B", "src/app/core.py", "X = 2\n"),
 )
 
-_ALL_PASSED = re.compile(r"^(?P<ok>\d+)/(?P<total>\d+) passed$")
-
 
 def _plan(td: Path, cids: tuple[str, ...], diffs: dict[str, Path]) -> Path:
     """造一份分工计划（`diff` 用文件名，相对计划文件所在目录解析）；id 升序以满足 `load_plan` 规范化。"""
@@ -160,11 +157,6 @@ def _prepared_digest(prepared: dict) -> str:
     return hashlib.sha256(
         json.dumps(_canon(prepared), ensure_ascii=False).encode("utf-8")
     ).hexdigest()
-
-
-def _all_passed(tail: str) -> bool:
-    m = _ALL_PASSED.match(tail)
-    return bool(m) and m.group("ok") == m.group("total")
 
 
 def test_cross_feed_diagnosis() -> None:

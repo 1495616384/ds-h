@@ -36,7 +36,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, impact_analyzer, parser, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture
+from .selftest_kit import PKG_DIR, cli as _cli, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture, assert_regression as _assert_regression
 
 
 # 身份键公式片段（结构扫描用）：拆成两段拼接，避免本文件自身成为「第二个实现」的假命中
@@ -61,8 +61,6 @@ _RECORDS: tuple[dict, ...] = (
     {"constraint_id": "", "evidence": ""},
     {"constraint_id": " A ", "evidence": "  x  "},
 )
-
-_ALL_PASSED = re.compile(r"^(?P<ok>\d+)/(?P<total>\d+) passed$")
 
 # ④ 实测条数（与 M21 自测一致；改动前后相同）
 _REGRESSION = {
@@ -169,15 +167,6 @@ def _checker(td: Path) -> Path:
     path = td / "checker.py"
     path.write_text("print('checker stub ok')\nraise SystemExit(0)\n", encoding="utf-8")
     return path
-
-
-def _assert_regression(expected: dict[str, str]) -> None:
-    """断言给定模块集合各按**实测**条数全绿（诊断含模块名与实际尾行，便于定位）。"""
-    for mod, want in expected.items():
-        rc, out, err = _run_module(mod)
-        tail = _last_line(out)
-        assert rc == 0 and tail == f"{want} passed", \
-            f"{mod} 应为 {want} passed，实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"
 
 
 def _keys_of(records: list[dict]) -> list[tuple[str, str]]:
