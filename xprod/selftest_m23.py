@@ -30,7 +30,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff
+from .selftest_kit import PKG_DIR, cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest, diff_one_file as _diff, make_min_root as _make_root
 
 
 # 边界表达式：`startswith(` 紧跟**具名常量** `SELFTEST_PREFIX` 或**字面量** `"selftest"`。
@@ -161,20 +161,6 @@ def _ref_all_modules() -> list[Path]:
         (p for p in PKG_DIR.rglob("*.py") if "__pycache__" not in p.parts),
         key=lambda p: p.as_posix(),
     )
-
-
-def _make_root(td: Path) -> Path:
-    """建最小代码根（层层 `__init__.py`，使依赖图有模块名可解析、有节点可用）。"""
-    root = td / "root"
-    (root / "src" / "app").mkdir(parents=True)
-    (root / "docs").mkdir(parents=True)
-    (root / "src" / "app" / "__init__.py").write_text("", encoding="utf-8")
-    (root / "src" / "app" / "api.py").write_text("from app.core import X\nA = 0\n", encoding="utf-8")
-    (root / "src" / "app" / "core.py").write_text("X = 1\n", encoding="utf-8")
-    (root / "src" / "app" / "notify.py").write_text("N = 1\n", encoding="utf-8")
-    (root / "docs" / "guide.md").write_text("# 指南\n", encoding="utf-8")
-    (root / "docs" / "spec.md").write_text("# 规格\n", encoding="utf-8")
-    return root
 
 
 def _fixture(td: Path) -> tuple[Path, Path, Path, dict[str, Path]]:

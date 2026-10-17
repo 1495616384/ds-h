@@ -182,3 +182,35 @@ def add_core_file(root: Path) -> None:
 def records_identity_keys(records: list[dict]) -> list[tuple[str, str]]:
     """把记录列表按参照公式投影为身份键列表（收口前各文件的 `_keys`）。"""
     return [(r["constraint_id"], r["evidence"]) for r in records]
+
+
+# --- M28：自测「夹具最小代码根构造」的唯一实现 ------------------------------------------------
+# 自测要跑依赖图 / 锚点 / 影响面之前，都得先造一份「最小代码根」（目录骨架 + 占位源文件 +
+# 两个非 .py 载体）。这条约定此前被 **10 个自测文件各自复刻**（`m17`–`m24`、`m26`、`m27`，
+# 本地名 `_make_root`，AST 归一化后**逐字同构**，含签名与文档串），**没有任何一处是定义源**。
+# M28 把这一份**原样搬入本模块**（实现**逐字不变**：只换位置、不改内容），消费点改为
+# `from .selftest_kit import make_min_root as _make_root` 的**同名绑定**，故**全部调用点一字不改**、
+# **夹具产物逐字节不变**。
+#
+# 公共名不叫 `_make_root` 也不叫 `make_root`：另有 **9 个自测文件**（`m8`–`m16`）持有
+# **同名同签名但文件集各不相同**的**真分歧变体**（`m10`/`m11` 特意不建 `core.py`、`m12` 不建
+# `__init__.py`、`m13`/`m14` 多 `report.py`……），它们是各里程碑**刻意**造出的不同夹具、**不是漂移**，
+# 故**保留**并在 `selftest_m28.py` ③ 中**显式登记**。`make_min_root` 一名与「最小代码根」这一约定
+# 一一对应，不会与那些变体产生「同名两义」的误读。
+#
+# 结构断言（`selftest_m28.py`）按**全签名**计数证明「唯一实现恰 1 处且在本文件」，
+# 并按**显式名单**证明「本地 `def _make_root` 恰存在于那 9 个分歧变体文件」。
+
+
+def make_min_root(td: Path) -> Path:
+    """建最小代码根（层层 `__init__.py`，使依赖图有模块名可解析、有节点可用）。"""
+    root = td / "root"
+    (root / "src" / "app").mkdir(parents=True)
+    (root / "docs").mkdir(parents=True)
+    (root / "src" / "app" / "__init__.py").write_text("", encoding="utf-8")
+    (root / "src" / "app" / "api.py").write_text("from app.core import X\nA = 0\n", encoding="utf-8")
+    (root / "src" / "app" / "core.py").write_text("X = 1\n", encoding="utf-8")
+    (root / "src" / "app" / "notify.py").write_text("N = 1\n", encoding="utf-8")
+    (root / "docs" / "guide.md").write_text("# 指南\n", encoding="utf-8")
+    (root / "docs" / "spec.md").write_text("# 规格\n", encoding="utf-8")
+    return root
