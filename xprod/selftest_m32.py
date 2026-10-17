@@ -55,10 +55,8 @@ from .selftest_kit import (
     number_independence_regression,
     ARG_EXEMPT as _ARG_EXEMPT,
     ARGV_MARK as _ARGV_MARK,
+    KIT_NAME as _KIT,
 )
-
-# 宿主文件名（唯一实现所在）
-_KIT = "selftest_kit.py"
 
 # 待查特征串**分段拼接**（见模块 docstring 的「自指防护」）：拼出的结果不在本文件源码中字面出现
 _A_PUB = "ARGV" + "_MARK"                 # 公共常量名（⑧ 的特征串）

@@ -61,14 +61,14 @@ from .selftest_kit import (
     run_module as _run_module,
     ARG_EXEMPT as _ARG_EXEMPT,
     ARGV_MARK as _ARGV_MARK,
+    KIT_NAME as _KIT,
+    DEF_PREFIX as _D,
 )
 
-# 宿主文件名（唯一实现所在）与本文件名（③ 的登记项计数须排除自身）
-_KIT = "selftest_kit.py"
+# 本文件名（③ 的登记项计数须排除自身）；宿主文件名 / 定义前缀已收归 `selftest_kit.py` 唯一实现（M33）
 _SELF = "selftest_m30.py"
 
 # 待查特征串**分段拼接**（见模块 docstring 的「自指防护」）：拼出的结果不在本文件源码中字面出现
-_D = "def "
 _UND = "_"
 _RE_SRC = r'r"^(?P<ok>\d+)/(?P<total>\d+) passed$"'
 
@@ -121,6 +121,7 @@ _REGISTERED = (
             "selftest_m29.py": 1,
             "selftest_m31.py": 1,
             "selftest_m32.py": 1,
+            "selftest_m33.py": 1,
         },
     ),
     (
@@ -134,12 +135,13 @@ _REGISTERED = (
             "selftest_m29.py": 1,
             "selftest_m31.py": 1,
             "selftest_m32.py": 1,
+            "selftest_m33.py": 1,
         },
     ),
     ("def _entry(", {}),
 )
 _MAIN_NEEDLE = "def main("
-_MAIN_TOTAL = 32        # 实测：本文件之外含 `def main(` 的文件数（31 个自测 + __main__.py；M32 新增 1 个自测）
+_MAIN_TOTAL = 33        # 实测：本文件之外含 `def main(` 的文件数（M33 新增 1 个自测；此前 M32 实测为 32）
 
 # ② 多组输入：含全绿 / 零比零 / 未全绿 / 非 `N/N` 形状 / 空串 / 前后空白（参照公式不依赖正则，独立推导）
 _TAILS = (

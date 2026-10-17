@@ -46,11 +46,10 @@ from pathlib import Path
 from . import drift, flow, impact_analyzer, scanscope, sync, viewer
 from . import selftest_kit
 from . import selftest_m1, selftest_m21
-from .selftest_kit import PKG_DIR, assert_regression as _assert_regression, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK
+from .selftest_kit import PKG_DIR, assert_regression as _assert_regression, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK, KIT_NAME as _KIT
 
-# 定义源文件名（唯一实现所在）与宿主文件名
+# 定义源文件名（唯一实现所在）；宿主文件名已收归 `selftest_kit.py` 唯一实现（M33），经 M33 别名绑定导入
 _SCANSCOPE = "scanscope.py"
-_KIT = "selftest_kit.py"
 
 # 待查特征串**分段拼接**（见模块 docstring 的「自指防护」）：拼出的结果不在本文件源码中字面出现
 _PKG_LITERAL = "Path(__file__).resolve()" + ".parent"   # 包定位写法（① / ③）

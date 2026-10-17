@@ -33,9 +33,8 @@ from pathlib import Path
 
 from . import scanscope
 from . import selftest_kit
-from .selftest_kit import dir_digest as _dir_digest, last_line as _last_line, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK
-
-_KIT = "selftest_kit.py"
+from .selftest_kit import dir_digest as _dir_digest, last_line as _last_line, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK, KIT_NAME as _KIT
+# 宿主文件名已收归 `selftest_kit.py` 唯一实现（M33），经 M33 别名绑定导入
 
 # 非叶子模块（= 含「回归遍历」者，M25 设计稿 §一 实测恰 9 个）
 _NONLEAF = (

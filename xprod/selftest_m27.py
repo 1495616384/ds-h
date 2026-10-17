@@ -47,13 +47,9 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, add_core_file as _with_core, assert_regression as _assert_regression, capture_raises as _capture, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression, records_identity_keys as _keys, write_text_at as _write, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK
-
-# 宿主文件名（唯一实现所在）
-_KIT = "selftest_kit.py"
+from .selftest_kit import PKG_DIR, add_core_file as _with_core, assert_regression as _assert_regression, capture_raises as _capture, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression, records_identity_keys as _keys, write_text_at as _write, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK, KIT_NAME as _KIT, DEF_PREFIX as _D
 
 # 待查特征串**分段拼接**（见模块 docstring 的「自指防护」）：拼出的结果不在本文件源码中字面出现
-_D = "def "
 _SIG_PUBLIC = (
     _D + "diff_one_file(path: str, old: str, new: str) -> str:",
     _D + "write_text_at(td: Path, name: str, text: str) -> Path:",

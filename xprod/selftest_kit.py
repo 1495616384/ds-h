@@ -363,3 +363,10 @@ def number_independence_regression(
 # 故宿主自身不会被 ⑧ 算成「需要命令行代码根」的模块。
 ARGV_MARK = "sys" + ".argv"                          # 「取命令行参数」的特征串（⑧ 的输入）
 ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")    # 允许（且仅允许）需要命令行代码根的自测
+
+
+# ===== M33：「宿主文件名 / 定义前缀」两件字面量的唯一实现（2026-10-18 追加） =====
+# 背景见《X产品化-M33设计稿-v1.md》§一：该字面量共 15 处定义、且连本地名都不统一
+# （`_KIT` ×8 + `_KIT_NAME` ×1；`_D` ×5 + `_DEF_PREFIX` ×1），无唯一归属。
+KIT_NAME = "selftest_kit.py"     # 自测脚手架宿主文件名（唯一实现所在）
+DEF_PREFIX = "def "              # 「顶层函数定义」在源码里的起始字面量（待查特征串的前缀）

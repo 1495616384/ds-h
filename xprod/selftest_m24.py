@@ -43,14 +43,12 @@ from pathlib import Path
 
 from . import __version__, drift, flow, impact_analyzer, scanscope, sync, viewer
 from . import selftest_kit
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture, assert_regression as _assert_regression, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture, assert_regression as _assert_regression, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK, KIT_NAME as _KIT_NAME, DEF_PREFIX as _DEF_PREFIX
 
 
-# 共享宿主文件名（唯一实现所在）
-_KIT_NAME = "selftest_kit.py"
+# 共享宿主文件名 / 定义前缀已收归 `selftest_kit.py` 唯一实现（M33），经 M33 别名绑定导入
 
 # 特征串**分段拼接**（见模块 docstring 的「自指防护」）：拼出的结果不在本文件源码中字面出现
-_DEF_PREFIX = "def "
 _SCAFFOLD_NAMES = ("_cli", "_run_module", "_last_line", "_dir_digest", "_tree_digest")
 _OLD_DEF_NEEDLES = tuple(f"{_DEF_PREFIX}{n}(" for n in _SCAFFOLD_NAMES)
 _SUB_RUN = "subprocess" + ".run("
