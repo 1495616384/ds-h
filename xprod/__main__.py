@@ -16,6 +16,8 @@ M12 追加 `flow`——业务流 / 数据流影响图：给定流程文档与代
 M13 扩展 `view`——可选 `--flow <flow-doc.md>`（配合可选 `--diff`）：流程影响面与既有段汇成同一张页面。
 M14 扩展 `conflict`——可选 `--flow <flow-doc.md>`：在文件 / 条目层之上追加**流程层**冲突
 （流程面逐改动取自 `flow.analyze`；流程层判定**不并入**顶层 `verdict`）。
+M35 扩展 `view`——可选 `--plan <plan.json>`（**依赖** `--flow`）：把 M7/M14 的分工计划冲突
+（文件/条目层 + 流程层）接入可视面；冲突段结果**原样**取自 `conflict.analyze_plan`（不裁剪、不重算）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -35,7 +37,7 @@ USAGE = (
     "       python -m xprod guard push [--repo <dir>] [--git <path>] [--remote <name>] [--branch <name>] [--text]\n"
     "       python -m xprod conflict <plan.json> <code-root> <design-doc> [--flow <flow-doc.md>] [--text]\n"
     "       python -m xprod drift <code-root> <design-doc> [--text]\n"
-    "       python -m xprod view <code-root> <design-doc> [--baseline <snap.json>] [--flow <flow-doc.md>] [--diff <diff-file>]\n"
+    "       python -m xprod view <code-root> <design-doc> [--baseline <snap.json>] [--flow <flow-doc.md>] [--diff <diff-file>] [--plan <plan.json>]\n"
     "       python -m xprod sync <code-root> <design-doc> [--save <snap.json>|--compare <snap.json>] [--text]\n"
     "       python -m xprod flow <flow-doc.md> <code-root> [--diff <diff-file>] [--text]"
 )
@@ -249,7 +251,7 @@ def main(argv: list[str] | None = None) -> int:
         _write_bytes(text)
         return 0
     if args and args[0] == "view":
-        from . import drift, flow, graph_builder, impact_analyzer, parser, sync, viewer
+        from . import conflict, drift, flow, graph_builder, impact_analyzer, parser, sync, viewer
 
         rest = args[1:]
         missing = False
@@ -270,14 +272,22 @@ def main(argv: list[str] | None = None) -> int:
         baseline_path = take("--baseline")
         flow_path = take("--flow")
         diff_path = take("--diff")
+        plan_path = take("--plan")
         # `--diff` 依附于 `--flow`：给了 `--diff` 却没给 `--flow` 属用法错误，不静默丢弃
-        if len(rest) != 2 or missing or (diff_path is not None and flow_path is None):
+        # M35：`--plan` 也依附于 `--flow`（流程层冲突需要流程文档）
+        if (
+            len(rest) != 2
+            or missing
+            or (diff_path is not None and flow_path is None)
+            or (plan_path is not None and flow_path is None)
+        ):
             print(USAGE, file=sys.stderr)
             return 2
         try:
             baseline = sync.load_snapshot(baseline_path) if baseline_path is not None else None
-            doc = viewer.analyze(rest[0], rest[1], baseline, flow_path, diff_path)
+            doc = viewer.analyze(rest[0], rest[1], baseline, flow_path, diff_path, plan_path)
         except (
+            conflict.ConflictError,
             drift.DriftError,
             flow.FlowError,
             graph_builder.GraphError,

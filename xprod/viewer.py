@@ -24,6 +24,12 @@ M13 扩展：把 M12 的流程影响面接入可视面——可选 `flow_doc` / 
 「未给流程文档时页面一字节未变」这条不变量就会失效；故流程段的判定配色复用既有类名
 （`clear` → `ok`、`impacted` → `drift`）。
 
+M35 扩展：把 M7/M14 的**分工计划冲突**接入可视面——可选 `plan_file`；给了就在流程段之后追加
+「分工计划冲突」段（**文件/条目层 + 流程层两层并列**，判定与各清单**一律取自** `conflict.analyze_plan`，
+本模块**不重算、不裁剪**）。兑现《X产品化-M14设计稿-v1.md》§七 第 6 条登记的遗留缺口
+（「流程层冲突接入可视面」）。同样**`_CSS` 一行不加**：冲突段的判定配色复用既有类名
+（`clear` → `ok`、`conflict` → `drift`）。**无 `plan_file` 时页面逐字节不变**（冲突段不出现）。
+
 隔离约定：本模块**不写死**任何冻结链路径；代码根 / 设计文档一律由调用方传入
 （由 M0 自测第三条校验本包源码不含冻结链目录名）。仅依赖 Python 标准库。
 """
@@ -32,7 +38,7 @@ from __future__ import annotations
 
 import html
 
-from . import drift, flow, graph_builder, parser, sync
+from . import conflict, drift, flow, graph_builder, parser, sync
 
 # 证据在可视面上的三种状态：与 `drift` **同源**（直接取 `drift.STATUS_*`），此处只作标签用途，
 # 不再各持一份字面量——可视面是「呈现层」，三态口径只能有一个源头。
@@ -96,14 +102,18 @@ def analyze(
     baseline: dict | None = None,
     flow_doc: str | None = None,
     diff_file: str | None = None,
+    plan_file: str | None = None,
 ) -> dict:
-    """汇总条目 / 锚活性 / 盲区 / 依赖图（+ 可选同步增量、可选流程影响面），返回键序固定、可逐字节复现的文档。
+    """汇总条目 / 锚活性 / 盲区 / 依赖图（+ 可选同步增量、可选流程影响面、可选分工计划冲突），返回键序固定、可逐字节复现的文档。
 
     对同一批次数据只取一次：`drift` 负责锚活性与盲区，`graph_builder` 负责依赖图，
     本函数只做**汇合**，不改写任何一方的取值。给了 `baseline` 时，增量段经
     `sync.snapshot_from_drift` 由**同一份** `drift` 结果构造，不再重复采集。
     给了 `flow_doc` 时，流程段经 `flow.analyze`**只跑一次**得到，其返回文档**原样**放入
     `doc["flow"]`（不裁剪、不改写、不重算）——这样呈现段就没有第二份判定实现的可能。
+    M35：给了 `plan_file` 时，冲突段经 `conflict.analyze_plan`**只跑一次**得到，其返回文档
+    **原样**放入 `doc["conflict"]`（不裁剪、不改写、不重算）——文件/条目层与流程层**并列**呈现，
+    呈现层不会再造一份「过滤口径」。`plan_file` 依赖 `flow_doc`（流程层冲突需要流程文档，由 CLI 校验）。
     M17：`design` 与 `drift_doc` 由**同一份** `drift.prepare(...)` 中间体供给
     （`design = prepared["design"]`），同一份设计文档只解析**一次**——条目区与锚活性区**必定同源**，
     不可能再因两次解析而分叉。`graph` 仍单独取一次：`drift.scan_tree` 枚举的是**文件/目录存在性**、
@@ -140,6 +150,11 @@ def analyze(
     )
     doc["flow"] = (
         flow.analyze(flow_doc, code_root, diff_file) if flow_doc is not None else None
+    )
+    doc["conflict"] = (
+        conflict.analyze_plan(plan_file, code_root, design_doc, flow_doc)
+        if plan_file is not None
+        else None
     )
     return doc
 
@@ -304,6 +319,91 @@ def _render_flow(flowdoc: dict) -> list[str]:
     return lines
 
 
+def _render_conflict(conflictdoc: dict) -> list[str]:
+    """分工计划冲突段（M35）：文件/条目层与流程层**并列**呈现，判定与各清单**一律取自**
+    `conflict.analyze_plan` 的返回文档，此处只做呈现。
+
+    本段**不**重算任何一处（`verdict`、各计数、各清单直接读 `conflict` 已算好的值），
+    也**不**二次排序（沿用 `conflict` 的确定性顺序）；**不**裁剪文档（两层都画），
+    避免在呈现层再造一份「过滤口径」——与 M13 流程段「返回文档原样放入」同口径。
+    配色复用既有类名：`clear` → `ok`、`conflict` → `drift`（**不**新增 CSS，见模块 docstring）。
+    """
+    cls = "ok" if conflictdoc["verdict"] == "clear" else "drift"
+    plan_id = conflictdoc["plan_id"]
+    plan_label = _ev(plan_id) if plan_id is not None else "（未命名）"
+    lines = [
+        '<section id="conflict">',
+        f"<h2>分工计划冲突（计划 {plan_label}）</h2>",
+        f'<p class="verdict {cls}">判定：{_ev(conflictdoc["verdict"])}</p>',
+        "<ul>",
+        f"<li>改动数：{conflictdoc['changeset_count']}</li>",
+        f"<li>冲突对：{conflictdoc['conflict_count']}</li>",
+    ]
+    flow_conflict = conflictdoc.get("flow_conflict")
+    if flow_conflict is not None:
+        lines.append(f"<li>流程层冲突对：{flow_conflict['conflict_count']}</li>")
+    else:
+        lines.append("<li>流程层冲突对：未提供</li>")
+    lines.append("</ul>")
+
+    lines.append("<h3>改动清单</h3>")
+    for s in conflictdoc["changesets"]:
+        lines.append(
+            f'<details><summary><span class="cid">{_ev(s["id"])}</span> '
+            f"files {s['changed_file_count']}, entries {s['entry_count']}</summary>"
+        )
+        lines.append("<ul>")
+        for path in s["changed_files"]:
+            lines.append(f'<li class="kv">file  {_ev(path)}</li>')
+        for cid in s["entries"]:
+            lines.append(f'<li class="kv">entry {_ev(cid)}</li>')
+        lines.extend(["</ul>", "</details>"])
+
+    lines.append("<h3>冲突对</h3>")
+    for c in conflictdoc["conflicts"]:
+        lines.append(
+            f'<details><summary>{_ev(c["left"])} &lt;&gt; {_ev(c["right"])} '
+            f'<span class="muted">kinds {_ev(",".join(c["kinds"]))}</span></summary>'
+        )
+        lines.append("<ul>")
+        for path in c["shared_files"]:
+            lines.append(f'<li class="kv">shared file  {_ev(path)}</li>')
+        for cid in c["shared_entries"]:
+            lines.append(f'<li class="kv">shared entry {_ev(cid)}</li>')
+        lines.extend(["</ul>", "</details>"])
+
+    if flow_conflict is not None:
+        lines.append("<h3>流程层（流程层冲突）</h3>")
+        for r in conflictdoc["flow_of_changesets"]:
+            lines.append(
+                f'<details><summary><span class="cid">{_ev(r["id"])}</span> '
+                f"direct {len(r['direct_steps'])}, affected {len(r['affected_steps'])}</summary>"
+            )
+            lines.append("<ul>")
+            for d in r["direct_steps"]:
+                lines.append(f'<li class="kv">direct   {_ev(d["flow_id"])}/{_ev(d["step_id"])}</li>')
+            for a in r["affected_steps"]:
+                lines.append(f'<li class="kv">affected {_ev(a["flow_id"])}/{_ev(a["step_id"])}</li>')
+            lines.extend(["</ul>", "</details>"])
+        for c in flow_conflict["conflicts"]:
+            lines.append(
+                f'<details><summary>{_ev(c["left"])} &lt;&gt; {_ev(c["right"])} '
+                f'<span class="muted">kinds {_ev(",".join(c["kinds"]))}</span></summary>'
+            )
+            lines.append("<ul>")
+            for s in c["shared_steps"]:
+                lines.append(f'<li class="kv">shared step  {_ev(s["flow_id"])}/{_ev(s["step_id"])}</li>')
+            for fid in c["shared_flows"]:
+                lines.append(f'<li class="kv">shared flow  {_ev(fid)}</li>')
+            lines.extend(["</ul>", "</details>"])
+        cls_flow = "ok" if flow_conflict["verdict"] == "clear" else "drift"
+        lines.append(f'<p class="verdict {cls_flow}">流程层判定：{_ev(flow_conflict["verdict"])}</p>')
+        lines.append(f'<p class="muted">{_ev(flow_conflict["note"])}</p>')
+
+    lines.append("</section>")
+    return lines
+
+
 def render_html(doc: dict) -> str:
     """把合成文档渲染为单个自包含 HTML（末尾单换行；逐字节可断言）。"""
     index = _status_index(
@@ -346,6 +446,8 @@ def render_html(doc: dict) -> str:
         lines.extend(_render_sync(doc["sync"]))
     if doc.get("flow") is not None:
         lines.extend(_render_flow(doc["flow"]))
+    if doc.get("conflict") is not None:
+        lines.extend(_render_conflict(doc["conflict"]))
     lines.append('<section id="entries">')
     lines.append("<h2>条目与锚</h2>")
     for entry in doc["entries"]:

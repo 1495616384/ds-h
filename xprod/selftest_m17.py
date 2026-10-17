@@ -161,6 +161,10 @@ def _legacy_viewer_doc(root: Path, design_path: Path) -> dict:
     }
     doc["sync"] = None
     doc["flow"] = None
+    # M35：可视面新增**可选**「冲突段」键（未给 `--plan` 时为 None）。对照基线必须同样带上该键，
+    # 否则本项⑩比对的是**结构不同的两份文档**，而不是「同一份产物由几条采集路径得到」——
+    # 该键在两条路径下同为 None，故本项要断言的「产物逐字段相同」原样成立。
+    doc["conflict"] = None
     return doc
 
 

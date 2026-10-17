@@ -103,6 +103,7 @@ _CONSUMERS_2 = (
     "selftest_m32.py",
     "selftest_m33.py",
     "selftest_m34.py",
+    "selftest_m35.py",
 )
 _CONSUMERS_3 = (
     "selftest_m23.py",
@@ -116,6 +117,7 @@ _CONSUMERS_3 = (
     "selftest_m32.py",
     "selftest_m33.py",
     "selftest_m34.py",
+    "selftest_m35.py",
 )
 _CONSUMERS_5 = ("selftest_m10.py", "selftest_m11.py")
 _KEPT_1 = ("selftest_m21.py", "selftest_m22.py", "selftest_m23.py")
@@ -134,6 +136,7 @@ _SPELLING_3 = {
     "selftest_m32.py": _A_PUBLIC,
     "selftest_m33.py": _A_PUBLIC,
     "selftest_m34.py": _A_PUBLIC,
+    "selftest_m35.py": _A_PUBLIC,
 }
 _UNPARSED_2 = f"{_NIR}(_REGRESSION, _ARGV_MARK, _ARG_EXEMPT)"
 _UNPARSED_EXTRA = f"{_A_LOCAL}(_REGRESSION_EXTRA)"
