@@ -47,7 +47,7 @@ import tempfile
 from pathlib import Path
 
 from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
-from .selftest_kit import PKG_DIR, add_core_file as _with_core, assert_regression as _assert_regression, capture_raises as _capture, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression, records_identity_keys as _keys, write_text_at as _write
+from .selftest_kit import PKG_DIR, add_core_file as _with_core, assert_regression as _assert_regression, capture_raises as _capture, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression, records_identity_keys as _keys, write_text_at as _write, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK
 
 # 宿主文件名（唯一实现所在）
 _KIT = "selftest_kit.py"
@@ -76,8 +76,7 @@ _BIND = (
     ("_with_core", "add_core_file"),
     ("_keys", "records_identity_keys"),
 )
-_ARGV_MARK = "sys" + ".argv"          # 「取命令行参数」特征串（⑧）
-_ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
+# ⑧ 的输入常量（`_ARGV_MARK` / `_ARG_EXEMPT`）已收归 `selftest_kit.py` 唯一实现（M32），经 M32 别名绑定导入
 
 # 多组输入：含普通 / 非 ASCII / 首尾空白（用于 ② 的「不裁剪」断言）
 _DIFF_INPUTS = (

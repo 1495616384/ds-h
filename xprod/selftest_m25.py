@@ -33,7 +33,7 @@ from pathlib import Path
 
 from . import scanscope
 from . import selftest_kit
-from .selftest_kit import dir_digest as _dir_digest, last_line as _last_line
+from .selftest_kit import dir_digest as _dir_digest, last_line as _last_line, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK
 
 _KIT = "selftest_kit.py"
 
@@ -60,8 +60,7 @@ _RUN_PUBLIC = "run" + "_module"          # 宿主公开名
 _ASSERT_ALIAS = "_assert" + "_regression"
 _ASSERT_PUBLIC = "assert" + "_regression"
 _LAUNCH_MARKS = frozenset({_RUN_ALIAS, _RUN_PUBLIC, _ASSERT_ALIAS, _ASSERT_PUBLIC})
-_ARGV_MARK = "sys" + ".argv"             # 「取命令行参数」的特征串
-_ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
+# ⑧ 的输入常量已收归 `selftest_kit.py` 唯一实现（M32），经 M32 别名绑定导入
 
 # 基线（`exec_cost.py` 静态模型实测：cost(selftest_m24)=1062）与扁平化后的**实测上界**
 # ④ 的绝对阈值：按设计稿「以实测取整写入、只降不升」——`m25_measure` 实测 29

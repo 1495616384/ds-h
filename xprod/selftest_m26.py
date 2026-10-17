@@ -46,7 +46,7 @@ from pathlib import Path
 from . import drift, flow, impact_analyzer, scanscope, sync, viewer
 from . import selftest_kit
 from . import selftest_m1, selftest_m21
-from .selftest_kit import PKG_DIR, assert_regression as _assert_regression, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression
+from .selftest_kit import PKG_DIR, assert_regression as _assert_regression, cli as _cli, diff_one_file as _diff, dir_digest as _dir_digest, make_fixture as _fixture, make_min_root as _make_root, number_independence_regression, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK
 
 # 定义源文件名（唯一实现所在）与宿主文件名
 _SCANSCOPE = "scanscope.py"
@@ -55,8 +55,7 @@ _KIT = "selftest_kit.py"
 # 待查特征串**分段拼接**（见模块 docstring 的「自指防护」）：拼出的结果不在本文件源码中字面出现
 _PKG_LITERAL = "Path(__file__).resolve()" + ".parent"   # 包定位写法（① / ③）
 _OLD_ASSIGN = "PKG_DIR = Path" + "("                     # 本地定义写法（③）
-_ARGV_MARK = "sys" + ".argv"                             # 「取命令行参数」特征串（⑧）
-_ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
+# ⑧ 的输入常量已收归 `selftest_kit.py` 唯一实现（M32），经 M32 别名绑定导入
 
 # 消费文件 = 自测模块中**已收口**的全部（排除宿主 `selftest_kit`；**动态推导**，不写死文件数——
 # 若写死「恰 24」则本里程碑自身新增 `selftest_m27.py` 就会把它顶红，见设计稿 §五.3）

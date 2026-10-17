@@ -355,3 +355,11 @@ def number_independence_regression(
         tail = last_line(out)
         assert rc == 0 and tail == want, \
             f"{mod} 逆序应全绿（{want}，与 ⑦ 正序一致），实际 rc={rc} tail={tail!r} stderr={err[-200:]!r}"
+
+
+# ===== M32：⑧「编号无关性」输入常量的唯一实现（2026-10-18 追加） =====
+# 背景见《X产品化-M32设计稿-v1.md》§一：两件常量在 8 个自测文件里各写一遍、无唯一归属。
+# `ARGV_MARK` 仍**分段拼接**（见「自指防护」）：本文件源码中**不**字面出现该特征串，
+# 故宿主自身不会被 ⑧ 算成「需要命令行代码根」的模块。
+ARGV_MARK = "sys" + ".argv"                          # 「取命令行参数」的特征串（⑧ 的输入）
+ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")    # 允许（且仅允许）需要命令行代码根的自测

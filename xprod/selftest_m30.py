@@ -59,6 +59,8 @@ from .selftest_kit import (
     make_fixture,
     number_independence_regression,
     run_module as _run_module,
+    ARG_EXEMPT as _ARG_EXEMPT,
+    ARGV_MARK as _ARGV_MARK,
 )
 
 # 宿主文件名（唯一实现所在）与本文件名（③ 的登记项计数须排除自身）
@@ -118,6 +120,7 @@ _REGISTERED = (
             "selftest_m28.py": 1,
             "selftest_m29.py": 1,
             "selftest_m31.py": 1,
+            "selftest_m32.py": 1,
         },
     ),
     (
@@ -130,12 +133,13 @@ _REGISTERED = (
             "selftest_m28.py": 1,
             "selftest_m29.py": 1,
             "selftest_m31.py": 1,
+            "selftest_m32.py": 1,
         },
     ),
     ("def _entry(", {}),
 )
 _MAIN_NEEDLE = "def main("
-_MAIN_TOTAL = 31        # 实测：本文件之外含 `def main(` 的文件数（30 个自测 + __main__.py；M31 新增 1 个自测）
+_MAIN_TOTAL = 32        # 实测：本文件之外含 `def main(` 的文件数（31 个自测 + __main__.py；M32 新增 1 个自测）
 
 # ② 多组输入：含全绿 / 零比零 / 未全绿 / 非 `N/N` 形状 / 空串 / 前后空白（参照公式不依赖正则，独立推导）
 _TAILS = (
@@ -152,8 +156,7 @@ _TAILS = (
     "٣/٣ passed",     # 阿拉伯-印度数字：`\\d` 亦命中，参照公式须一致
 )
 
-_ARGV_MARK = "sys" + ".argv"          # 「取命令行参数」特征串（⑧）
-_ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
+# ⑧ 的输入常量（`_ARGV_MARK` / `_ARG_EXEMPT`）已收归 `selftest_kit.py` 唯一实现（M32），经 M32 别名绑定导入
 
 # ⑤ / ⑥ 用的夹具数据（本模块自己的三份；与收口前的自测同形，仅题头不同）
 _DESIGN = (

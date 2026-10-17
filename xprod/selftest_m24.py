@@ -43,7 +43,7 @@ from pathlib import Path
 
 from . import __version__, drift, flow, impact_analyzer, scanscope, sync, viewer
 from . import selftest_kit
-from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture, assert_regression as _assert_regression
+from .selftest_kit import PKG_DIR, cli as _cli, dir_digest as _dir_digest, last_line as _last_line, run_module as _run_module, diff_one_file as _diff, make_min_root as _make_root, make_fixture as _fixture, assert_regression as _assert_regression, ARG_EXEMPT as _ARG_EXEMPT, ARGV_MARK as _ARGV_MARK
 
 
 # 共享宿主文件名（唯一实现所在）
@@ -57,9 +57,7 @@ _SUB_RUN = "subprocess" + ".run("
 # 真正「模块级导入」的正则：**行首锚定**（`^\s*`），避免把桩脚本字符串里的同名片段误判为导入
 _SUB_IMP_RE = re.compile(r"^\s*" + "import " + r"subprocess\b", re.M)
 _SYS_IMP_RE = re.compile(r"^\s*" + "import " + r"sys\b", re.M)
-_ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
-# 「取命令行参数」的特征串，同样**分段拼接**（见「自指防护」）：避免本文件自身被 ⑧ 算成需要代码根的模块
-_ARGV_MARK = "sys" + ".argv"
+# ⑧ 的输入常量（`_ARGV_MARK` / `_ARG_EXEMPT`）已收归 `selftest_kit.py` 唯一实现（M32），经 M32 别名绑定导入
 
 # 版本文本路径参照公式：CLI `--version` 经 `print`（文本流，默认换行翻译）→ `\n` 在
 # 子进程文本流中被译成 `os.linesep`（本机 Windows 为 `\r\n`），故字节参照须做同构替换。

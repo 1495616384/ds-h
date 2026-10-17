@@ -52,6 +52,8 @@ from .selftest_kit import (
     make_fixture,
     make_min_root as _make_root,
     number_independence_regression,
+    ARG_EXEMPT as _ARG_EXEMPT,
+    ARGV_MARK as _ARGV_MARK,
 )
 
 # 宿主文件名（唯一实现所在）
@@ -133,8 +135,7 @@ _CHANGES = (
     ("B", "src/app/core.py", "X = 2\n"),
 )
 
-_ARGV_MARK = "sys" + ".argv"          # 「取命令行参数」特征串（⑧）
-_ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
+# ⑧ 的输入常量（`_ARGV_MARK` / `_ARG_EXEMPT`）已收归 `selftest_kit.py` 唯一实现（M32），经 M32 别名绑定导入
 
 
 # --- ②/④ 用的独立参照公式（**写死**在自测里，与共享实现逐字节对照）-------------------

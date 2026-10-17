@@ -60,6 +60,8 @@ from .selftest_kit import (
     entry,
     make_fixture as _fixture,
     number_independence_regression,
+    ARG_EXEMPT as _ARG_EXEMPT,
+    ARGV_MARK as _ARGV_MARK,
 )
 
 _KIT = "selftest_kit.py"
@@ -99,6 +101,7 @@ _CONSUMERS_2 = (
     "selftest_m29.py",
     "selftest_m30.py",
     "selftest_m31.py",
+    "selftest_m32.py",
 )
 _CONSUMERS_3 = (
     "selftest_m23.py",
@@ -109,6 +112,7 @@ _CONSUMERS_3 = (
     "selftest_m29.py",
     "selftest_m30.py",
     "selftest_m31.py",
+    "selftest_m32.py",
 )
 _CONSUMERS_5 = ("selftest_m10.py", "selftest_m11.py")
 _KEPT_1 = ("selftest_m21.py", "selftest_m22.py", "selftest_m23.py")
@@ -124,6 +128,7 @@ _SPELLING_3 = {
     "selftest_m29.py": _A_LOCAL,
     "selftest_m30.py": _A_PUBLIC,
     "selftest_m31.py": _A_PUBLIC,
+    "selftest_m32.py": _A_PUBLIC,
 }
 _UNPARSED_2 = f"{_NIR}(_REGRESSION, _ARGV_MARK, _ARG_EXEMPT)"
 _UNPARSED_EXTRA = f"{_A_LOCAL}(_REGRESSION_EXTRA)"
@@ -136,8 +141,7 @@ _REGISTERED = (
     ("_" + _ENTRY, {}),      # 本地渲染名已被收口为宿主唯一实现，故定义处数**应为 0**（真值更新，非放宽）
 )
 
-_ARGV_MARK = "sys" + ".argv"          # 「取命令行参数」特征串（⑧；分段构造，避免本文件被算成需代码根者）
-_ARG_EXEMPT = ("selftest_m2.py", "selftest_m3.py")
+# ⑧ 的输入常量（`_ARGV_MARK` / `_ARG_EXEMPT`）已收归 `selftest_kit.py` 唯一实现（M32），经 M32 别名绑定导入
 
 
 # --- ② 用的独立参照公式（**写死**在自测里，与共享实现逐字对照）-------------------------
