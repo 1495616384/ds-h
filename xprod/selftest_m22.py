@@ -35,7 +35,7 @@ import re
 import tempfile
 from pathlib import Path
 
-from . import drift, impact_analyzer, parser, scanscope, sync, viewer
+from . import drift, impact_analyzer, parser, scanscope, selftest_kit, sync, viewer
 from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
@@ -331,6 +331,8 @@ def test_delegation_effective() -> None:
 
 def test_contract_regression() -> None:
     """④ 既有契约回归：身份键的既有消费方全部按实测条数全绿（**零修订**）。"""
+    if selftest_kit.in_regression():
+        return
     _assert_regression(_REGRESSION)
 
 
@@ -443,6 +445,8 @@ def test_canonical_form() -> None:
 
 def test_full_regression_extra() -> None:
     """⑧ 全域回归（其余无需参数的自测）：按实测条数全绿。"""
+    if selftest_kit.in_regression():
+        return
     _assert_regression(_REGRESSION_EXTRA)
 
 

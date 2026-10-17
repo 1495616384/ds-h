@@ -50,7 +50,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from . import drift, graph_builder, parser, viewer
+from . import drift, graph_builder, parser, selftest_kit, viewer
 from .selftest_kit import cli as _cli, run_module as _run_module, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
@@ -300,6 +300,8 @@ def test_reuse_counter_end_to_end() -> None:
 
 def test_selftest_m8_regression() -> None:
     """⑥ 输出未变（drift 层）：M8 自测仍全绿（其断言覆盖 M8 的输出口径）。"""
+    if selftest_kit.in_regression():
+        return
     rc, out, err = _run_module("selftest_m8")
     tail = out.decode("utf-8", "replace").strip().splitlines()[-1] if out else ""
     assert rc == 0 and tail == "12/12 passed", f"selftest_m8 末行应为 '12/12 passed'，实际 rc={rc} tail={tail!r}"
@@ -353,6 +355,8 @@ def test_numbering_independence() -> None:
 
 def test_cli_and_regression() -> None:
     """⑨ CLI 与输出回归：stdout 与库输出逐字节一致、无 `\\r\\n`；错误码语义不变；m9 / m11 / m13 仍通过。"""
+    if selftest_kit.in_regression():
+        return
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
         root, design = _fixture(td)

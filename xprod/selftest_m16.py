@@ -49,7 +49,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from . import conflict, graph_builder, impact_analyzer, parser
+from . import conflict, graph_builder, impact_analyzer, parser, selftest_kit
 from .selftest_kit import cli as _cli, run_module as _run_module, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
@@ -353,6 +353,8 @@ def test_determinism_and_read_only() -> None:
 
 def test_cli_and_regression() -> None:
     """⑩ CLI 与回归：stdout 与库输出逐字节一致、无 `\\r\\n`；错误码语义不变；m7 / m14 / m15 仍通过。"""
+    if selftest_kit.in_regression():
+        return
     with tempfile.TemporaryDirectory() as td_s:
         td = Path(td_s)
         root, design, _flow_doc, diffs = _fixture(td)

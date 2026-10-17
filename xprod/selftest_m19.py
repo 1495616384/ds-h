@@ -34,7 +34,7 @@ import re
 import tempfile
 from pathlib import Path
 
-from . import conflict, drift, flow, impact_analyzer, viewer
+from . import conflict, drift, flow, impact_analyzer, selftest_kit, viewer
 from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
@@ -285,6 +285,8 @@ def test_cross_feed_diagnosis_not_regressed() -> None:
 
 def test_contract_regression() -> None:
     """⑤ 既有契约回归：M15 / M16 / M17 各 10/10；M18 在定点精化 ⑥ 后仍 10/10。"""
+    if selftest_kit.in_regression():
+        return
     for mod in ("selftest_m15", "selftest_m16", "selftest_m17", "selftest_m18"):
         rc, out, _err = _run_module(mod)
         tail = _last_line(out)

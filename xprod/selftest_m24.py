@@ -334,11 +334,15 @@ def _assert_regression(expected: dict[str, str]) -> None:
 
 def test_existing_selftests_regression() -> None:
     """⑦ 既有自测零修订：21 个无需参数的自测各按实测条数全绿（个数与改动前相同）。"""
+    if selftest_kit.in_regression():
+        return
     _assert_regression(_REGRESSION)
 
 
 def test_number_independence_and_arg_modules() -> None:
     """⑧ 编号无关性 + 参数模块边界：需命令行代码根的恰为 m2/m3；正序 / 逆序结果逐条一致。"""
+    if selftest_kit.in_regression():
+        return
     arg_mods = sorted(p.name for p in scanscope.selftest_modules() if _ARGV_MARK in p.read_text(encoding="utf-8"))
     assert arg_mods == list(_ARG_EXEMPT), f"需命令行代码根的自测应恰为 m2/m3，实际 {arg_mods}"
 

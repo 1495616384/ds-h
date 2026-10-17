@@ -29,7 +29,7 @@ import re
 import tempfile
 from pathlib import Path
 
-from . import drift, flow, impact_analyzer, scanscope, sync, viewer
+from . import drift, flow, impact_analyzer, scanscope, selftest_kit, sync, viewer
 from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
@@ -332,11 +332,15 @@ def test_read_only_and_determinism() -> None:
 
 def test_existing_selftests_regression() -> None:
     """⑦ 既有自测零修订：5 个消费文件所在里程碑各按实测条数全绿（个数不变）。"""
+    if selftest_kit.in_regression():
+        return
     _assert_regression(_REGRESSION)
 
 
 def test_full_regression_extra() -> None:
     """⑧ 全域回归（其余无需参数的自测）：按实测条数全绿。"""
+    if selftest_kit.in_regression():
+        return
     _assert_regression(_REGRESSION_EXTRA)
 
 

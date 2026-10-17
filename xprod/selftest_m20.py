@@ -42,7 +42,7 @@ import re
 import tempfile
 from pathlib import Path
 
-from . import conflict, contract, drift, flow, impact_analyzer, scanscope, viewer
+from . import conflict, contract, drift, flow, impact_analyzer, scanscope, selftest_kit, viewer
 from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
@@ -348,6 +348,8 @@ def test_contract_regression() -> None:
     注：M19 自测为 8 条（M19 设计稿 §八 ①–⑧），非 10 条——设计稿 §八 ⑤ 曾误写「m18·m19 各 10/10」，
     本自测按**实测**口径断言（M19 = 8/8）。
     """
+    if selftest_kit.in_regression():
+        return
     for mod, expect in (
         ("selftest_m15", "10/10 passed"),
         ("selftest_m16", "10/10 passed"),

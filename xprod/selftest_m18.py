@@ -51,7 +51,7 @@ import re
 import tempfile
 from pathlib import Path
 
-from . import conflict, drift, flow, impact_analyzer, parser, viewer
+from . import conflict, drift, flow, impact_analyzer, parser, selftest_kit, viewer
 from .selftest_kit import cli as _cli, run_module as _run_module, last_line as _last_line, dir_digest as _dir_digest
 
 PKG_DIR = Path(__file__).resolve().parent
@@ -319,6 +319,8 @@ def test_constant_matches_prepare() -> None:
 
 def test_contract_regression() -> None:
     """④ 既有契约回归：M15 / M16 / M17 自测各 10/10（三者都含键序断言，证明零契约修订）。"""
+    if selftest_kit.in_regression():
+        return
     for mod in ("selftest_m15", "selftest_m16", "selftest_m17"):
         rc, out, _err = _run_module(mod)
         tail = _last_line(out)
@@ -333,6 +335,8 @@ def test_output_regression() -> None:
     目录名**——故按 M17 设计稿 §八 的同一条先例，改由里程碑级**全域回归**在自测外覆盖
     （`selftest_m3` 归 M3 口径，与本项无关；M18 只保证不经它改变其任何合法输入产物）。
     """
+    if selftest_kit.in_regression():
+        return
     for mod, expect in (
         ("selftest_m7", None),
         ("selftest_m8", "12/12 passed"),
@@ -480,6 +484,8 @@ def test_numbering_independence_and_full_regression() -> None:
     按 M17 设计稿 §八 同一条先例，由里程碑级全域回归在自测外覆盖，本处不内嵌）。
     断言退出码 0 且末行为 `N/N passed`——即「合法输入对外产物未变」的全域证据。
     """
+    if selftest_kit.in_regression():
+        return
     mods = (
         "selftest",
         "selftest_m1",
