@@ -19,6 +19,12 @@ M31 把这两件收归 `selftest_kit.py` 的**唯一实现**（公共名 `number
   * 早退守卫**仍留消费端**（宿主**不**自持早退判定、也**不**读环境变量），故 `m25` 的
     「早退判定唯一归属」这一已固化不变量原样成立；③ 的两种调用拼写（本地名 / 公共名）**如实登记**。
 
+**M37 口径收窄（以实测为准；笔三回写设计稿 / 路线图）**：「逐字同构」的真值由「**整段源码（含 docstring）**」
+收窄为「**函数体（去 docstring）的原始源段**」——旧名 `_segment` 改名为新名 `_body_segment`（**改名而非同名
+换语义**，避免同名绑定掩盖口径演进）。**代码**仍按**口径 A（原始源段逐字节相同）**比较（强判据**原样保留**，
+未降级为 `ast.unparse`）；被**释放**的 **docstring** 改为**按模块登记真值**（`_DOC_TPL` / `_DOC_MARK` /
+`_DOC_EXTRA`），从此各模块可**各自写对本模块标号**；`m35` / `m36` 两处被旧判据**锁坏**的标号如实按各自真值校正。
+
 **自指防护**：本文件同样会被多份既有结构断言扫到，故所有待查特征串一律**分段拼接**构造
 （`_D + "_" + _ENTRY + "("`、`"reversed(list(_REG" + "RESSION))"` …），使本文件源码**不**字面出现
 这些特征串，避免把度量器自身算成假命中（与 M23 / M24 / M25 / M29 / M30 同法）。
@@ -31,7 +37,9 @@ M31 把这两件收归 `selftest_kit.py` 的**唯一实现**（公共名 `number
   ② **值等价 + 绑定同源**：`entry` 与**独立参照公式**逐字同值（多组输入含中文 / 空锚）；`HEAD` 为写死的
      四行常量；`m10`/`m11` 的绑定**就是**共享实现（同一对象）；
   ③ **薄包装形态 + 逐字同构**：②/③ 的体恰为「守卫 + 单条委派」（AST 证据，已无内联循环）；
-    ② 的 6 处、① 的 3 处**原始源段逐字相同**；③ 的两种调用拼写显式登记；
+    ② 的 12 处、① 的 3 处**函数体（去 docstring）的原始源段逐字节相同**（M37 口径收窄后）；
+    ③ 的两种调用拼写显式登记；docstring **不再**被逐字锁定，改为**按模块登记真值**（`_DOC_TPL` /
+    `_DOC_MARK` / `_DOC_EXTRA`）；
   ④ **消费点已无本地复刻 + 登记项真值**：`m10`/`m11` 不再自持渲染实现；各测试名的**定义处数**按新真值登记
     （按 AST 统计定义，不受源码内字符串字面量干扰）；
   ⑤ **CLI 与退出码回归**：`drift` / `sync` / `impact` / `flow` / `view` 正常路径 stdout 与库输出
@@ -87,6 +95,12 @@ _OLD_HEAD = "_HEAD" + " = ("
 _OLD_ITEMS = "_REG" + "RESSION.items()"        # ③ 收口前的内联循环写法（`for mod, want in …items()`）
 _OLD_REVERSE = "reversed(list(_REG" + "RESSION))"   # ② 收口前的内联逆序遍历写法
 
+# M37 口径收窄：新旧名（均**分段拼接**，避免度量器自身字面命中）与两个口径的取证调用
+_BODY_SEG = "_body" + "_segment"          # 收窄后的新名（口径 A：**函数体去 docstring**的原始源段）
+_OLD_SEG = "_" + "segment"                # 收窄前的旧名（应收窄后全仓**定义 0 处 / 引用 0 处**）
+_GET_SEG = "get_source" + "_segment"      # 口径 A 取证调用（`ast.get_source_segment`）
+_UNPARSE = "un" + "parse"                 # 口径 B（仅作形态证据，**不**作「逐字同构」判据）
+
 # ① 消费点「已引用共享实现」的特征串
 _NIR_CALL = _NIR + "("
 _ASSERT_CALL = _A_PUBLIC + "("
@@ -105,6 +119,7 @@ _CONSUMERS_2 = (
     "selftest_m34.py",
     "selftest_m35.py",
     "selftest_m36.py",
+    "selftest_m37.py",
 )
 _CONSUMERS_3 = (
     "selftest_m23.py",
@@ -120,11 +135,12 @@ _CONSUMERS_3 = (
     "selftest_m34.py",
     "selftest_m35.py",
     "selftest_m36.py",
+    "selftest_m37.py",
 )
 _CONSUMERS_5 = ("selftest_m10.py", "selftest_m11.py")
 _KEPT_1 = ("selftest_m21.py", "selftest_m22.py", "selftest_m23.py")
 
-# ③ 的**两种调用拼写**如实登记（`m23`–`m29` 用本地别名，`m30`/本文件用公共名）——
+# ③ 的**两种调用拼写**如实登记（`m23`–`m29` 用本地别名，`m30`–`m37` 用公共名）——
 # 登记而非「统一改写法」：两种拼写都只是同一份共享实现的引用，改写法会碰到 `m30` ④ 的同一对象断言。
 _SPELLING_3 = {
     "selftest_m23.py": _A_LOCAL,
@@ -140,6 +156,7 @@ _SPELLING_3 = {
     "selftest_m34.py": _A_PUBLIC,
     "selftest_m35.py": _A_PUBLIC,
     "selftest_m36.py": _A_PUBLIC,
+    "selftest_m37.py": _A_PUBLIC,
 }
 _UNPARSED_2 = f"{_NIR}(_REGRESSION, _ARGV_MARK, _ARG_EXEMPT)"
 _UNPARSED_EXTRA = f"{_A_LOCAL}(_REGRESSION_EXTRA)"
@@ -151,6 +168,17 @@ _REGISTERED = (
     (_EXIST, {name: 1 for name in _CONSUMERS_3}),
     ("_" + _ENTRY, {}),      # 本地渲染名已被收口为宿主唯一实现，故定义处数**应为 0**（真值更新，非放宽）
 )
+
+# ③（M37）docstring 的**按模块登记真值**：各处只有「两个标号」可不同，其余文字**逐字相同**；
+# 键集必须**恰等于** `_CONSUMERS_2`——docstring 由此从「被逐字锁定的字面」改为「按模块登记的受检查真值」。
+_DOC_TPL = "{own} 全域回归 + 编号无关性：逆序逐模块跑同一批自测仍全绿（与 {ref} 逐条一致）；需代码根者恰 m2/m3。"
+_DOC_MARK = {
+    "selftest_m26.py": ("⑧", "⑦"), "selftest_m27.py": ("⑧", "⑦"), "selftest_m28.py": ("⑧", "⑦"),
+    "selftest_m29.py": ("⑧", "⑦"), "selftest_m30.py": ("⑧", "⑦"), "selftest_m31.py": ("⑧", "⑦"),
+    "selftest_m32.py": ("⑧", "⑦"), "selftest_m33.py": ("⑧", "⑦"), "selftest_m34.py": ("⑧", "⑦"),
+    "selftest_m35.py": ("⑩", "⑨"), "selftest_m36.py": ("⑩", "⑨"), "selftest_m37.py": ("⑧", "⑦"),
+}
+_DOC_EXTRA = "⑧ 全域回归（其余无需参数的自测）：按实测条数全绿。"
 
 # ⑧ 的输入常量（`_ARGV_MARK` / `_ARG_EXEMPT`）已收归 `selftest_kit.py` 唯一实现（M32），经 M32 别名绑定导入
 
@@ -228,10 +256,36 @@ def _assert_wrapper(name: str, func: str, callee: str, unparsed: str) -> None:
         f"{name}.{func} 的委派实参应逐字为 {unparsed!r}，实际 {ast.unparse(step)!r}"
 
 
-def _segment(name: str, func: str) -> str:
-    """取某测试函数的**原始源段**（逐字节），用于「逐字同构」的等价判定。"""
+def _body_segment(name: str, func: str) -> str:
+    """取某测试函数的**函数体（去 docstring）的原始源段**（口径 A：逐字节），用于「逐字同构」的等价判定。
+
+    M37 口径收窄：真值由「整段源码（含 docstring）」收窄为「函数体」——**代码**仍按口径 A 比较，
+    被释放的 docstring 改由 `_DOC_TPL` / `_DOC_MARK` / `_DOC_EXTRA` 按模块登记并断言。
+    """
     src = (PKG_DIR / name).read_text(encoding="utf-8")
-    return ast.get_source_segment(src, _func_node(name, func)) or ""
+    body = _body_without_doc(_func_node(name, func))
+    return "\n".join(ast.get_source_segment(src, stmt) or "" for stmt in body)
+
+
+def _doc_of(name: str, func: str) -> str:
+    """取某测试函数的 **docstring 原文**（未清洗、逐字），用于「按模块登记真值」的比对（与 `_body_segment` 互补）。"""
+    return ast.get_docstring(_func_node(name, func), clean=False) or ""
+
+
+def _name_refs(name: str) -> dict[str, int]:
+    """按 AST 统计「标识符 `name`（`ast.Name` 或属性名）的引用」的文件 → 处数（不受源码内字符串字面量干扰）。"""
+    hits: dict[str, int] = {}
+    for p in scanscope.all_modules():
+        tree = ast.parse(p.read_text(encoding="utf-8"))
+        n = sum(
+            1
+            for node in ast.walk(tree)
+            if (isinstance(node, ast.Name) and node.id == name)
+            or (isinstance(node, ast.Attribute) and node.attr == name)
+        )
+        if n:
+            hits[p.name] = n
+    return hits
 
 
 def _def_files(func: str) -> dict[str, int]:
@@ -262,6 +316,20 @@ def test_unique_implementation() -> None:
     # （那是**登记项**，不是第二份实现）——按文本计数会把它误算成复刻（与 M30 的「全签名按定义计」同口径）
     entry_defs = _def_files("_" + _ENTRY)
     assert entry_defs == {}, f"本地渲染定义应全仓 0 处（按定义统计）：{entry_defs}"
+
+    # M37 口径收窄：旧名应收窄后全仓**定义 0 处 / 引用 0 处**。按 **AST** 统计而非文本计数——
+    # 新名 `_body_segment` 与旧名 `_segment` 有子串包含关系，文本计数会把新名误算成旧名命中。
+    old_defs = _def_files(_OLD_SEG)
+    assert old_defs == {}, f"收窄前旧名应全仓定义 0 处（按 AST）：{old_defs}"
+    old_refs = _name_refs(_OLD_SEG)
+    assert old_refs == {}, f"收窄前旧名应全仓引用 0 处（按 AST）：{old_refs}"
+
+    # 强判据未降级：`_body_segment` 体内**恰 1** 处口径 A（`ast.get_source_segment`）、**零**处口径 B（`ast.unparse`）
+    seg_node = _func_node("selftest_m31.py", _BODY_SEG)
+    n_a = sum(1 for n in ast.walk(seg_node) if isinstance(n, ast.Attribute) and n.attr == _GET_SEG)
+    n_b = sum(1 for n in ast.walk(seg_node) if isinstance(n, ast.Attribute) and n.attr == _UNPARSE)
+    assert (n_a, n_b) == (1, 0), \
+        f"`{_BODY_SEG}` 体内应恰 1 处口径 A（`{_GET_SEG}`）、0 处口径 B（`{_UNPARSE}`），实际 {(n_a, n_b)}"
 
     for sig in (_OLD_HEAD, _OLD_ITEMS, _OLD_REVERSE):
         hits = {}
@@ -316,15 +384,16 @@ def test_value_equivalence() -> None:
 
 
 def test_thin_wrapper_shape() -> None:
-    """③ 薄包装形态 + 逐字同构：体恰为「守卫 + 单条委派」；② 6 处、① 3 处源段逐字相同；拼写已登记。"""
+    """③ 薄包装形态 + 逐字同构：体恰为「守卫 + 单条委派」；② 12 处、① 3 处**函数体**源段逐字节相同；
+    docstring 按模块登记真值；拼写已登记。"""
     assert set(_SPELLING_3) == set(_CONSUMERS_3), \
         f"③ 的调用拼写登记应与消费文件名单一一对应，实际 {sorted(_SPELLING_3)} vs {sorted(_CONSUMERS_3)}"
 
     for name in _CONSUMERS_2:
         _assert_wrapper(name, _BOTH, _NIR, _UNPARSED_2)
-    segs_2 = {_segment(name, _BOTH) for name in _CONSUMERS_2}
+    segs_2 = {_body_segment(name, _BOTH) for name in _CONSUMERS_2}
     assert len(segs_2) == 1, \
-        f"② 的 {len(_CONSUMERS_2)} 处骨架应逐字同构（原始源段逐字节相同），实际 {len(segs_2)} 种"
+        f"② 的 {len(_CONSUMERS_2)} 处骨架应逐字同构（**函数体**原始源段逐字节相同），实际 {len(segs_2)} 种"
 
     for name in _CONSUMERS_3:
         _assert_wrapper(name, _EXIST, _SPELLING_3[name], f"{_SPELLING_3[name]}(_REGRESSION)")
@@ -332,8 +401,27 @@ def test_thin_wrapper_shape() -> None:
     # ① `test_full_regression_extra` **保留不收口**：仍委派 `assert_regression(_REGRESSION_EXTRA)`，未改接线到共享过程
     for name in _KEPT_1:
         _assert_wrapper(name, _EXTRA, _A_LOCAL, _UNPARSED_EXTRA)
-    segs_1 = {_segment(name, _EXTRA) for name in _KEPT_1}
+    segs_1 = {_body_segment(name, _EXTRA) for name in _KEPT_1}
     assert len(segs_1) == 1, f"① 的 {len(_KEPT_1)} 处骨架应逐字同构，实际 {len(segs_1)} 种"
+
+    # M37 ①：收窄后的「函数体」串**不含**任何 docstring 标号字符——直接证据：docstring 已不参与判据
+    for seg in segs_2 | segs_1:
+        assert "⑧" not in seg and "⑩" not in seg, \
+            f"收窄后的「函数体」串不得含 docstring 标号字符，实际 {seg!r}"
+
+    # M37 ③：docstring 由「被逐字锁定的字面」改为「**按模块登记真值**」——键集恰等消费名单，逐条逐字比对
+    assert set(_DOC_MARK) == set(_CONSUMERS_2), \
+        f"`_DOC_MARK` 键集应恰等消费名单，实际 {sorted(_DOC_MARK)} vs {sorted(_CONSUMERS_2)}"
+    for name in _CONSUMERS_2:
+        own, ref = _DOC_MARK[name]
+        want = _DOC_TPL.format(own=own, ref=ref)
+        assert _doc_of(name, _BOTH) == want, \
+            f"{name}.{_BOTH} 的 docstring 应逐字为该模块真值，实际 {_doc_of(name, _BOTH)!r}"
+    for name in _KEPT_1:
+        assert _doc_of(name, _EXTRA) == _DOC_EXTRA, \
+            f"{name}.{_EXTRA} 的 docstring 应逐字为 {_DOC_EXTRA!r}，实际 {_doc_of(name, _EXTRA)!r}"
+    marks = {v[0] for v in _DOC_MARK.values()}
+    assert len(marks) >= 2, f"docstring 首标号应实测至少 2 组（锁定已释放），实际 {sorted(marks)}"
 
 
 # --- ④ 断言 ------------------------------------------------------------------------

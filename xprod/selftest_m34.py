@@ -87,12 +87,12 @@ _REF_FILES = (
     ("docs/spec.md", "# 规格\n"),
 )
 
-# ③ 5 项不收口裁定的**显式名单**（`_N_BOTH` 为 post-M34 真值，故含本文件 `selftest_m34.py`）
+# ③ 5 项不收口裁定的**显式名单**（`_N_BOTH` 真值随里程碑推进至 `{m26–m37}`，含本文件 `selftest_m34.py`）
 _KEPT_DIFF = ("selftest_m12.py", "selftest_m13.py")
 _KEPT_NIR = ("selftest_m31.py", "selftest_m32.py")
 _KEPT_ROOT = ("selftest_m2.py", "selftest_m3.py")
 _KEPT_EXTRA = ("selftest_m21.py", "selftest_m22.py", "selftest_m23.py")
-_KEPT_BOTH = tuple("selftest_m%d.py" % i for i in range(26, 37))
+_KEPT_BOTH = tuple("selftest_m%d.py" % i for i in range(26, 38))
 
 # ④ 调用点真值清单（**逐字写死**，收口前后相同；表达式而非处数）
 _CALLPOINTS = (

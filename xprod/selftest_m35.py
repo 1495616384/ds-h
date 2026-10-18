@@ -15,7 +15,7 @@
 待查特征串一律**分段拼接**构造（`"flow" + "_conflict"`、`"<section id=" + '"conflict">'` …），
 使度量器自身（含 docstring / 注释）**不字面出现**该特征串。
 
-覆盖（对应设计稿 §八 ①–⑧）：
+覆盖（对应设计稿 §八 ①–⑧ ＋ ⑨/⑩ 沿用 M31 既定形态自持）：
   ① **无 `--plan` 的回归**：5 参与 6 参（`plan_file=None`）分析文档**深比较相等**；`doc["conflict"]
      为 `None`；页面**无**冲突段；「移除 `conflict` 键后再渲染」与实渲染**逐字节一致**；冲突渲染入口
      在 `viewer.py` **恰 1 处**；冲突段只用既有类名（全部已在 `_CSS` 中）；
@@ -29,7 +29,9 @@
   ⑦ **只读**：分析 / 渲染 / CLI 全程夹具目录复合摘要**不变**；
   ⑧ **CLI 与退出码**：正常路径退出码 **0**、stdout 与库输出**逐字节一致**、**无 `\\r\\n`**；
      `--plan` **缺值** → **2**；`--plan` **缺 `--flow`** → **2**；坏计划 → **1**；
-     **无 `--plan`** 时 stdout 与库输出**逐字节一致**。
+     **无 `--plan`** 时 stdout 与库输出**逐字节一致**；
+  ⑨ **既有自测零修订**：32 个无需参数的自测各按**实测**条数全绿（经共享 `assert_regression`）；
+  ⑩ **全域回归 + 编号无关性**：**逆序**跑同一批自测仍全绿（与 ⑨ 逐条一致）；需代码根者仍恰为 `m2` / `m3`。
 
 沿用 M0–M34 约定：**不**用管道捕获输出，改临时文件重定向（本机沙箱禁建管道）——
 本文件自身的脚手架调用一律经 `selftest_kit` 唯一实现，**不**内联子进程调用。
@@ -455,18 +457,18 @@ def test_cli_and_exit_codes() -> None:
         assert rc == 1, f"坏计划应退出码 1（沿 ConflictError），实际 {rc}"
 
 
-# --- ⑦ / ⑧ 32 个无需命令行参数的自测（`m2` / `m3` 需代码根，见 ⑧）；条数为**实测** ------------
+# --- ⑨ / ⑩ 32 个无需命令行参数的自测（`m2` / `m3` 需代码根，见 ⑩）；条数为**实测** ------------
 
 
 def test_existing_selftests_regression() -> None:
-    """⑦ 既有自测零修订：32 个无需参数的自测各按实测条数全绿（经共享 `assert_regression`）。"""
+    """⑨ 既有自测零修订：32 个无需参数的自测各按实测条数全绿（经共享 `assert_regression`）。"""
     if selftest_kit.in_regression():
         return
     assert_regression(_REGRESSION)
 
 
 def test_full_regression_and_number_independence() -> None:
-    """⑧ 全域回归 + 编号无关性：逆序逐模块跑同一批自测仍全绿（与 ⑦ 逐条一致）；需代码根者恰 m2/m3。"""
+    """⑩ 全域回归 + 编号无关性：逆序逐模块跑同一批自测仍全绿（与 ⑨ 逐条一致）；需代码根者恰 m2/m3。"""
     if selftest_kit.in_regression():
         return
     number_independence_regression(_REGRESSION, _ARGV_MARK, _ARG_EXEMPT)

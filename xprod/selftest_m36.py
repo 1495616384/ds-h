@@ -587,7 +587,7 @@ def test_existing_selftests_regression() -> None:
 
 
 def test_full_regression_and_number_independence() -> None:
-    """⑧ 全域回归 + 编号无关性：逆序逐模块跑同一批自测仍全绿（与 ⑦ 逐条一致）；需代码根者恰 m2/m3。"""
+    """⑩ 全域回归 + 编号无关性：逆序逐模块跑同一批自测仍全绿（与 ⑨ 逐条一致）；需代码根者恰 m2/m3。"""
     if selftest_kit.in_regression():
         return
     number_independence_regression(_REGRESSION, _ARGV_MARK, _ARG_EXEMPT)
