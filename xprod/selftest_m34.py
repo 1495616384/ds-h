@@ -92,7 +92,7 @@ _KEPT_DIFF = ("selftest_m12.py", "selftest_m13.py")
 _KEPT_NIR = ("selftest_m31.py", "selftest_m32.py")
 _KEPT_ROOT = ("selftest_m2.py", "selftest_m3.py")
 _KEPT_EXTRA = ("selftest_m21.py", "selftest_m22.py", "selftest_m23.py")
-_KEPT_BOTH = tuple("selftest_m%d.py" % i for i in range(26, 36))
+_KEPT_BOTH = tuple("selftest_m%d.py" % i for i in range(26, 37))
 
 # ④ 调用点真值清单（**逐字写死**，收口前后相同；表达式而非处数）
 _CALLPOINTS = (

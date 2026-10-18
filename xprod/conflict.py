@@ -40,6 +40,15 @@ M16 扩展（条目层采集复用；对齐路线图 §二十 M16 行与设计�
        diff 读口径**唯一收口**在 `impact_analyzer.read_diff`；复用**写在调用点**，不引入隐式缓存。
        M7 / M14 输出**逐字节不变**。
 
+M36 扩展（构造入口与采集入口分列；对齐路线图 §四十 M36 行与设计稿 `X产品化-M36设计稿-v1.md`）：
+    ⑫ `analyze_plan` 退化为**薄编排**：采集仍在「从路径开始」的唯一入口（`impact_analyzer.prepare`
+       / `flow.prepare`），**构造**移入新增的 `analyze_plan_prepared(plan, impact_prepared,
+       flow_prepared=None)`——它**零**建图、**零**解析设计文档、**零**解析流程文档，只做「命中条目 ∩
+       直接变更文件」与两层相交。这样**调用方**（可视面）可把**已采到的** `graph` / `design` / 流程面
+       直接交给构造入口，避免同一进程内对同一份输入二次采集。`_flow_layer` 形参随之由
+       「流程文档路径 + 代码根」收敛为**已采到的流程面**，采集点与复用点**合并为同一处**（调用方持有）。
+       `analyze_plan` 的签名与输出**一字不变**，M7 / M14 / M16 输出**逐字节不变**。
+
 为什么这样定：
     * 冲突对按 (left, right) 字典序输出、共享集合排序，保证同输入**逐字节可复现**；
     * 分工计划里的改动按 id 升序规范化，使输出的**键序与分组不依赖输入书写顺序**；
@@ -164,7 +173,7 @@ def _pairwise_conflicts(summaries: list[dict]) -> list[dict]:
     return conflicts
 
 
-def _flow_layer(plan: dict, code_root: str | Path, flow_doc: str | Path) -> list[dict]:
+def _flow_layer(plan: dict, flow_prepared: dict) -> list[dict]:
     """逐改动取流程面：**一律**取自 `flow` 的判定，不重算、不另造。
 
     为什么用「采集一次 + 逐改动构造」（M15）：流程解析与「直接命中 ∪ 正向下游闭包」的判定口径
@@ -174,11 +183,12 @@ def _flow_layer(plan: dict, code_root: str | Path, flow_doc: str | Path) -> list
     M15 起改为：`flow.prepare` **只做一次**，再对每份 diff 各做一次 `flow.analyze_prepared`。
     复用**写在调用点**（本函数显式持有 `prepared`），不引入任何隐式缓存；M14 的输出**逐字节不变**。
     `affected_steps` 与 `direct_steps` 在 `flow` 内已排序，此处原样透传以保确定性。
+    M36：形参由「流程文档路径 + 代码根」收敛为**已采到的流程面** `flow_prepared`——采集点上移到
+    **调用方**（可视面可把同一份流程面同时供流程段与冲突段复用），本函数不再自行采集。
     """
-    prepared = flow.prepare(flow_doc, code_root)
     rows: list[dict] = []
     for change in plan["changesets"]:
-        impact = flow.analyze_prepared(prepared, change["diff"])["impact"]
+        impact = flow.analyze_prepared(flow_prepared, change["diff"])["impact"]
         affected = list(impact["affected_steps"])
         rows.append(
             {
@@ -232,31 +242,21 @@ def _flow_conflicts(rows: list[dict]) -> list[dict]:
 _FLOW_CLEAR_NOTE = "note: clear 仅表示本次分工计划内部流程层无冲突，不表示合并安全"
 
 
-def analyze_plan(
-    plan_path: str | Path,
-    code_root: str | Path,
-    design_doc: str | Path,
-    flow_doc: str | Path | None = None,
+def analyze_plan_prepared(
+    plan: dict,
+    impact_prepared: dict,
+    flow_prepared: dict | None = None,
 ) -> dict:
-    """分析一份分工计划，返回键序固定、可逐字节复现的结果文档。
+    """用**已采集的中间体**构造分工计划分析结果（M36）：零建图、零解析设计文档、零解析流程文档。
 
-    每份改动都经 M3 影响分析器解析：直接变更文件来自 diff，命中条目来自「证据锚 ∩ 直接变更文件」。
-
-    M14：给了 `flow_doc` 才计算**流程层**并在输出末尾追加两个键（`flow_of_changesets` /
-    `flow_conflict`）；**未给时输出与 M7 逐字节一致**（流程层键**不出现**，而不是出现并置 `null`）——
-    这样既有断言与既有页面对照一律不受影响。流程层判定**不并入**顶层 `verdict`：把「波及同一流程」
-    这种弱证据并进文件/条目层的强判定，会造成影响面二次放大（与 M3 排除反向闭包传播同理由）。
-
-    M16：条目层改用「采集一次 + 逐改动构造」——同一对 `(代码根, 设计文档)` 供 N 份改动复用，
-    `impact_analyzer.prepare` **只做一次**（建图 + 解析设计文档，两者**与 diff 无关**），
-    再对每份改动各做一次 `impact_analyzer.analyze_prepared`（读该 diff 文件、命中条目、反向闭包）。
-    复用**写在调用点**（本函数显式持有 `impact_prepared`），不引入任何隐式缓存；
-    diff 读口径**唯一收口**在 `impact_analyzer.read_diff`。M7 / M14 输出**逐字节不变**。
-    中间体变量名用 `impact_prepared`，与 `_flow_layer` 内的 `prepared`（流程面）区分，避免混淆。
+    本函数是 M15 / M16 既定治理规则的落点：**采集入口**（`impact_analyzer.prepare` / `flow.prepare`）
+    与**构造入口**（本函数）分列；同一对 `(代码根, 设计文档)` 与同一份流程文档在工作流内**只采一次**，
+    由**调用方**显式持有中间体并复用（`analyze_plan` 是它的「从路径开始」稳定外壳）。
+    为什么形参收「已采到的中间体」而不是「路径」：采集与构造若耦合在同一函数里，调用方就**没有**
+    交出已采事实的位置——只能各自重采一遍（同一进程内对同一份设计文档解析两次、依赖图建两次），
+    这正是 M36 要堵的那种隐性重复。`flow_prepared` 未给时流程层键**不出现**（与 M7 一致）。
+    M7 / M14 / M16 输出**逐字节不变**。
     """
-    plan = load_plan(plan_path)
-
-    impact_prepared = impact_analyzer.prepare(code_root, design_doc)
     summaries: list[dict] = []
     for change in plan["changesets"]:
         doc = impact_analyzer.analyze_prepared(
@@ -281,8 +281,8 @@ def analyze_plan(
         "conflicts": conflicts,
         "verdict": VERDICT_CONFLICT if conflicts else VERDICT_CLEAR,
     }
-    if flow_doc is not None:
-        rows = _flow_layer(plan, code_root, flow_doc)
+    if flow_prepared is not None:
+        rows = _flow_layer(plan, flow_prepared)
         flow_conflicts = _flow_conflicts(rows)
         result["flow_of_changesets"] = rows
         result["flow_conflict"] = {
@@ -292,6 +292,39 @@ def analyze_plan(
             "note": _FLOW_CLEAR_NOTE,
         }
     return result
+
+
+def analyze_plan(
+    plan_path: str | Path,
+    code_root: str | Path,
+    design_doc: str | Path,
+    flow_doc: str | Path | None = None,
+) -> dict:
+    """分析一份分工计划，返回键序固定、可逐字节复现的结果文档。
+
+    每份改动都经 M3 影响分析器解析：直接变更文件来自 diff，命中条目来自「证据锚 ∩ 直接变更文件」。
+
+    M14：给了 `flow_doc` 才计算**流程层**并在输出末尾追加两个键（`flow_of_changesets` /
+    `flow_conflict`）；**未给时输出与 M7 逐字节一致**（流程层键**不出现**，而不是出现并置 `null`）——
+    这样既有断言与既有页面对照一律不受影响。流程层判定**不并入**顶层 `verdict`：把「波及同一流程」
+    这种弱证据并进文件/条目层的强判定，会造成影响面二次放大（与 M3 排除反向闭包传播同理由）。
+
+    M16：条目层改用「采集一次 + 逐改动构造」——同一对 `(代码根, 设计文档)` 供 N 份改动复用，
+    `impact_analyzer.prepare` **只做一次**（建图 + 解析设计文档，两者**与 diff 无关**），
+    再对每份改动各做一次 `impact_analyzer.analyze_prepared`（读该 diff 文件、命中条目、反向闭包）。
+    复用**写在调用点**（本函数显式持有 `impact_prepared`），不引入任何隐式缓存；
+    diff 读口径**唯一收口**在 `impact_analyzer.read_diff`。M7 / M14 输出**逐字节不变**。
+
+    M36：本函数退化为**薄编排**——采集仍在此处（「从路径开始」的唯一入口：`impact_analyzer.prepare`
+    / `flow.prepare`），但**构造**移入 `analyze_plan_prepared`，使**调用方**（如可视面）可把**已采到的**
+    中间体直接交给构造入口，避免同一进程内对同一份输入二次采集。签名与输出**一字不变**。
+    条目层中间体名 `impact_prepared`、流程面中间体名 `flow_prepared`，两名分列以免混淆。
+    """
+    return analyze_plan_prepared(
+        load_plan(plan_path),
+        impact_analyzer.prepare(code_root, design_doc),
+        flow.prepare(flow_doc, code_root) if flow_doc is not None else None,
+    )
 
 
 _CLEAR_NOTE = "note: clear 仅表示本次分工计划内部无冲突，不表示合并安全"

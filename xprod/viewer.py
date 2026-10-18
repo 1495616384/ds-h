@@ -30,6 +30,13 @@ M35 扩展：把 M7/M14 的**分工计划冲突**接入可视面——可选 `pl
 （「流程层冲突接入可视面」）。同样**`_CSS` 一行不加**：冲突段的判定配色复用既有类名
 （`clear` → `ok`、`conflict` → `drift`）。**无 `plan_file` 时页面逐字节不变**（冲突段不出现）。
 
+M36 扩展：兑现 M35 引入的**同进程双份采集**治理缺口——M35 把 `conflict.analyze_plan` 接进本函数后，
+同一份 `(代码根, 设计文档, 流程文档)` 被流程段与冲突段**各采一遍**（设计文档解析 2 次、依赖图构建 2 次、
+流程文档解析 2 次）。M36 起：`flow_prepared` 在本函数**只采一次**，同时供流程段与冲突段复用；
+冲突段的**依赖图**与**设计文档**直接取本函数已采到的 `graph` / `design`（经
+`impact_analyzer.prepare_from_parts` 组装，**零**建图、**零**解析）。`analyze` 的签名与输出**一字不变**，
+**无 `plan_file` 时页面逐字节不变**。
+
 隔离约定：本模块**不写死**任何冻结链路径；代码根 / 设计文档一律由调用方传入
 （由 M0 自测第三条校验本包源码不含冻结链目录名）。仅依赖 Python 标准库。
 """
@@ -38,7 +45,7 @@ from __future__ import annotations
 
 import html
 
-from . import conflict, drift, flow, graph_builder, parser, sync
+from . import conflict, drift, flow, graph_builder, impact_analyzer, parser, sync
 
 # 证据在可视面上的三种状态：与 `drift` **同源**（直接取 `drift.STATUS_*`），此处只作标签用途，
 # 不再各持一份字面量——可视面是「呈现层」，三态口径只能有一个源头。
@@ -109,11 +116,15 @@ def analyze(
     对同一批次数据只取一次：`drift` 负责锚活性与盲区，`graph_builder` 负责依赖图，
     本函数只做**汇合**，不改写任何一方的取值。给了 `baseline` 时，增量段经
     `sync.snapshot_from_drift` 由**同一份** `drift` 结果构造，不再重复采集。
-    给了 `flow_doc` 时，流程段经 `flow.analyze`**只跑一次**得到，其返回文档**原样**放入
-    `doc["flow"]`（不裁剪、不改写、不重算）——这样呈现段就没有第二份判定实现的可能。
-    M35：给了 `plan_file` 时，冲突段经 `conflict.analyze_plan`**只跑一次**得到，其返回文档
-    **原样**放入 `doc["conflict"]`（不裁剪、不改写、不重算）——文件/条目层与流程层**并列**呈现，
+    给了 `flow_doc` 时，流程段经 `flow.analyze_prepared`**只跑一次**得到（M36 前为 `flow.analyze`），
+    其返回文档**原样**放入 `doc["flow"]`（不裁剪、不改写、不重算）——这样呈现段就没有第二份判定实现的可能。
+    M35：给了 `plan_file` 时，冲突段**只跑一次**得到，其返回文档**原样**放入 `doc["conflict"]`
+    （不裁剪、不改写、不重算）——文件/条目层与流程层**并列**呈现，
     呈现层不会再造一份「过滤口径」。`plan_file` 依赖 `flow_doc`（流程层冲突需要流程文档，由 CLI 校验）。
+    M36：冲突段改经 `conflict.analyze_plan_prepared`（M35 时为 `conflict.analyze_plan`）构造，并把
+    **本函数已采到的**中间体显式交给它——流程面 `flow_prepared`、依赖图 `graph`、设计文档 `design`
+    （后两者经 `impact_analyzer.prepare_from_parts` 组装）。故同一份输入在本进程内**只采一次**：
+    流程段与冲突段共用同一 `flow_prepared`，冲突段不再二次建图 / 二次解析设计文档与流程文档。
     M17：`design` 与 `drift_doc` 由**同一份** `drift.prepare(...)` 中间体供给
     （`design = prepared["design"]`），同一份设计文档只解析**一次**——条目区与锚活性区**必定同源**，
     不可能再因两次解析而分叉。`graph` 仍单独取一次：`drift.scan_tree` 枚举的是**文件/目录存在性**、
@@ -148,11 +159,16 @@ def analyze(
         if baseline is not None
         else None
     )
+    flow_prepared = flow.prepare(flow_doc, code_root) if flow_doc is not None else None
     doc["flow"] = (
-        flow.analyze(flow_doc, code_root, diff_file) if flow_doc is not None else None
+        flow.analyze_prepared(flow_prepared, diff_file) if flow_prepared is not None else None
     )
     doc["conflict"] = (
-        conflict.analyze_plan(plan_file, code_root, design_doc, flow_doc)
+        conflict.analyze_plan_prepared(
+            conflict.load_plan(plan_file),
+            impact_analyzer.prepare_from_parts(graph, design),
+            flow_prepared,
+        )
         if plan_file is not None
         else None
     )

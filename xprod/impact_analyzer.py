@@ -13,6 +13,10 @@
        「读 diff 文件」实现）与 `analyze_prepared`（按 diff 构造）各有**唯一实现**；`analyze` /
        `analyze_files` 退化为**薄编排**；复用由调用方**显式持有**中间体，**不**引入隐式缓存
        （两者的签名与输出**逐字节不变**）。
+    ⑥ M36：新增 `prepare_from_parts(graph, design)`——调用方**已按同一契约采到**原始事实时，
+       **零**建图、**零**解析，只组装并自证键序（让可视面把已采到的 `graph` / `design`
+       显式交给冲突路径，避免同一进程内二次采集）；`prepare`（从路径采集）仍是「从路径开始」的
+       唯一入口，两者的产出**同一契约** `PREPARED_REQUIRED_KEYS`。
 
 为什么这样定：
     * 反向传播而非正向：改一个被依赖的底层模块，风险在于**它的消费者**，
@@ -185,6 +189,25 @@ def prepare(code_root: str | Path, design_doc: str | Path) -> dict:
         "graph": graph_builder.build_graph(code_root),
         "design": parser.parse_file(design_doc),
     }
+    contract.assert_produced_keys(body, PREPARED_REQUIRED_KEYS, ImpactError, "impact_analyzer")
+    return body
+
+
+def prepare_from_parts(graph: dict, design: dict) -> dict:
+    """把**已采集的原样事实**组装为采集体（M36）：**零**建图、**零**解析，只组装并**自证**键序契约。
+
+    为什么需要它：可视面（`viewer.analyze`）**已经**持有 `graph_builder.build_graph` 的 `graph` 与
+    `parser.parse_file` 的 `design`；自 M35 把 `conflict.analyze_plan` 接进可视面后，冲突路径会**再**
+    `prepare` 一遍（二次建图 + 二次解析设计文档）。本入口让可视面把这**同一份原始事实**显式交出去
+    （M15 / M16 / M17 同一治理规则：采集一次 / 复用多次 + 显式中间体，不引入隐式缓存）。
+
+    为什么放在**采集层**而不是让呈现层自己拼字典：采集体的键序契约 `PREPARED_REQUIRED_KEYS` 与
+    「产出不变量自证」（M19）属**生产者**；让呈现层拼 `{"graph": …, "design": …}` 等于把**消费方的
+    类型假设**写进采集层（M11 / M16 教训）。本入口**不**替代 `prepare`：`prepare` 仍是「从路径开始
+    采集」的唯一入口，两者产出**同一契约**的采集体；本入口也**不做**任何校验之外的加工（不排序、
+    不派生、不写盘）。
+    """
+    body = {"graph": graph, "design": design}
     contract.assert_produced_keys(body, PREPARED_REQUIRED_KEYS, ImpactError, "impact_analyzer")
     return body
 
