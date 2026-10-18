@@ -26,6 +26,7 @@ M23（扫描边界）同族：规则以**复刻**形式存在、**没有唯一�
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import os
 import re
@@ -381,3 +382,152 @@ def tree_files(root: Path) -> list[tuple[str, str]]:
         (p.relative_to(root).as_posix(), p.read_bytes().decode("utf-8"))
         for p in sorted(q for q in root.rglob("*") if q.is_file())
     ]
+
+
+# ===== M38：「新增里程碑连带影响预检」的唯一实现（2026-10-18 追加） =====
+# 背景见《X产品化-M38设计稿-v1.md》§一 / §四。M35 与 M37 的复盘各登记一条「加固」（新增拼接常量须用
+# 全仓既有扫描正则自检；新建顶层常量前须与全仓既有「名字 → 文件集」登记表逐名比对），而两条**至今
+# 只是路线图里的文字**——全仓没有一个可执行机具，于是新模块能**静默**闯进别人的登记集合（M37 实测：
+# `m37` 夹具常量沿用 `_CHANGES` 撞进 `m33` 的 `^_CHANGES = ` 定义文件集）或被别人的扫描正则命中
+# （M35 实测：`m35` 的 `_RENDER_ENTRY = "def " + …` 撞进 `m33` 的 `_RE_LIT_DEF`），两者**只有跑一次
+# 全域回归才暴露**。
+#
+# 治根因的方式**不是**新增判定能力，而是把「候选源码片段会不会被既有全仓扫描看见」这一步做成
+# **可执行机具**：针脚全集由 AST **机械推导**（**不手写名单**，故不随仓增长而陈旧），候选片段做
+# R（正则针脚）/ N（名字针脚）两维命中判定。**命中 ≠ 失败**——机具只列出命中项（含来源文件），
+# 是「改名避让」还是「登记为该登记表的真值更新项」由**人**裁定，机具**不**自动判负、**不**产结论。
+#
+# 只读、无副作用、无缓存：每次现推磁盘，两次调用相同。折叠支持四类（实测覆盖本仓全部 `re.compile`
+# 实参，「不可折叠」为 0）：`ast.Constant(str)` / `BinOp(Add)` 字符串拼接 / 同文件**已折叠**模块级
+# 常量的 `Name` 引用 / `re.escape(<str>)`。两个属性名**分段拼接**（自指防护）：本文件源码**不**字面
+# 出现这两个特征串，故不会把机具自身算成针脚来源。
+_ESCAPE_ATTR = "esc" + "ape"
+_COMPILE_ATTR = "com" + "pile"
+
+
+def _fold_expr(node: ast.AST, consts: dict[str, str]) -> str | None:
+    """把单个表达式折叠为 `str`；不可折叠返回 `None`（**不**抛异常、**不**伪造值）。
+
+    四类支持见 M38 区段说明；`re.compile(...)` **不在**此列——它的实参由 R 类取证点单独折叠
+    （若并入本函数，`_folded_consts` 会把编译结果也当成名字针脚，使同一条针脚在两维各登记一次）。
+    """
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if isinstance(node, ast.Name):
+        return consts.get(node.id)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left, right = _fold_expr(node.left, consts), _fold_expr(node.right, consts)
+        return None if left is None or right is None else left + right
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+        if node.func.attr == _ESCAPE_ATTR and len(node.args) == 1:
+            inner = _fold_expr(node.args[0], consts)
+            return None if inner is None else re.escape(inner)
+    return None
+
+
+def _is_compile_call(node: ast.AST) -> bool:
+    """`node` 是否为 `re.compile(...)` 调用——R 类正则针脚的**唯一取证点**。"""
+    return (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == _COMPILE_ATTR
+    )
+
+
+def _folded_consts(tree: ast.Module) -> dict[str, str]:
+    """单文件**模块级**常量表：按语句顺序**增量折叠**（故同文件内的常量引用可折叠）。
+
+    **跳过**右值为 `re.compile(...)` 的赋值：其真值属 R 类正则针脚，并进 N 会让同一针脚重复登记。
+    """
+    consts: dict[str, str] = {}
+    for node in tree.body:
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name) or _is_compile_call(node.value):
+            continue
+        value = _fold_expr(node.value, consts)
+        if value is not None:
+            consts[target.id] = value
+    return consts
+
+
+def _scan_sources() -> list[tuple[str, str, dict[str, str], ast.Module]]:
+    """只读解析 `scanscope.selftest_modules()` 的每个文件，返回（文件名, 源码, 模块级常量表, AST）。
+
+    边界取自 `scanscope`（M23 唯一实现）——**不**在本机具里复刻「哪些文件算自测」的判定。
+    """
+    rows = []
+    for path in scanscope.selftest_modules():
+        src = path.read_text(encoding="utf-8")
+        tree = ast.parse(src)
+        rows.append((path.name, src, _folded_consts(tree), tree))
+    return rows
+
+
+def _needles_and_unfoldable() -> tuple[
+    tuple[tuple[str, str], ...], tuple[tuple[str, str], ...], tuple[tuple[str, str], ...]
+]:
+    """一次只读扫描的结果三元组：(名字针脚 N, 正则针脚 R, 不可折叠 R 实参)；各按「来源, 值」排序去重。"""
+    names: set[tuple[str, str]] = set()
+    regexes: set[tuple[str, str]] = set()
+    unfoldable: list[tuple[str, str]] = []
+    for name, src, consts, tree in _scan_sources():
+        for value in consts.values():
+            names.add((name, value))
+        for node in ast.walk(tree):
+            if not _is_compile_call(node) or not node.args:
+                continue
+            pattern = _fold_expr(node.args[0], consts)
+            if pattern is None:
+                unfoldable.append((name, ast.get_source_segment(src, node) or ""))
+            else:
+                regexes.add((name, pattern))
+    return tuple(sorted(names)), tuple(sorted(regexes)), tuple(sorted(unfoldable))
+
+
+def scan_needles() -> tuple[tuple[str, str], ...]:
+    """全仓既有「全仓扫描针脚」的**唯一汇总**（AST 机械推导，**非**手写名单）。
+
+    对每个自测文件取：(a) **模块级** `名字 = <可折叠为 str>` 的**折叠值**（N 类名字针脚）；
+    (b) **任意位置** `re.compile(<可折叠为 str>)` 的**模式串**（R 类正则针脚）。
+    折叠失败者**一律不进入**本返回值（由 `unfoldable_patterns()` 单独登记，**不**静默丢弃）。
+    返回按「来源文件, 针脚值」排序去重的元组；只读，两次调用相同。
+    """
+    names, regexes, _unf = _needles_and_unfoldable()
+    return tuple(sorted(set(names) | set(regexes)))
+
+
+def unfoldable_patterns() -> tuple[tuple[str, str], ...]:
+    """**不可折叠**的 `re.compile` 实参源码片段（来源文件, 片段源码）——**显式登记，不静默跳过**。
+
+    本仓实况实测为 **0** 项（四类折叠覆盖全部 `re.compile` 实参）；返回按来源文件排序的元组。
+    """
+    _names, _regexes, unfoldable = _needles_and_unfoldable()
+    return unfoldable
+
+
+def precheck_fragment(text: str) -> dict[str, list[tuple[str, str]]]:
+    """预检：给定**拟新增的源码片段**，返回两维命中（每项 = (来源文件, 针脚)）。
+
+    R 维：对每条**正则针脚**命中文本者（用 `re.search(模式串, text)`，与 `re.compile(模式串).search(text)`
+    逐字等价——刻意**不**在本文件内再写一处 `re.compile`，否则机具自身会成为「不可折叠实参」的来源）；
+    N 维：**先** `ast.parse(text)` 取**顶层赋值目标名 ∪ 顶层函数名**，再与**名字针脚**逐名相等者。
+    片段**必须是合法模块语法**，否则 `ast.parse` 自然抛 `SyntaxError`（**不**静默跳过）。
+    命中只表示「该片段会进入某个既有登记 / 被某个既有扫描看见」——**不**判定成败、**不**产出结论，
+    是「改名避让」还是「登记为该登记表的真值更新项」由**人**裁定（契约见设计稿 §4.3）。
+    """
+    tree = ast.parse(text)
+    candidates: set[str] = set()
+    for node in tree.body:
+        if isinstance(node, ast.Assign):
+            candidates |= {t.id for t in node.targets if isinstance(t, ast.Name)}
+        elif isinstance(node, ast.FunctionDef):
+            candidates.add(node.name)
+
+    names, regexes, _unf = _needles_and_unfoldable()
+    hits: dict[str, list[tuple[str, str]]] = {
+        "R": [pair for pair in regexes if re.search(pair[1], text)],
+        "N": [pair for pair in names if pair[1] in candidates],
+    }
+    return hits
