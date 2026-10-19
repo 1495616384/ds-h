@@ -127,6 +127,7 @@ _REGISTERED = (
             "selftest_m36.py": 1,
             "selftest_m37.py": 1,
             "selftest_m38.py": 1,
+            "selftest_m39.py": 1,
         },
     ),
     (
@@ -146,12 +147,13 @@ _REGISTERED = (
             "selftest_m36.py": 1,
             "selftest_m37.py": 1,
             "selftest_m38.py": 1,
+            "selftest_m39.py": 1,
         },
     ),
     ("def _entry(", {}),
 )
 _MAIN_NEEDLE = "def main("
-_MAIN_TOTAL = 38        # 实测：本文件之外含 `def main(` 的文件数（M38 新增 1 个自测；此前 M37 实测为 37）
+_MAIN_TOTAL = 39        # 实测：本文件之外含 `def main(` 的文件数（M39 新增 1 个自测；此前 M38 实测为 38）
 
 # ② 多组输入：含全绿 / 零比零 / 未全绿 / 非 `N/N` 形状 / 空串 / 前后空白（参照公式不依赖正则，独立推导）
 _TAILS = (

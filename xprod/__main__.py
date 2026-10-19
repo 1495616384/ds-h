@@ -18,6 +18,8 @@ M14 扩展 `conflict`——可选 `--flow <flow-doc.md>`：在文件 / 条目层
 （流程面逐改动取自 `flow.analyze`；流程层判定**不并入**顶层 `verdict`）。
 M35 扩展 `view`——可选 `--plan <plan.json>`（**依赖** `--flow`）：把 M7/M14 的分工计划冲突
 （文件/条目层 + 流程层）接入可视面；冲突段结果**原样**取自 `conflict.analyze_plan`（不裁剪、不重算）。
+M39 追加 `remediate`——纠偏指令生成器：把既有判定产物（`drift` / `flow` / `conflict` / `sync` 基线比对）
+翻译为有界、可追溯、咨询式的纠偏指令集（`--text` 给人类可读版本）。
 参数解析仍不用 argparse，保持外部面最小、零依赖。
 """
 
@@ -39,7 +41,8 @@ USAGE = (
     "       python -m xprod drift <code-root> <design-doc> [--text]\n"
     "       python -m xprod view <code-root> <design-doc> [--baseline <snap.json>] [--flow <flow-doc.md>] [--diff <diff-file>] [--plan <plan.json>]\n"
     "       python -m xprod sync <code-root> <design-doc> [--save <snap.json>|--compare <snap.json>] [--text]\n"
-    "       python -m xprod flow <flow-doc.md> <code-root> [--diff <diff-file>] [--text]"
+    "       python -m xprod flow <flow-doc.md> <code-root> [--diff <diff-file>] [--text]\n"
+    "       python -m xprod remediate <code-root> <design-doc> [--flow <flow-doc.md>] [--diff <diff-file>] [--plan <plan.json>] [--baseline <snap.json>] [--text]"
 )
 
 
@@ -362,6 +365,60 @@ def main(argv: list[str] | None = None) -> int:
             print(f"flow error: {exc}", file=sys.stderr)
             return 1
         text = flow.render_text(doc) if as_text else flow.to_json(doc)
+        _write_bytes(text)
+        return 0
+    if args and args[0] == "remediate":
+        from . import conflict, drift, flow, graph_builder, impact_analyzer, parser, remediator, sync
+
+        rest = args[1:]
+        as_text = "--text" in rest
+        if as_text:
+            del rest[rest.index("--text")]
+        missing = False
+
+        def take(flag: str) -> str | None:
+            """取出 `--flag value` 并从 rest 中删除；不存在返回 None，缺值置 `missing`。"""
+            nonlocal rest, missing
+            if flag not in rest:
+                return None
+            i = rest.index(flag)
+            if i + 1 >= len(rest):
+                missing = True
+                return None
+            value = rest[i + 1]
+            del rest[i : i + 2]
+            return value
+
+        flow_path = take("--flow")
+        diff_path = take("--diff")
+        plan_path = take("--plan")
+        baseline_path = take("--baseline")
+        # M39：`--diff` / `--plan` 依附于 `--flow`，`--baseline` 独立——给了二者之一却没给 `--flow`
+        # 属用法错误（退出码 2），不静默丢弃（与 `view` 同规则）
+        if (
+            len(rest) != 2
+            or missing
+            or (diff_path is not None and flow_path is None)
+            or (plan_path is not None and flow_path is None)
+        ):
+            print(USAGE, file=sys.stderr)
+            return 2
+        try:
+            doc = remediator.remediate(rest[0], rest[1], flow_path, diff_path, plan_path, baseline_path)
+        except (
+            conflict.ConflictError,
+            drift.DriftError,
+            flow.FlowError,
+            graph_builder.GraphError,
+            impact_analyzer.ImpactError,
+            parser.ParseError,
+            remediator.RemediatorError,
+            sync.SyncError,
+            OSError,
+        ) as exc:
+            print(f"remediate error: {exc}", file=sys.stderr)
+            return 1
+        text = remediator.render_text(doc) if as_text else remediator.to_json(doc)
         _write_bytes(text)
         return 0
     print(USAGE, file=sys.stderr)

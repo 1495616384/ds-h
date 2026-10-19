@@ -121,6 +121,7 @@ _CONSUMERS_2 = (
     "selftest_m36.py",
     "selftest_m37.py",
     "selftest_m38.py",
+    "selftest_m39.py",
 )
 _CONSUMERS_3 = (
     "selftest_m23.py",
@@ -138,6 +139,7 @@ _CONSUMERS_3 = (
     "selftest_m36.py",
     "selftest_m37.py",
     "selftest_m38.py",
+    "selftest_m39.py",
 )
 _CONSUMERS_5 = ("selftest_m10.py", "selftest_m11.py")
 _KEPT_1 = ("selftest_m21.py", "selftest_m22.py", "selftest_m23.py")
@@ -160,6 +162,7 @@ _SPELLING_3 = {
     "selftest_m36.py": _A_PUBLIC,
     "selftest_m37.py": _A_PUBLIC,
     "selftest_m38.py": _A_PUBLIC,
+    "selftest_m39.py": _A_PUBLIC,
 }
 _UNPARSED_2 = f"{_NIR}(_REGRESSION, _ARGV_MARK, _ARG_EXEMPT)"
 _UNPARSED_EXTRA = f"{_A_LOCAL}(_REGRESSION_EXTRA)"
@@ -180,7 +183,7 @@ _DOC_MARK = {
     "selftest_m29.py": ("⑧", "⑦"), "selftest_m30.py": ("⑧", "⑦"), "selftest_m31.py": ("⑧", "⑦"),
     "selftest_m32.py": ("⑧", "⑦"), "selftest_m33.py": ("⑧", "⑦"), "selftest_m34.py": ("⑧", "⑦"),
     "selftest_m35.py": ("⑩", "⑨"), "selftest_m36.py": ("⑩", "⑨"), "selftest_m37.py": ("⑧", "⑦"),
-    "selftest_m38.py": ("⑧", "⑦"),
+    "selftest_m38.py": ("⑧", "⑦"), "selftest_m39.py": ("⑧", "⑦"),
 }
 _DOC_EXTRA = "⑧ 全域回归（其余无需参数的自测）：按实测条数全绿。"
 
